@@ -1,6 +1,6 @@
 # Rules Engine
 
-Kurzbeschreibung des Projekts — was es tut und warum es existiert.
+Entwicklung einer Applikation um Rollenspiel-Regeln generisch zu entwicklen. Auf Basis der generischen Regeln werden dann explizite Regel-Ausprägungen erstellt, die auf die Wünsche der Spieler und deren Spielwelt zugeschnitten werden können.
 
 ## Kontext
 

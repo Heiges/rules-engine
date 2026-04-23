@@ -7,6 +7,8 @@
 ## Domain-Modell
 
 <!-- Wichtige Entitäten, Aggregate, Value Objects -->
+Attribute
+Skills
 
 ## Muster & Konventionen
 

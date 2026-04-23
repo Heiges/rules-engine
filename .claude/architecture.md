@@ -7,10 +7,15 @@
 ## Modulstruktur
 
 <!-- Welche Module/Pakete gibt es, wie hängen sie zusammen -->
+Oberfläche/UI
+API über die die Oberfläche/UI mit dem Backend kommuniziert
+Backend mit der gesamten Logik
+Datebank 
 
 ## Abhängigkeitsrichtung
 
 <!-- z.B. Domain kennt keine Infrastruktur, welche Schichten dürfen wen importieren -->
+Abhängigkeiten entsprechend des Schichtensystem nur nach unten. Beispiel : Das Backend hat eine Abhängigkeit zur Datenbank und keine Abhängigkeit zur Oberfläche/UI.
 
 ## Integrationspunkte
 
