@@ -1,0 +1,14 @@
+.home-view {
+  padding: 40px 32px;
+
+  @media (max-width: 1024px) {
+    padding: 24px 20px;
+  }
+}
+
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
