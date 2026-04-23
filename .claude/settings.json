@@ -2,11 +2,14 @@
   "permissions": {
     "defaultMode": "acceptEdits",
     "allow": [
-      "Read(/home/hheiges/Dev/workspace-code/rules-engine/**)",
-      "Write(/home/hheiges/Dev/workspace-code/rules-engine/**)",
-      "Edit(/home/hheiges/Dev/workspace-code/rules-engine/**)",
-      "Bash(find /home/hheiges/Dev/workspace-code/rules-engine/**)",
-      "Bash(grep * /home/hheiges/Dev/workspace-code/rules-engine/**)"
+      "Read",
+      "Write",
+      "Edit",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(ls *)",
+      "Bash(mvn *)",
+      "Bash(cd * && mvn *)"
     ],
     "deny": [
       "Read(/home/hheiges/.ssh/**)",
