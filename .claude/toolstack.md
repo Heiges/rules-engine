@@ -10,7 +10,7 @@ Für den Build wird Maven genutzt.
 
 ## Frontend
 
-- React 18 + TypeScript + Vite
+- React 19 + TypeScript + Vite
 - Verzeichnis: `frontend/`
 - Dev-Server: `cd frontend && npm run dev` (Port 5173)
 
@@ -29,10 +29,15 @@ Für den Build wird Maven genutzt.
 ## Wichtige Build-Befehle
 
 ```bash
-# Frontend Dev-Server
+# Frontend Dev-Server starten (Port 5173)
 cd frontend && npm run dev
 
-# Build
-# Test
-# Run
+# Frontend bauen (TypeScript-Check + Vite-Build nach frontend/dist/)
+cd frontend && npm run build
+
+# Frontend-Build lokal vorschauen (nach npm run build)
+cd frontend && npm run preview
+
+# Linting
+cd frontend && npm run lint
 ```
