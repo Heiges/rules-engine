@@ -9,7 +9,9 @@
       "Bash(grep *)",
       "Bash(ls *)",
       "Bash(mvn *)",
-      "Bash(cd * && mvn *)"
+      "Bash(cd * && mvn *)",
+      "Bash(code --list-extensions*)",
+      "Bash(javap *)"
     ],
     "deny": [
       "Read(/home/hheiges/.ssh/**)",
