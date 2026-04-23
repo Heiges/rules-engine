@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(/home/hheiges/Dev/workspace-code/rules-engine/**)",
+      "Write(/home/hheiges/Dev/workspace-code/rules-engine/**)",
+      "Edit(/home/hheiges/Dev/workspace-code/rules-engine/**)",
+      "Bash(find /home/hheiges/Dev/workspace-code/rules-engine/**)",
+      "Bash(grep * /home/hheiges/Dev/workspace-code/rules-engine/**)"
+    ],
+    "deny": [
+      "Read(/home/hheiges/.ssh/**)",
+      "Read(/home/hheiges/.gnupg/**)",
+      "Read(/home/hheiges/.config/**)",
+      "Read(/home/hheiges/.credentials*)",
+      "Read(/etc/**)",
+      "Read(/var/**)",
+      "Read(/root/**)"
+    ]
+  }
+}
