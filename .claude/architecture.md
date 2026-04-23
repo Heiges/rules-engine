@@ -23,4 +23,6 @@ Abhängigkeiten entsprechend des Schichtensystem nur nach unten. Beispiel : Das 
 
 ## Entscheidungen (ADRs)
 
-<!-- Wichtige Architekturentscheidungen und ihre Begründung -->
+- **React Router** (`react-router-dom`) für Navigation im Frontend
+- **Java-Paket**: `de.heiges.rulesengine`
+- **Maven-Struktur**: `src/main/java/de/heiges/rulesengine/`

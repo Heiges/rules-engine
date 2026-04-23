@@ -9,6 +9,8 @@ Entwicklung einer Applikation um Rollenspiel-Regeln generisch zu entwicklen. Auf
 ## Wichtige Einstiegspunkte
 
 - Frontend: `frontend/src/App.tsx`
+- Kachel-Übersicht: `frontend/src/views/HomeView.tsx`
+- Java-Backend: `src/main/java/de/heiges/rulesengine/`
 
 ## Projektweite Regeln
 
