@@ -21,9 +21,19 @@ Erstelle ein neues Domain-Element im Modul coreElements mit dem Namen $ARGUMENTS
 - Ablehnung ungültiger Eingaben (assertThrows)
 - Gleichheitsprüfung
 
+## Persistenz
+
+Nach der Erstellung des Domain-Elements auch DTO und Repository im `persistence`-Modul anlegen:
+
+- `persistence/src/main/java/de/heiges/rulesengine/persistence/xml/dto/$ARGUMENTSDto.java` (JAXB-annotiert)
+- `persistence/src/main/java/de/heiges/rulesengine/persistence/repository/$ARGUMENTSRepository.java` (Interface)
+- `persistence/src/main/java/de/heiges/rulesengine/persistence/xml/Xml$ARGUMENTSRepository.java` (Implementierung)
+- `persistence/src/test/java/de/heiges/rulesengine/persistence/xml/Xml$ARGUMENTSRepositoryTest.java`
+
 ## Abschluss
 
-Tests ausführen und Ergebnis zeigen:
+Tests in beiden Modulen ausführen:
 ```bash
 cd coreElements && mvn test
+cd ../persistence && mvn test
 ```

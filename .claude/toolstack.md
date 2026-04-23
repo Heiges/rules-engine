@@ -16,7 +16,8 @@ Für den Build wird Maven genutzt.
 
 ## Frameworks & Bibliotheken
 
-<!-- Kernabhängigkeiten mit kurzer Begründung warum -->
+- **Jakarta XML Bind (JAXB) 4.0.x** — XML-Serialisierung im `persistence`-Modul
+- **JUnit Jupiter 5.10.x** — Tests in allen Java-Modulen
 
 ## Entwicklungsumgebung
 
@@ -40,4 +41,13 @@ cd frontend && npm run preview
 
 # Linting
 cd frontend && npm run lint
+
+# coreElements bauen & testen
+cd coreElements && mvn test
+
+# coreElements ins lokale Maven-Repo installieren (Voraussetzung für persistence)
+cd coreElements && mvn install
+
+# persistence bauen & testen
+cd persistence && mvn test
 ```

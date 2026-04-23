@@ -6,23 +6,26 @@
 
 ## Modulstruktur
 
-<!-- Welche Module/Pakete gibt es, wie hängen sie zusammen -->
-Oberfläche/UI
-API über die die Oberfläche/UI mit dem Backend kommuniziert
-Backend mit der gesamten Logik
-Datebank 
+| Modul          | Verzeichnis    | Beschreibung                                              |
+|----------------|----------------|-----------------------------------------------------------|
+| `coreElements` | `coreElements/`| Domänenmodell (Attribute, AttributeSet, Skill)            |
+| `persistence`  | `persistence/` | XML-Persistenz der Domänenklassen (JAXB)                  |
+| Frontend       | `frontend/`    | React-UI, kommuniziert künftig über eine API mit dem Backend |
+
+Abhängigkeiten: `persistence` → `coreElements`. Das Frontend kennt keine Java-Module.
 
 ## Abhängigkeitsrichtung
 
-<!-- z.B. Domain kennt keine Infrastruktur, welche Schichten dürfen wen importieren -->
-Abhängigkeiten entsprechend des Schichtensystem nur nach unten. Beispiel : Das Backend hat eine Abhängigkeit zur Datenbank und keine Abhängigkeit zur Oberfläche/UI.
+Abhängigkeiten nur nach unten: `persistence` hängt von `coreElements` ab, nicht umgekehrt. Das Domänenmodell in `coreElements` hat keine Abhängigkeit zur Persistenz oder zur UI.
 
 ## Integrationspunkte
 
-<!-- Externe Systeme, APIs, Datenbanken -->
+- Persistenz: XML-Dateien über `XmlAttributeSetRepository` und `XmlSkillRepository`
+- Speicherort der XML-Dateien: wird vom Aufrufer per `Path` übergeben (noch nicht standardisiert)
 
 ## Entscheidungen (ADRs)
 
 - **React Router** (`react-router-dom`) für Navigation im Frontend
 - **Java-Paket**: `de.heiges.rulesengine`
-- **Maven-Struktur**: `src/main/java/de/heiges/rulesengine/`
+- **Domänenmodell bleibt annotation-frei** — JAXB-Annotationen nur in DTOs im `persistence`-Modul
+- **XML-Persistenz statt Datenbank** — Domänenklassen werden als XML gespeichert/geladen (JAXB 4.x / Jakarta)

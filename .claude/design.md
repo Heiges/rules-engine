@@ -6,9 +6,11 @@
 
 ## Domain-Modell
 
-<!-- Wichtige Entitäten, Aggregate, Value Objects -->
-Attribute
-Skills
+Alle Domänenklassen liegen in `coreElements/src/main/java/de/heiges/rulesengine/coreelements/domain/model/`.
+
+- **Attribute** — Name (unveränderlich) + Wert (int ≥ 0)
+- **AttributeSet** — geordnete Sammlung von Attributen; kein Duplikat-Name erlaubt
+- **Skill** — Name (unveränderlich) + Verweis auf ein Attribut + Level (int ≥ 0)
 
 ## Muster & Konventionen
 

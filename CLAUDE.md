@@ -10,7 +10,8 @@ Entwicklung einer Applikation um Rollenspiel-Regeln generisch zu entwicklen. Auf
 
 - Frontend: `frontend/src/App.tsx`
 - Kachel-Übersicht: `frontend/src/views/HomeView.tsx`
-- Java-Backend: `src/main/java/de/heiges/rulesengine/`
+- Domänenmodell: `coreElements/src/main/java/de/heiges/rulesengine/coreelements/domain/model/`
+- Persistenzschicht: `persistence/src/main/java/de/heiges/rulesengine/persistence/`
 
 ## Projektweite Regeln
 
