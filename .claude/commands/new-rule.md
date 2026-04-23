@@ -5,7 +5,17 @@ Beachte dabei:
 - Designrichtlinien aus @design.md
 - Toolstack aus @toolstack.md
 
-Schritte:
-1. Regel-Klasse/Datei im korrekten Verzeichnis anlegen
-2. Passenden Test anlegen
-3. Kurz erklären, was erstellt wurde und warum so
+## Ablageorte
+
+**Domain-Klasse** (Kernbaustein):
+`coreElements/src/main/java/de/heiges/rulesengine/coreelements/domain/model/<Name>.java`
+
+**Zugehöriger Test:**
+`coreElements/src/test/java/de/heiges/rulesengine/coreelements/domain/model/<Name>Test.java`
+
+## Schritte
+
+1. Domain-Klasse im korrekten Paket `de.heiges.rulesengine.coreelements.domain.model` anlegen
+2. Test-Klasse anlegen (JUnit 5, min. Validierungen + Gleichheitsprüfung)
+3. Tests ausführen: `mvn test` im Verzeichnis `coreElements/`
+4. Kurz erklären, was erstellt wurde und warum so
