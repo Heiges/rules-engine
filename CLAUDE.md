@@ -8,7 +8,7 @@ Entwicklung einer Applikation um Rollenspiel-Regeln generisch zu entwicklen. Auf
 
 ## Wichtige Einstiegspunkte
 
-<!-- z.B. src/main/java/..., README, Doku-Links -->
+- Frontend: `frontend/src/App.tsx`
 
 ## Projektweite Regeln
 

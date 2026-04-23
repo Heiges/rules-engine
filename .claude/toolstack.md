@@ -8,6 +8,12 @@ Für die Entwicklung wird Java genutzt mit der Version 17.
 
 Für den Build wird Maven genutzt.
 
+## Frontend
+
+- React 18 + TypeScript + Vite
+- Verzeichnis: `frontend/`
+- Dev-Server: `cd frontend && npm run dev` (Port 5173)
+
 ## Frameworks & Bibliotheken
 
 <!-- Kernabhängigkeiten mit kurzer Begründung warum -->
@@ -23,6 +29,9 @@ Für den Build wird Maven genutzt.
 ## Wichtige Build-Befehle
 
 ```bash
+# Frontend Dev-Server
+cd frontend && npm run dev
+
 # Build
 # Test
 # Run
