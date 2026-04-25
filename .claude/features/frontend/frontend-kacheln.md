@@ -34,7 +34,8 @@ Primäres Navigationsmuster der Anwendung. Die Startseite zeigt eine Kachel-Übe
 
 | ID | Name | Beschreibung |
 |---|---|---|
-| `attributes` | Attribute | Verwalte die grundlegenden Attribute für Charaktere und Wesen in deiner Spielwelt. |
+| `new-ruleset` | Neues Regelwerk | Ein neues Regelwerk erstellen |
+| `load-ruleset` | Regelwerk laden | ein bestehendes Regelwerk laden |
 
 ## Rekonstruktion
 

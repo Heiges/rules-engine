@@ -3,9 +3,14 @@ import './HomeView.css'
 
 const tiles = [
   {
-    id: 'attributes',
-    name: 'Attribute',
-    description: 'Verwalte die grundlegenden Attribute für Charaktere und Wesen in deiner Spielwelt.',
+    id: 'new-ruleset',
+    name: 'Neues Regelwerk',
+    description: 'Ein neues Regelwerk erstellen',
+  },
+  {
+    id: 'load-ruleset',
+    name: 'Regelwerk laden',
+    description: 'ein bestehendes Regelwerk laden',
   },
 ]
 
