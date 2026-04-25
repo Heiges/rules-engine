@@ -82,7 +82,8 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 
 ### Persistenz (`persistence/`)
 
-- [XML-Persistenz](persistence/persistenz-xml.md) — Speichern und Laden von Domänenklassen als XML (JAXB)
+- [XML-Persistenz](persistence/persistenz-xml.md) — Regelwerk (AttributeSet + Skills) als einzelne XML-Datei speichern/laden (JAXB)
+- [Datenspeicher](persistence/datenspeicher.md) — Fester Speicherort `~/.rules-engine/data/`, Regelwerke per Dateiname identifizierbar
 
 ### Frontend (`frontend/`)
 
