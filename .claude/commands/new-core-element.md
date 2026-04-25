@@ -37,3 +37,14 @@ Tests in beiden Modulen ausführen:
 cd coreElements && mvn test
 cd ../persistence && mvn test
 ```
+
+## Dokumentation
+
+Nach erfolgreichem Test-Lauf die Datei `.claude/design.md` aktualisieren:
+
+- Im Abschnitt `## Domain-Modell` einen Eintrag für `$ARGUMENTS` hinzufügen mit:
+  - fachlichem Schlüssel (Feld, das `equals`/`hashCode` bestimmt)
+  - zentralen Invarianten (z. B. „Name nicht leer", „Wert ≥ 0")
+  - Beziehungen zu anderen Domain-Elementen (falls vorhanden)
+
+Das hält die Architekturdokumentation synchron mit dem Code.
