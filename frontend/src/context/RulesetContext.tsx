@@ -4,15 +4,18 @@ import type { ReactNode } from 'react'
 interface RulesetContextType {
   currentRuleset: string | null
   setCurrentRuleset: (name: string | null) => void
+  fileHandle: FileSystemFileHandle | null
+  setFileHandle: (handle: FileSystemFileHandle | null) => void
 }
 
 const RulesetContext = createContext<RulesetContextType | null>(null)
 
 export function RulesetProvider({ children }: { children: ReactNode }) {
   const [currentRuleset, setCurrentRuleset] = useState<string | null>(null)
+  const [fileHandle, setFileHandle] = useState<FileSystemFileHandle | null>(null)
 
   return (
-    <RulesetContext.Provider value={{ currentRuleset, setCurrentRuleset }}>
+    <RulesetContext.Provider value={{ currentRuleset, setCurrentRuleset, fileHandle, setFileHandle }}>
       {children}
     </RulesetContext.Provider>
   )

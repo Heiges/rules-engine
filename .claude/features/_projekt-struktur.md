@@ -92,3 +92,4 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 - [Statuszeile](frontend/statusbar-aktuelles-regelwerk.md) — Statuszeile am unteren Rand mit aktuellem Regelwerk-Namen (React Context)
 - [Regelwerk laden (XML-Dateiauswahl)](frontend/regelwerk-laden-xml.md) — nativer Dateidialog über Kachel, setzt Dateinamen in Statuszeile
 - [Edit-Regelwerk-Kachel](frontend/edit-ruleset-tile.md) — dritte Kachel auf HomeView, nur sichtbar wenn Regelwerk geladen, navigiert zu /tile/edit-ruleset
+- [Neues Regelwerk erstellen](frontend/neues-regelwerk-erstellen.md) — nativer Speichern-Dialog, legt leere XML-Datei an und setzt sie als aktives Regelwerk

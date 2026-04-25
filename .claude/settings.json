@@ -1,6 +1,5 @@
 {
   "permissions": {
-    "defaultMode": "dontAsk",
     "allow": [
       "Read",
       "Write",
@@ -11,7 +10,9 @@
       "Bash(mvn *)",
       "Bash(cd * && mvn *)",
       "Bash(code --list-extensions*)",
-      "Bash(javap *)"
+      "Bash(javap *)",
+      "Bash(node_modules/.bin/tsc --version)",
+      "Bash(node_modules/.bin/tsc --noEmit)"
     ],
     "deny": [
       "Read(/home/hheiges/.ssh/**)",
@@ -21,6 +22,7 @@
       "Read(/etc/**)",
       "Read(/var/**)",
       "Read(/root/**)"
-    ]
+    ],
+    "defaultMode": "dontAsk"
   }
 }
