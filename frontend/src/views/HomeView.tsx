@@ -3,7 +3,7 @@ import { Tile } from '../components/Tile'
 import { useRuleset } from '../context/RulesetContext'
 import './HomeView.css'
 
-const tiles = [
+const staticTiles = [
   {
     id: 'new-ruleset',
     name: 'Neues Regelwerk',
@@ -18,7 +18,7 @@ const tiles = [
 
 export function HomeView() {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { setCurrentRuleset } = useRuleset()
+  const { currentRuleset, setCurrentRuleset } = useRuleset()
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -27,6 +27,19 @@ export function HomeView() {
     }
     e.target.value = ''
   }
+
+  const rulesetDisplayName = currentRuleset?.replace(/\.xml$/i, '') ?? ''
+
+  const tiles = currentRuleset
+    ? [
+        ...staticTiles,
+        {
+          id: 'edit-ruleset',
+          name: `Regelwerk ${rulesetDisplayName} bearbeiten`,
+          description: 'Bearbeite das aktuell geladene Regelwerk',
+        },
+      ]
+    : staticTiles
 
   return (
     <div className="home-view">

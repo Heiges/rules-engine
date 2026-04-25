@@ -91,3 +91,4 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 - [Kacheln](frontend/frontend-kacheln.md) — Kachel-Navigation (HomeView, Tile-Komponente, DetailView)
 - [Statuszeile](frontend/statusbar-aktuelles-regelwerk.md) — Statuszeile am unteren Rand mit aktuellem Regelwerk-Namen (React Context)
 - [Regelwerk laden (XML-Dateiauswahl)](frontend/regelwerk-laden-xml.md) — nativer Dateidialog über Kachel, setzt Dateinamen in Statuszeile
+- [Edit-Regelwerk-Kachel](frontend/edit-ruleset-tile.md) — dritte Kachel auf HomeView, nur sichtbar wenn Regelwerk geladen, navigiert zu /tile/edit-ruleset
