@@ -30,6 +30,12 @@ Primäres Navigationsmuster der Anwendung. Die Startseite zeigt eine Kachel-Übe
 | Detailseite | `frontend/src/views/DetailView.tsx` |
 | Detailseiten-Styling | `frontend/src/views/DetailView.css` |
 
+## Kacheln (aktueller Stand)
+
+| ID | Name | Beschreibung |
+|---|---|---|
+| `attributes` | Attribute | Verwalte die grundlegenden Attribute für Charaktere und Wesen in deiner Spielwelt. |
+
 ## Rekonstruktion
 
 ```
