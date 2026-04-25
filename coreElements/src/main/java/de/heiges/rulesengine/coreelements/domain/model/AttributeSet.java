@@ -30,7 +30,7 @@ public class AttributeSet {
         attributes.remove(name);
     }
 
-    public void modify(String name, int newValue) {
+    public void modify(String name, String newDescription) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Attribute name must not be blank");
         }
@@ -38,7 +38,7 @@ public class AttributeSet {
         if (attribute == null) {
             throw new IllegalArgumentException("Attribute not found: " + name);
         }
-        attribute.setValue(newValue);
+        attribute.setDescription(newDescription);
     }
 
     public Optional<Attribute> find(String name) {

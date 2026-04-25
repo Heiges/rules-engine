@@ -18,7 +18,7 @@ class AttributeSetTest {
 
     @Test
     void addsAttribute() {
-        attributeSet.add(new Attribute("Stärke", 10));
+        attributeSet.add(new Attribute("Stärke", ""));
         assertTrue(attributeSet.contains("Stärke"));
         assertEquals(1, attributeSet.size());
     }
@@ -30,13 +30,13 @@ class AttributeSetTest {
 
     @Test
     void rejectsDuplicateAttribute() {
-        attributeSet.add(new Attribute("Stärke", 10));
-        assertThrows(IllegalArgumentException.class, () -> attributeSet.add(new Attribute("Stärke", 5)));
+        attributeSet.add(new Attribute("Stärke", ""));
+        assertThrows(IllegalArgumentException.class, () -> attributeSet.add(new Attribute("Stärke", "Andere")));
     }
 
     @Test
     void removesAttribute() {
-        attributeSet.add(new Attribute("Stärke", 10));
+        attributeSet.add(new Attribute("Stärke", ""));
         attributeSet.remove("Stärke");
         assertFalse(attributeSet.contains("Stärke"));
         assertEquals(0, attributeSet.size());
@@ -54,26 +54,20 @@ class AttributeSetTest {
     }
 
     @Test
-    void modifiesAttributeValue() {
-        attributeSet.add(new Attribute("Stärke", 10));
-        attributeSet.modify("Stärke", 15);
-        assertEquals(15, attributeSet.find("Stärke").map(Attribute::getValue).orElseThrow());
+    void modifiesAttributeDescription() {
+        attributeSet.add(new Attribute("Stärke", "Alt"));
+        attributeSet.modify("Stärke", "Neu");
+        assertEquals("Neu", attributeSet.find("Stärke").map(Attribute::getDescription).orElseThrow());
     }
 
     @Test
     void rejectsModifyOfUnknownAttribute() {
-        assertThrows(IllegalArgumentException.class, () -> attributeSet.modify("Stärke", 10));
-    }
-
-    @Test
-    void rejectsModifyWithNegativeValue() {
-        attributeSet.add(new Attribute("Stärke", 10));
-        assertThrows(IllegalArgumentException.class, () -> attributeSet.modify("Stärke", -1));
+        assertThrows(IllegalArgumentException.class, () -> attributeSet.modify("Stärke", "Beschreibung"));
     }
 
     @Test
     void findsAttributeByName() {
-        attributeSet.add(new Attribute("Stärke", 10));
+        attributeSet.add(new Attribute("Stärke", ""));
         Optional<Attribute> result = attributeSet.find("Stärke");
         assertTrue(result.isPresent());
         assertEquals("Stärke", result.get().getName());
@@ -86,14 +80,14 @@ class AttributeSetTest {
 
     @Test
     void getAllReturnsAllAttributes() {
-        attributeSet.add(new Attribute("Stärke", 10));
-        attributeSet.add(new Attribute("Geschicklichkeit", 8));
+        attributeSet.add(new Attribute("Stärke", ""));
+        attributeSet.add(new Attribute("Geschicklichkeit", ""));
         assertEquals(2, attributeSet.getAll().size());
     }
 
     @Test
     void getAllIsUnmodifiable() {
-        attributeSet.add(new Attribute("Stärke", 10));
+        attributeSet.add(new Attribute("Stärke", ""));
         assertThrows(UnsupportedOperationException.class, () -> attributeSet.getAll().clear());
     }
 }

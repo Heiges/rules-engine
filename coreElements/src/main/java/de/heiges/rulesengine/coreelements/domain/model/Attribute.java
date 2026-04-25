@@ -5,32 +5,26 @@ import java.util.Objects;
 public class Attribute {
 
     private final String name;
-    private int value;
+    private String description;
 
-    public Attribute(String name, int value) {
+    public Attribute(String name, String description) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Attribute name must not be blank");
         }
-        if (value < 0) {
-            throw new IllegalArgumentException("Attribute value must not be negative");
-        }
         this.name = name;
-        this.value = value;
+        this.description = description == null ? "" : description;
     }
 
     public String getName() {
         return name;
     }
 
-    public int getValue() {
-        return value;
+    public String getDescription() {
+        return description;
     }
 
-    public void setValue(int value) {
-        if (value < 0) {
-            throw new IllegalArgumentException("Attribute value must not be negative");
-        }
-        this.value = value;
+    public void setDescription(String description) {
+        this.description = description == null ? "" : description;
     }
 
     @Override
@@ -47,6 +41,6 @@ public class Attribute {
 
     @Override
     public String toString() {
-        return "Attribute{name='" + name + "', value=" + value + "}";
+        return "Attribute{name='" + name + "', description='" + description + "'}";
     }
 }

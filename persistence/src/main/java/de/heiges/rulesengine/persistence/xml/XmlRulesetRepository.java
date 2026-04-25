@@ -65,7 +65,7 @@ public class XmlRulesetRepository implements RulesetRepository {
     private RulesetDto toDto(AttributeSet attributeSet, Collection<Skill> skills) {
         RulesetDto dto = new RulesetDto();
         for (Attribute attribute : attributeSet.getAll()) {
-            dto.getAttributeSet().getAttributes().add(new AttributeDto(attribute.getName(), attribute.getValue()));
+            dto.getAttributeSet().getAttributes().add(new AttributeDto(attribute.getName(), attribute.getDescription()));
         }
         for (Skill skill : skills) {
             dto.getSkills().getSkills().add(new SkillDto(
@@ -80,7 +80,7 @@ public class XmlRulesetRepository implements RulesetRepository {
     private LoadedRuleset toDomain(RulesetDto dto) {
         AttributeSet attributeSet = new AttributeSet();
         for (AttributeDto attributeDto : dto.getAttributeSet().getAttributes()) {
-            attributeSet.add(new Attribute(attributeDto.getName(), attributeDto.getValue()));
+            attributeSet.add(new Attribute(attributeDto.getName(), attributeDto.getDescription()));
         }
 
         List<Skill> skills = new ArrayList<>();

@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SkillTest {
 
-    private final Attribute staerke = new Attribute("Stärke", 10);
+    private final Attribute staerke = new Attribute("Stärke", "");
 
     @Test
     void createsSkillWithNameAttributeAndLevel() {

@@ -21,8 +21,8 @@ class XmlRulesetRepositoryTest {
     @Test
     void speichernUndLaden_erhaltAttributeUndSkillsKorrekt(@TempDir Path tempDir) throws IOException {
         AttributeSet attributeSet = new AttributeSet();
-        Attribute staerke = new Attribute("Stärke", 10);
-        Attribute geschicklichkeit = new Attribute("Geschicklichkeit", 8);
+        Attribute staerke = new Attribute("Stärke", "Körperliche Kraft");
+        Attribute geschicklichkeit = new Attribute("Geschicklichkeit", "Feinmotorik und Reaktion");
         attributeSet.add(staerke);
         attributeSet.add(geschicklichkeit);
 
@@ -37,8 +37,8 @@ class XmlRulesetRepositoryTest {
 
         assertEquals(2, geladen.attributeSet().size());
         assertTrue(geladen.attributeSet().contains("Stärke"));
-        assertEquals(10, geladen.attributeSet().find("Stärke").orElseThrow().getValue());
-        assertEquals(8, geladen.attributeSet().find("Geschicklichkeit").orElseThrow().getValue());
+        assertEquals("Körperliche Kraft", geladen.attributeSet().find("Stärke").orElseThrow().getDescription());
+        assertEquals("Feinmotorik und Reaktion", geladen.attributeSet().find("Geschicklichkeit").orElseThrow().getDescription());
 
         List<Skill> skillListe = List.copyOf(geladen.skills());
         assertEquals(2, skillListe.size());

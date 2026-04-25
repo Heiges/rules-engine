@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ruleset>
   <attributeSet>
-    <attribute name="Kraft" value="0"/>
-    <attribute name="Ausdauer" value="0"/>
-    <attribute name="Resilienz" value="0"/>
-    <attribute name="Regeneration" value="0"/>
-    <attribute name="Geschicklichkeit" value="0"/>
-    <attribute name="Beweglichkeit" value="0"/>
-    <attribute name="Tempo" value="0"/>
-    <attribute name="Reflexe" value="0"/>
-    <attribute name="Intelligenz" value="0"/>
-    <attribute name="Gedächtnis" value="0"/>
-    <attribute name="Kreativität" value="0"/>
-    <attribute name="Intuition" value="0"/>
-    <attribute name="Wahrnehmung" value="0"/>
-    <attribute name="Empathie" value="0"/>
-    <attribute name="Charisma" value="0"/>
-    <attribute name="Einfluss" value="0"/>
-    <attribute name="Glaube" value="0"/>
-    <attribute name="Mut" value="0"/>
-    <attribute name="Willenskraft" value="0"/>
-    <attribute name="Disziplin" value="0"/>
+    <attribute name="Kraft" description="Kraft"/>
+    <attribute name="Ausdauer" description="Ausdauer"/>
+    <attribute name="Resilienz" description="Resilienz"/>
+    <attribute name="Regeneration" description="Regeneration"/>
+    <attribute name="Geschicklichkeit" description="Geschicklichkeit"/>
+    <attribute name="Beweglichkeit" description="Beweglichkeit"/>
+    <attribute name="Tempo" description="Tempo"/>
+    <attribute name="Reflexe" description="Reflexe"/>
+    <attribute name="Intelligenz" description="Intelligenz"/>
+    <attribute name="Gedächtnis" description="Gedächtnis"/>
+    <attribute name="Kreativität" description="Kreativität"/>
+    <attribute name="Intuition" description="Intuition"/>
+    <attribute name="Wahrnehmung" description="Wahrnehmung"/>
+    <attribute name="Empathie" description="Empathie"/>
+    <attribute name="Charisma" description="Charisma"/>
+    <attribute name="Einfluss" description="Einfluss"/>
+    <attribute name="Glaube" description="Glaube"/>
+    <attribute name="Mut" description="Mut"/>
+    <attribute name="Willenskraft" description="Willenskraft"/>
+    <attribute name="Disziplin" description="Disziplin"/>
   </attributeSet>
   <skills>
     <skill name="Wissen" linkedAttributeName="Kraft" level="0"/>

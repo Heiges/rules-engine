@@ -10,16 +10,16 @@ public class AttributeDto {
     @XmlAttribute(required = true)
     private String name;
 
-    @XmlAttribute(required = true)
-    private int value;
+    @XmlAttribute
+    private String description;
 
     public AttributeDto() {}
 
-    public AttributeDto(String name, int value) {
+    public AttributeDto(String name, String description) {
         this.name = name;
-        this.value = value;
+        this.description = description;
     }
 
     public String getName() { return name; }
-    public int getValue() { return value; }
+    public String getDescription() { return description; }
 }
