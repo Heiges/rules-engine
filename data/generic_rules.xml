@@ -2,6 +2,25 @@
 <ruleset>
   <attributeSet>
     <attribute name="Kraft" value="0"/>
+    <attribute name="Ausdauer" value="0"/>
+    <attribute name="Resilienz" value="0"/>
+    <attribute name="Regeneration" value="0"/>
+    <attribute name="Geschicklichkeit" value="0"/>
+    <attribute name="Beweglichkeit" value="0"/>
+    <attribute name="Tempo" value="0"/>
+    <attribute name="Reflexe" value="0"/>
+    <attribute name="Intelligenz" value="0"/>
+    <attribute name="Gedächtnis" value="0"/>
+    <attribute name="Kreativität" value="0"/>
+    <attribute name="Intuition" value="0"/>
+    <attribute name="Wahrnehmung" value="0"/>
+    <attribute name="Empathie" value="0"/>
+    <attribute name="Charisma" value="0"/>
+    <attribute name="Einfluss" value="0"/>
+    <attribute name="Glaube" value="0"/>
+    <attribute name="Mut" value="0"/>
+    <attribute name="Willenskraft" value="0"/>
+    <attribute name="Disziplin" value="0"/>
   </attributeSet>
   <skills>
     <skill name="Wissen" linkedAttributeName="Kraft" level="0"/>
