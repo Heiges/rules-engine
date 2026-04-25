@@ -76,9 +76,10 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 
 ### Domain (`domain/`)
 
-- [Attribute](domain/attribute.md) — benannte, messbare Eigenschaft
+- [Attribute](domain/attribute.md) — benannte, messbare Eigenschaft mit Value
 - [AttributeSet](domain/attribute-set.md) — geordnete Sammlung von Attributen
 - [Skill](domain/skill.md) — Fähigkeit mit Attribut-Bindung und Level
+- [Value](domain/value-domain-class.md) — numerischer Wert eines Regelbausteins (pos./neg.)
 
 ### Persistenz (`persistence/`)
 

@@ -44,4 +44,35 @@ class AttributeTest {
         Attribute a2 = new Attribute("Stärke", "Zweite Beschreibung");
         assertEquals(a1, a2);
     }
+
+    @Test
+    void defaultValueIsZero() {
+        Attribute attr = new Attribute("Stärke", "Beschreibung");
+        assertEquals(new Value(0), attr.getValue());
+    }
+
+    @Test
+    void acceptsPositiveValue() {
+        Attribute attr = new Attribute("Stärke", "Beschreibung", new Value(5));
+        assertEquals(new Value(5), attr.getValue());
+    }
+
+    @Test
+    void acceptsNegativeValue() {
+        Attribute attr = new Attribute("Malus", "Nachteil", new Value(-3));
+        assertEquals(new Value(-3), attr.getValue());
+    }
+
+    @Test
+    void updatesValue() {
+        Attribute attr = new Attribute("Stärke", "Beschreibung");
+        attr.setValue(new Value(10));
+        assertEquals(new Value(10), attr.getValue());
+    }
+
+    @Test
+    void nullValueDefaultsToZero() {
+        Attribute attr = new Attribute("Stärke", "Beschreibung", null);
+        assertEquals(new Value(0), attr.getValue());
+    }
 }
