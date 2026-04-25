@@ -40,11 +40,14 @@ cd ../persistence && mvn test
 
 ## Dokumentation
 
-Nach erfolgreichem Test-Lauf die Datei `.claude/design.md` aktualisieren:
+Nach erfolgreichem Test-Lauf zwei Dateien aktualisieren:
 
-- Im Abschnitt `## Domain-Modell` einen Eintrag für `$ARGUMENTS` hinzufügen mit:
-  - fachlichem Schlüssel (Feld, das `equals`/`hashCode` bestimmt)
-  - zentralen Invarianten (z. B. „Name nicht leer", „Wert ≥ 0")
-  - Beziehungen zu anderen Domain-Elementen (falls vorhanden)
+1. `.claude/features/$ARGUMENTS.md` anlegen (Vorlage: bestehende Dateien in `.claude/features/`) mit:
+   - **Ziel**: warum dieses Element existiert
+   - **Anforderungen**: alle Invarianten und Verhaltensregeln
+   - **Entscheidungen**: warum so und nicht anders
+   - **Rekonstruktion**: minimaler Prompt + Kontext zum Wiederherstellen
 
-Das hält die Architekturdokumentation synchron mit dem Code.
+2. `.claude/design.md` — im Abschnitt `## Domain-Modell` einen Kurz-Eintrag für `$ARGUMENTS` ergänzen (fachlicher Schlüssel + zentrale Invarianten).
+
+Das hält Code, Spec und Übersicht synchron.
