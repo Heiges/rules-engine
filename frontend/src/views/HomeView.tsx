@@ -10,7 +10,7 @@ const tiles = [
   {
     id: 'load-ruleset',
     name: 'Regelwerk laden',
-    description: 'ein bestehendes Regelwerk laden',
+    description: 'Ein bestehendes Regelwerk laden',
   },
 ]
 
