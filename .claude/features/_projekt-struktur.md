@@ -74,6 +74,13 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 
 ## Bestehende Features
 
+### coreElements / persistence
+
 - [Attribute](attribute.md) — benannte, messbare Eigenschaft
 - [AttributeSet](attribute-set.md) — geordnete Sammlung von Attributen
 - [Skill](skill.md) — Fähigkeit mit Attribut-Bindung und Level
+
+### Frontend
+
+- [Anwendungsrahmen](frontend-anwendungsrahmen.md) — Entry Point, Routing, globales Theming
+- [Kacheln](frontend-kacheln.md) — Kachel-Navigation (HomeView, Tile-Komponente, DetailView)
