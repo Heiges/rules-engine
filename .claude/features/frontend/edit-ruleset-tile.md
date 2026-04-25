@@ -9,7 +9,7 @@ Sobald ein Regelwerk geladen ist, erscheint auf der Startseite eine dritte Kache
 - Die Kachel erscheint nur, wenn `currentRuleset !== null` (Regelwerk geladen).
 - Kachel-Name: `Regelwerk <Name> bearbeiten` — der Dateiname ohne `.xml`-Endung (Groß-/Kleinschreibung egal).
 - Kachel-Beschreibung: `Bearbeite das aktuell geladene Regelwerk` (statisch).
-- Die Kachel-ID ist `edit-ruleset`; sie navigiert über den Standard-Tile-Mechanismus zu `/tile/edit-ruleset`.
+- Die Kachel-ID ist `edit-ruleset`; sie navigiert via explizitem `onClick` zu `/edit-ruleset` (nicht über den Standard-Tile-Mechanismus).
 - Die zwei Basiskacheln („Neues Regelwerk", „Regelwerk laden") sind immer sichtbar und bleiben unverändert.
 
 ## Entscheidungen
@@ -17,7 +17,7 @@ Sobald ein Regelwerk geladen ist, erscheint auf der Startseite eine dritte Kache
 - **Statisches Array ausgelagert**: Die Basiskacheln werden in `staticTiles` extrahiert; `tiles` wird zur berechneten Variable. Das hält die Logik lesbar ohne zusätzliche Komponente.
 - **`.xml`-Endung entfernen**: Regex `/\.xml$/i` — case-insensitiv, damit auch `.XML`-Dateien korrekt angezeigt werden.
 - **Kein neuer Context-State**: `currentRuleset` aus `RulesetContext` reicht aus; kein eigener State nötig.
-- **Kein neues Routing**: Die Kachel navigiert zu `/tile/edit-ruleset` via Default-Tile-Verhalten. Eine dedizierte Route für diese View existiert noch nicht.
+- **Explizites `onClick` statt Default-Tile-Navigation**: Die Kachel navigiert via `onClick={() => navigate('/edit-ruleset')}` zu einer dedizierten Route. Der Default-Tile-Mechanismus würde zu `/tile/edit-ruleset` navigieren — deshalb explizites Override.
 
 ## Implementierung
 

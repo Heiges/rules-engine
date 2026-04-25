@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Tile } from '../components/Tile'
 import { useRuleset } from '../context/RulesetContext'
 import './HomeView.css'
@@ -24,11 +25,14 @@ const staticTiles = [
 
 export function HomeView() {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { currentRuleset, setCurrentRuleset, setFileHandle } = useRuleset()
+  const navigate = useNavigate()
+  const { currentRuleset, setCurrentRuleset, setFileHandle, setXmlContent } = useRuleset()
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (file) {
+      const text = await file.text()
+      setXmlContent(text)
       setCurrentRuleset(file.name)
     }
     e.target.value = ''
@@ -37,7 +41,7 @@ export function HomeView() {
   async function handleNewRuleset() {
     if ('showSaveFilePicker' in window) {
       try {
-        const handle = await window.showSaveFilePicker({
+        const handle = await window.showSaveFilePicker!({
           suggestedName: 'regelwerk.xml',
           types: [{ description: 'XML-Regelwerk', accept: { 'application/xml': ['.xml'] } }],
         })
@@ -45,6 +49,7 @@ export function HomeView() {
         await writable.write(EMPTY_RULESET_XML)
         await writable.close()
         setFileHandle(handle)
+        setXmlContent(EMPTY_RULESET_XML)
         setCurrentRuleset(handle.name)
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') return
@@ -62,6 +67,7 @@ export function HomeView() {
       a.download = filename
       a.click()
       URL.revokeObjectURL(url)
+      setXmlContent(EMPTY_RULESET_XML)
       setCurrentRuleset(filename)
     }
   }
@@ -97,7 +103,7 @@ export function HomeView() {
           if (tile.id === 'load-ruleset') {
             return <Tile key={tile.id} {...tile} onClick={() => fileInputRef.current?.click()} />
           }
-          return <Tile key={tile.id} {...tile} />
+          return <Tile key={tile.id} {...tile} onClick={() => navigate('/edit-ruleset')} />
         })}
       </div>
     </div>
