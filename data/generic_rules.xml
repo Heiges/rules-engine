@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset>
+  <attributeSet>
+    <attribute name="Kraft" value="0"/>
+  </attributeSet>
+  <skills>
+    <skill name="Wissen" linkedAttributeName="Kraft" level="0"/>
+  </skills>
+</ruleset>
