@@ -79,6 +79,7 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 - [Attribute](attribute.md) — benannte, messbare Eigenschaft
 - [AttributeSet](attribute-set.md) — geordnete Sammlung von Attributen
 - [Skill](skill.md) — Fähigkeit mit Attribut-Bindung und Level
+- [XML-Persistenz](persistenz-xml.md) — Speichern und Laden von Domänenklassen als XML (JAXB)
 
 ### Frontend
 
