@@ -19,6 +19,17 @@ Geordnete Sammlung von `Attribute`-Objekten. Verhindert Duplikate und bietet CRU
 - `find` gibt `Optional` zurück statt `null`
 - Keine eigene Persistenz-Logik — liegt im `persistence`-Modul
 
+## Implementierung
+
+| Artefakt | Pfad |
+|---|---|
+| Domain-Klasse | `coreElements/src/main/java/de/heiges/rulesengine/coreelements/domain/model/AttributeSet.java` |
+| Unit-Test | `coreElements/src/test/java/de/heiges/rulesengine/coreelements/domain/model/AttributeSetTest.java` |
+| Persistenz-DTO | `persistence/src/main/java/de/heiges/rulesengine/persistence/xml/dto/AttributeSetDto.java` |
+| Repository-Interface | `persistence/src/main/java/de/heiges/rulesengine/persistence/repository/AttributeSetRepository.java` |
+| Repository-Impl | `persistence/src/main/java/de/heiges/rulesengine/persistence/xml/XmlAttributeSetRepository.java` |
+| Persistenz-Test | `persistence/src/test/java/de/heiges/rulesengine/persistence/xml/XmlAttributeSetRepositoryTest.java` |
+
 ## Rekonstruktion
 
 ```

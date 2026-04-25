@@ -18,6 +18,17 @@ Grundlegender Baustein des Domänenmodells. Repräsentiert eine benannte, messba
 - Wert ist mutabel: Spielwerte ändern sich im Spielverlauf
 - Keine Obergrenze für den Wert: Regelwerke variieren, Grenzwerte gehören in die Regel-Schicht
 
+## Implementierung
+
+| Artefakt | Pfad |
+|---|---|
+| Domain-Klasse | `coreElements/src/main/java/de/heiges/rulesengine/coreelements/domain/model/Attribute.java` |
+| Unit-Test | `coreElements/src/test/java/de/heiges/rulesengine/coreelements/domain/model/AttributeTest.java` |
+| Persistenz-DTO | `persistence/src/main/java/de/heiges/rulesengine/persistence/xml/dto/AttributeDto.java` |
+| Repository-Interface | `persistence/src/main/java/de/heiges/rulesengine/persistence/repository/AttributeRepository.java` |
+| Repository-Impl | `persistence/src/main/java/de/heiges/rulesengine/persistence/xml/XmlAttributeRepository.java` |
+| Persistenz-Test | `persistence/src/test/java/de/heiges/rulesengine/persistence/xml/XmlAttributeRepositoryTest.java` |
+
 ## Rekonstruktion
 
 ```

@@ -19,6 +19,17 @@ Fähigkeit einer Spielfigur, die auf einem `Attribute` basiert. Ein Skill hat ei
 - Keine Obergrenze für Level: regelabhängig, gehört in die Regel-Schicht
 - `linkedAttribute` ist unveränderlich: ein Skill wechselt nicht die Attribut-Grundlage
 
+## Implementierung
+
+| Artefakt | Pfad |
+|---|---|
+| Domain-Klasse | `coreElements/src/main/java/de/heiges/rulesengine/coreelements/domain/model/Skill.java` |
+| Unit-Test | `coreElements/src/test/java/de/heiges/rulesengine/coreelements/domain/model/SkillTest.java` |
+| Persistenz-DTO | `persistence/src/main/java/de/heiges/rulesengine/persistence/xml/dto/SkillDto.java` |
+| Repository-Interface | `persistence/src/main/java/de/heiges/rulesengine/persistence/repository/SkillRepository.java` |
+| Repository-Impl | `persistence/src/main/java/de/heiges/rulesengine/persistence/xml/XmlSkillRepository.java` |
+| Persistenz-Test | `persistence/src/test/java/de/heiges/rulesengine/persistence/xml/XmlSkillRepositoryTest.java` |
+
 ## Rekonstruktion
 
 ```
