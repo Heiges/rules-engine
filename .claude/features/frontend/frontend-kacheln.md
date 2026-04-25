@@ -7,6 +7,7 @@ Primäres Navigationsmuster der Anwendung. Die Startseite zeigt eine Kachel-Übe
 ## Anforderungen
 
 - Kacheln als Eintrittspunkte: Name + Kurzbeschreibung, klickbar, navigieren zu `/tile/:id`
+- `Tile` akzeptiert ein optionales `onClick`-Prop; ist es gesetzt, ersetzt es die Navigation vollständig
 - Kacheldaten als Array in `HomeView.tsx` definiert (kein externe Datenhaltung)
 - Responsive Grid: `auto-fill`, Minimalbreite 260px, 16px Gap
 - Detailseite zeigt den Kachel-Namen als Überschrift und bietet einen Zurück-Button (`← Zurück`)
