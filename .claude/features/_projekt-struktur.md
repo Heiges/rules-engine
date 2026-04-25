@@ -74,14 +74,17 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 
 ## Bestehende Features
 
-### coreElements / persistence
+### Domain (`domain/`)
 
-- [Attribute](attribute.md) — benannte, messbare Eigenschaft
-- [AttributeSet](attribute-set.md) — geordnete Sammlung von Attributen
-- [Skill](skill.md) — Fähigkeit mit Attribut-Bindung und Level
-- [XML-Persistenz](persistenz-xml.md) — Speichern und Laden von Domänenklassen als XML (JAXB)
+- [Attribute](domain/attribute.md) — benannte, messbare Eigenschaft
+- [AttributeSet](domain/attribute-set.md) — geordnete Sammlung von Attributen
+- [Skill](domain/skill.md) — Fähigkeit mit Attribut-Bindung und Level
 
-### Frontend
+### Persistenz (`persistence/`)
 
-- [Anwendungsrahmen](frontend-anwendungsrahmen.md) — Entry Point, Routing, globales Theming
-- [Kacheln](frontend-kacheln.md) — Kachel-Navigation (HomeView, Tile-Komponente, DetailView)
+- [XML-Persistenz](persistence/persistenz-xml.md) — Speichern und Laden von Domänenklassen als XML (JAXB)
+
+### Frontend (`frontend/`)
+
+- [Anwendungsrahmen](frontend/frontend-anwendungsrahmen.md) — Entry Point, Routing, globales Theming
+- [Kacheln](frontend/frontend-kacheln.md) — Kachel-Navigation (HomeView, Tile-Komponente, DetailView)

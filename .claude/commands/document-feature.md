@@ -4,7 +4,12 @@ Lies zunächst die relevanten Quelldateien, um die Dokumentation aus dem tatsäc
 
 ## Was zu tun ist
 
-1. `.claude/features/$ARGUMENTS.md` anlegen oder aktualisieren mit diesen Pflichtabschnitten:
+1. Feature dem richtigen Unterordner zuordnen:
+   - Domänenklassen (coreElements) → `.claude/features/domain/`
+   - Persistenz (XML, Repository) → `.claude/features/persistence/`
+   - Frontend (React, Views, Komponenten) → `.claude/features/frontend/`
+
+2. `.claude/features/<unterordner>/$ARGUMENTS.md` anlegen oder aktualisieren mit diesen Pflichtabschnitten:
 
    - **Ziel**: warum dieses Feature existiert, welchen Mehrwert es liefert
    - **Anforderungen**: alle Invarianten, Verhaltensregeln und Randbedingungen
@@ -12,7 +17,7 @@ Lies zunächst die relevanten Quelldateien, um die Dokumentation aus dem tatsäc
    - **Implementierung**: Tabelle mit allen Artefakt-Pfaden (Klassen, Tests, DTOs, Views, Komponenten …)
    - **Rekonstruktion**: minimaler Prompt + notwendiger Kontext, um das Feature aus dem Nichts wiederherzustellen
 
-2. `.claude/features/_projekt-struktur.md` — im Abschnitt `## Bestehende Features` einen Link auf die neue Spec ergänzen (falls noch nicht vorhanden).
+3. `.claude/features/_projekt-struktur.md` — im passenden Unterabschnitt (`### Domain`, `### Persistenz` oder `### Frontend`) einen Link auf die neue Spec ergänzen (falls noch nicht vorhanden).
 
 ## Vorlage
 

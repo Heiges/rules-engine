@@ -42,14 +42,14 @@ cd ../persistence && mvn test
 
 Nach erfolgreichem Test-Lauf zwei Dateien aktualisieren:
 
-1. `.claude/features/$ARGUMENTS.md` anlegen nach dem Muster der bestehenden Feature-Specs (Vorlage: `attribute.md`). Pflichtabschnitte:
+1. `.claude/features/domain/$ARGUMENTS.md` anlegen nach dem Muster der bestehenden Feature-Specs (Vorlage: `domain/attribute.md`). Pflichtabschnitte:
    - **Ziel**: warum dieses Element existiert
    - **Anforderungen**: alle Invarianten und Verhaltensregeln
    - **Entscheidungen**: warum so und nicht anders
    - **Implementierung**: Tabelle mit allen Artefakt-Pfaden (Namenskonventionen siehe `_projekt-struktur.md`)
    - **Rekonstruktion**: minimaler Prompt + Kontext zum Wiederherstellen
 
-2. `.claude/features/_projekt-struktur.md` — im Abschnitt `## Bestehende Features` einen Link auf die neue Spec ergänzen.
+2. `.claude/features/_projekt-struktur.md` — im Abschnitt `### Domain` einen Link auf die neue Spec ergänzen.
 
 3. `.claude/design.md` — im Abschnitt `## Domain-Modell` einen Kurz-Eintrag für `$ARGUMENTS` ergänzen (fachlicher Schlüssel + zentrale Invarianten).
 
