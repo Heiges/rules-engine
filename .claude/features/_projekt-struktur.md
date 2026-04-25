@@ -89,3 +89,4 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 
 - [Anwendungsrahmen](frontend/frontend-anwendungsrahmen.md) — Entry Point, Routing, globales Theming
 - [Kacheln](frontend/frontend-kacheln.md) — Kachel-Navigation (HomeView, Tile-Komponente, DetailView)
+- [Statuszeile](frontend/statusbar-aktuelles-regelwerk.md) — Statuszeile am unteren Rand mit aktuellem Regelwerk-Namen (React Context)
