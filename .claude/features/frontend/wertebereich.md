@@ -8,16 +8,14 @@ Der Nutzer kann unter `/tile/werte` den numerischen Wertebereich eines Regelwerk
 
 - Route: `/tile/werte` (spezifische Route vor dem generischen `/tile/:id`)
 - Drei bearbeitbare Ganzzahl-Felder: **Unterster Wert** (`min`), **Durchschnittswert** (`average`), **Oberster Wert** (`max`)
-- Invariante: `min ≤ average ≤ max`. Bei Verletzung: Fehlermeldung + Speichern-Button deaktiviert
-- Expliziter Speichern-Button. Nach Erfolg kurz „✓ Gespeichert" (1800 ms)
-- Kein Regelwerk geladen (`rulesetData === null`): Speichern-Button deaktiviert
+- Auto-Persist beim Verlassen eines Feldes (`onBlur`) — analog zu `AttributeView`
+- Kein expliziter Speichern-Button, keine Validierungsprüfung
 - Standardwerte wenn kein `valueRange` im Context: `min=-10, average=0, max=10`
 - Zurück-Button navigiert zu `/edit-ruleset`
-- Schreibfehler als roter Text unterhalb des Formulars
 
 ## Entscheidungen
 
-- **Expliziter Speichern-Button**: Bei Zahlenfeldern ist Auto-Persist auf jeden Keystroke störend (Zwischenzustand `-` beim Eintippen von `-5` wäre ungültig).
+- **Auto-Persist auf `onBlur`**: Analog zu `AttributeView` — jedes Feld speichert beim Verlassen eigenständig. Kein Speichern-Button, keine Validierungsinvariante.
 - **Speicherpfad folgt dem Ladepfad**: Wenn `fileHandle` im Context vorhanden (Datei wurde per `showOpenFilePicker` geöffnet), wird zurück in die Originaldatei geschrieben. Fallback: `PUT /api/rulesets/{name}` → `~/.rules-engine/data/`.
 
 ## Implementierung
@@ -34,14 +32,24 @@ Der Nutzer kann unter `/tile/werte` den numerischen Wertebereich eines Regelwerk
 
 ```
 WerteView liest werte aus rulesetData.valueRange (Fallback: min=-10, average=0, max=10).
-save():
-  const updatedData = { ...rulesetData, valueRange: werte }
+
+update(field, raw):   // onChange — aktualisiert nur lokalen State
+  val = parseInt(raw)
+  if !isNaN(val): setWerte(prev => { ...prev, [field]: val })
+
+commit(field, raw):   // onBlur — persistiert
+  val = parseInt(raw)
+  if !isNaN(val):
+    updated = { ...werte, [field]: val }
+    setWerte(updated)
+    persist(updated)
+
+persist(updated):
+  updatedData = { ...rulesetData, valueRange: updated }
   setRulesetData(updatedData)
   if (fileHandle):
     xml = await exportRuleset(updatedData)
     await fileHandle.createWritable() → write → close   // schreibt Originaldatei
   else if (currentRuleset):
     await saveRuleset(currentRuleset, updatedData)       // PUT /api/rulesets/{name}
-  bei Erfolg: setSaved(true), setTimeout 1800ms
-  bei Fehler: saveError-State setzen
 ```
