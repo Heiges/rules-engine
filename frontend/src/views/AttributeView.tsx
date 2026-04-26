@@ -70,6 +70,20 @@ export function AttributeView() {
     persist(updated)
   }
 
+  const [sortDir, setSortDir] = useState<'asc' | 'desc' | null>(null)
+
+  function toggleSort() {
+    setSortDir(d => d === null ? 'asc' : d === 'asc' ? 'desc' : null)
+  }
+
+  const rows = attrs
+    .map((attr, originalIndex) => ({ attr, originalIndex }))
+    .sort((a, b) => {
+      if (sortDir === null) return 0
+      const cmp = a.attr.name.localeCompare(b.attr.name, 'de')
+      return sortDir === 'asc' ? cmp : -cmp
+    })
+
   const allSelected = attrs.length > 0 && selected.size === attrs.length
 
   return (
@@ -101,21 +115,23 @@ export function AttributeView() {
               <th className="attr-col-check">
                 <input type="checkbox" checked={allSelected} onChange={toggleAll} />
               </th>
-              <th className="attr-col-name">Name</th>
+              <th className="attr-col-name attr-col-sortable" onClick={toggleSort}>
+                Name {sortDir === 'asc' ? '▲' : sortDir === 'desc' ? '▼' : '⇅'}
+              </th>
               <th className="attr-col-actions">Aktionen</th>
             </tr>
           </thead>
           <tbody>
-            {attrs.map((attr, i) => (
-              <tr key={i} className={selected.has(i) ? 'attr-row-selected' : ''}>
+            {rows.map(({ attr, originalIndex }) => (
+              <tr key={originalIndex} className={selected.has(originalIndex) ? 'attr-row-selected' : ''}>
                 <td className="attr-col-check">
-                  <input type="checkbox" checked={selected.has(i)} onChange={() => toggleSelect(i)} />
+                  <input type="checkbox" checked={selected.has(originalIndex)} onChange={() => toggleSelect(originalIndex)} />
                 </td>
                 <td className="attr-col-name">{attr.name}</td>
                 <td className="attr-col-actions">
-                  <button className="attr-action-link" onClick={() => navigate(`/tile/attributes/${i}`)}>Anzeigen</button>
-                  <button className="attr-action-link" onClick={() => navigate(`/tile/attributes/${i}`)}>Bearbeiten</button>
-                  <button className="attr-action-link attr-action-delete" onClick={() => del(i)}>Löschen</button>
+                  <button className="attr-action-link" onClick={() => navigate(`/tile/attributes/${originalIndex}`)}>Anzeigen</button>
+                  <button className="attr-action-link" onClick={() => navigate(`/tile/attributes/${originalIndex}`)}>Bearbeiten</button>
+                  <button className="attr-action-link attr-action-delete" onClick={() => del(originalIndex)}>Löschen</button>
                 </td>
               </tr>
             ))}

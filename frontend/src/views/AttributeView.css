@@ -108,6 +108,15 @@
   color: var(--text-h);
 }
 
+.attr-col-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.attr-col-sortable:hover {
+  color: var(--text-h);
+}
+
 .attr-col-actions {
   width: 200px;
   white-space: nowrap;
