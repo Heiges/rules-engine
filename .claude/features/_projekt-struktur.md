@@ -96,3 +96,4 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 - [Edit-Regelwerk-View](frontend/edit-ruleset-view.md) — Bearbeitungsansicht unter /edit-ruleset mit Attribut-Kachel inkl. Attributanzahl aus XML
 - [Attribute-View (CRUD)](frontend/attribute-view.md) — Liste, Umbenennen, Löschen, Anlegen von Attributen unter /tile/attributes
 - [Neues Regelwerk erstellen](frontend/neues-regelwerk-erstellen.md) — nativer Speichern-Dialog, legt leere XML-Datei an und setzt sie als aktives Regelwerk
+- [Wertebereich](frontend/wertebereich.md) — Bearbeiten von min, average, max unter /tile/werte; Speicherung als `<wertebereich>`-Element in der XML

@@ -5,6 +5,7 @@ import { HomeView } from './views/HomeView'
 import { DetailView } from './views/DetailView'
 import { EditRulesetView } from './views/EditRulesetView'
 import { AttributeView } from './views/AttributeView'
+import { WerteView } from './views/WerteView'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomeView />} />
           <Route path="/edit-ruleset" element={<EditRulesetView />} />
+          <Route path="/tile/werte" element={<WerteView />} />
           <Route path="/tile/attributes" element={<AttributeView />} />
           <Route path="/tile/:id" element={<DetailView />} />
         </Routes>

@@ -9,6 +9,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RulesetDto {
 
+    @XmlElement(name = "wertebereich")
+    private ValueRangeDto valueRange;
+
     @XmlElement(name = "attributeSet")
     private AttributeSetDto attributeSet = new AttributeSetDto();
 
@@ -17,6 +20,8 @@ public class RulesetDto {
 
     public RulesetDto() {}
 
+    public ValueRangeDto getValueRange() { return valueRange; }
+    public void setValueRange(ValueRangeDto valueRange) { this.valueRange = valueRange; }
     public AttributeSetDto getAttributeSet() { return attributeSet; }
     public SkillSetDto getSkills() { return skills; }
 }

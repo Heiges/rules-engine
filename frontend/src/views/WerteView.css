@@ -1,0 +1,71 @@
+.werte-form {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 420px;
+  text-align: left;
+}
+
+.werte-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.werte-label {
+  width: 180px;
+  flex-shrink: 0;
+  font-size: 15px;
+  color: var(--text-h);
+  font-family: var(--sans);
+}
+
+.werte-input {
+  flex: 1;
+  padding: 7px 12px;
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 15px;
+  font-family: var(--sans);
+  outline: none;
+  text-align: right;
+
+  &:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-bg);
+  }
+}
+
+.werte-error {
+  font-size: 13px;
+  color: #e55;
+  margin: 0;
+  font-family: var(--sans);
+}
+
+.werte-save-btn {
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 8px 22px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-family: var(--sans);
+  transition: filter 0.15s;
+  min-width: 120px;
+
+  &:not(:disabled):hover {
+    filter: brightness(1.12);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+}

@@ -22,6 +22,11 @@ export function EditRulesetView() {
       <h1>{rulesetName} bearbeiten</h1>
       <div className="tile-grid">
         <Tile
+          id="werte"
+          name="Werte"
+          description="Bearbeite den Wertebereich"
+        />
+        <Tile
           id="attributes"
           name="Attribute"
           description={`Attribute bearbeiten (${attributeCount} Attribute)`}
