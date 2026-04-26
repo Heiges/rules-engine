@@ -75,6 +75,12 @@
   background: rgba(220, 50, 50, 0.08);
 }
 
+.attr-error {
+  color: #e55;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
 .attr-add-section {
   display: flex;
   gap: 8px;

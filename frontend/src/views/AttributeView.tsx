@@ -9,7 +9,9 @@ interface Attr { name: string; value: number }
 function fromXml(xml: string | null): Attr[] {
   if (!xml) return []
   const doc = new DOMParser().parseFromString(xml, 'application/xml')
-  return Array.from(doc.querySelectorAll('attributeSet > attribute')).map(el => ({
+  const set = doc.getElementsByTagName('attributeSet')[0]
+  if (!set) return []
+  return Array.from(set.getElementsByTagName('attribute')).map(el => ({
     name: el.getAttribute('name') ?? '',
     value: parseInt(el.getAttribute('value') ?? '0', 10),
   }))
@@ -17,9 +19,9 @@ function fromXml(xml: string | null): Attr[] {
 
 function toXml(base: string, attrs: Attr[]): string {
   const doc = new DOMParser().parseFromString(base, 'application/xml')
-  const set = doc.querySelector('attributeSet')
+  const set = doc.getElementsByTagName('attributeSet')[0] ?? null
   if (!set) return base
-  Array.from(set.querySelectorAll('attribute')).forEach(el => el.remove())
+  Array.from(set.getElementsByTagName('attribute')).forEach(el => el.remove())
   attrs.forEach(({ name, value }) => {
     const el = doc.createElement('attribute')
     el.setAttribute('name', name)
@@ -31,21 +33,36 @@ function toXml(base: string, attrs: Attr[]): string {
 
 export function AttributeView() {
   const navigate = useNavigate()
-  const { xmlContent, setXmlContent, fileHandle } = useRuleset()
+  const { xmlContent, setXmlContent, fileHandle, currentRuleset } = useRuleset()
   const [attrs, setAttrs] = useState<Attr[]>(() => fromXml(xmlContent))
   const [editIdx, setEditIdx] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
   const [newName, setNewName] = useState('')
+  const [saveError, setSaveError] = useState<string | null>(null)
   const skipCommit = useRef(false)
 
   async function persist(updated: Attr[]) {
     if (!xmlContent) return
     const xml = toXml(xmlContent, updated)
     setXmlContent(xml)
+    setSaveError(null)
     if (fileHandle) {
-      const w = await fileHandle.createWritable()
-      await w.write(xml)
-      await w.close()
+      try {
+        const w = await fileHandle.createWritable()
+        await w.write(xml)
+        await w.close()
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err)
+        setSaveError(`Datei konnte nicht geschrieben werden: ${msg}`)
+      }
+    } else {
+      const blob = new Blob([xml], { type: 'application/xml' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = currentRuleset ?? 'regelwerk.xml'
+      a.click()
+      URL.revokeObjectURL(url)
     }
   }
 
@@ -120,6 +137,8 @@ export function AttributeView() {
           </div>
         ))}
       </div>
+
+      {saveError && <p className="attr-error">{saveError}</p>}
 
       <div className="attr-add-section">
         <input
