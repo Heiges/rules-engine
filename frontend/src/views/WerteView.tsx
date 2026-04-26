@@ -10,16 +10,11 @@ export function WerteView() {
   const navigate = useNavigate()
   const { rulesetData, setRulesetData, currentRuleset, fileHandle } = useRuleset()
   const [werte, setWerte] = useState<ValueRange>(() => rulesetData?.valueRange ?? { min: -10, average: 0, max: 10 })
-  const [saved, setSaved] = useState(false)
-  const [saveError, setSaveError] = useState<string | null>(null)
 
-  const isValid = werte.min <= werte.average && werte.average <= werte.max
-
-  async function save() {
-    if (!rulesetData || !isValid) return
-    const updatedData = { ...rulesetData, valueRange: werte }
+  async function persist(updated: ValueRange) {
+    if (!rulesetData) return
+    const updatedData = { ...rulesetData, valueRange: updated }
     setRulesetData(updatedData)
-    setSaveError(null)
     try {
       if (fileHandle) {
         const xml = await exportRuleset(updatedData)
@@ -29,17 +24,21 @@ export function WerteView() {
       } else if (currentRuleset) {
         await saveRuleset(currentRuleset, updatedData)
       }
-      setSaved(true)
-      setTimeout(() => setSaved(false), 1800)
-    } catch (err) {
-      setSaveError(err instanceof Error ? err.message : String(err))
-    }
+    } catch (_) {}
   }
 
   function update(field: keyof ValueRange, raw: string) {
     const val = parseInt(raw, 10)
     if (!isNaN(val)) setWerte(prev => ({ ...prev, [field]: val }))
-    setSaved(false)
+  }
+
+  function commit(field: keyof ValueRange, raw: string) {
+    const val = parseInt(raw, 10)
+    if (!isNaN(val)) {
+      const updated = { ...werte, [field]: val }
+      setWerte(updated)
+      persist(updated)
+    }
   }
 
   return (
@@ -56,6 +55,7 @@ export function WerteView() {
             className="werte-input"
             value={werte.min}
             onChange={e => update('min', e.target.value)}
+            onBlur={e => commit('min', e.target.value)}
           />
         </div>
 
@@ -67,6 +67,7 @@ export function WerteView() {
             className="werte-input"
             value={werte.average}
             onChange={e => update('average', e.target.value)}
+            onBlur={e => commit('average', e.target.value)}
           />
         </div>
 
@@ -78,23 +79,9 @@ export function WerteView() {
             className="werte-input"
             value={werte.max}
             onChange={e => update('max', e.target.value)}
+            onBlur={e => commit('max', e.target.value)}
           />
         </div>
-
-        {!isValid && (
-          <p className="werte-error">
-            Ungültige Werte: unterster ≤ Durchschnitt ≤ oberster Wert erforderlich.
-          </p>
-        )}
-        {saveError && <p className="werte-error">{saveError}</p>}
-
-        <button
-          className="werte-save-btn"
-          onClick={save}
-          disabled={!isValid || !rulesetData}
-        >
-          {saved ? '✓ Gespeichert' : 'Speichern'}
-        </button>
       </div>
     </div>
   )
