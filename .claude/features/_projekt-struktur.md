@@ -115,7 +115,8 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 
 ### Domain (`domain/`)
 
-- [coreMechanics-Modul](domain/coremechanics-modul.md) — Maven-Modul-Gerüst für Kernmechaniken (noch ohne Domänenklassen)
+- [coreMechanics-Modul](domain/coremechanics-modul.md) — Maven-Modul-Gerüst für Kernmechaniken
+- [Würfeln](domain/wuerfeln.md) — W6-Pasch-Mechanik: Erfolg wenn ≥2 gleiche Würfel; Endpunkt POST /api/roll
 - [Attribute](domain/attribute.md) — benannte, messbare Eigenschaft mit Value
 - [AttributeSet](domain/attribute-set.md) — geordnete Sammlung von Attributen
 - [Skill](domain/skill.md) — Fähigkeit mit Attribut-Bindung und Level

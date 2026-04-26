@@ -22,8 +22,10 @@ Eigenständiges Maven-Modul als Heimat für die Kernmechaniken des Regelwerks (W
 | Artefakt | Pfad |
 |---|---|
 | Maven POM | `coreMechanics/pom.xml` |
-| Main-Sources (leer) | `coreMechanics/src/main/java/de/heiges/rulesengine/coremechanics/domain/model/` |
-| Test-Sources (leer) | `coreMechanics/src/test/java/de/heiges/rulesengine/coremechanics/domain/model/` |
+| Main-Sources | `coreMechanics/src/main/java/de/heiges/rulesengine/coremechanics/domain/model/` |
+| Test-Sources | `coreMechanics/src/test/java/de/heiges/rulesengine/coremechanics/domain/model/` |
+
+Enthaltene Features: [Würfeln](wuerfeln.md)
 
 ## Rekonstruktion
 
