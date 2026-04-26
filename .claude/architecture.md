@@ -6,13 +6,14 @@
 
 ## Modulstruktur
 
-| Modul          | Verzeichnis    | Beschreibung                                              |
-|----------------|----------------|-----------------------------------------------------------|
-| `coreElements` | `coreElements/`| Domänenmodell (Attribute, AttributeSet, Skill)            |
-| `persistence`  | `persistence/` | XML-Persistenz der Domänenklassen (JAXB)                  |
-| Frontend       | `frontend/`    | React-UI, kommuniziert künftig über eine API mit dem Backend |
+| Modul            | Verzeichnis      | Beschreibung                                              |
+|------------------|------------------|-----------------------------------------------------------|
+| `coreElements`   | `coreElements/`  | Domänenmodell (Attribute, AttributeSet, Skill)            |
+| `coreMechanics`  | `coreMechanics/` | Kernmechaniken (Würfelwürfe, Proben, Modifikatoren etc.)  |
+| `persistence`    | `persistence/`   | XML-Persistenz der Domänenklassen (JAXB)                  |
+| Frontend         | `frontend/`      | React-UI, kommuniziert künftig über eine API mit dem Backend |
 
-Abhängigkeiten: `persistence` → `coreElements`. Das Frontend kennt keine Java-Module.
+Abhängigkeiten: `persistence` → `coreElements`; `coreMechanics` → `coreElements`. Das Frontend kennt keine Java-Module.
 
 ## Abhängigkeitsrichtung
 

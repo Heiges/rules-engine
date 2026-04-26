@@ -18,6 +18,20 @@ coreElements/
 - Keine Annotations (JAXB, Jakarta, etc.)
 - Build: `cd coreElements && mvn test`
 
+### `coreMechanics/`
+
+Kernmechaniken — spielmechanische Logik (Proben, Würfelwürfe, Modifikatoren etc.); hängt von `coreElements` ab.
+
+```
+coreMechanics/
+  src/main/java/de/heiges/rulesengine/coremechanics/domain/model/   ← Mechanik-Klassen
+  src/test/java/de/heiges/rulesengine/coremechanics/domain/model/   ← Unit-Tests
+```
+
+- Keine Annotation (JAXB, Jakarta etc.)
+- Abhängigkeit: `coreMechanics` → `coreElements` (nur in diese Richtung)
+- Build (nach `coreElements install`): `cd coreMechanics && mvn test`
+
 ### `persistence/`
 
 XML-Persistenz via JAXB — hängt von `coreElements` ab.
@@ -81,6 +95,7 @@ frontend/
 
 ```
 frontend  →  /api (HTTP)  →  api  →  persistence  →  coreElements
+                                      coreMechanics  →  coreElements
 ```
 
 Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind verboten.
@@ -100,6 +115,7 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 
 ### Domain (`domain/`)
 
+- [coreMechanics-Modul](domain/coremechanics-modul.md) — Maven-Modul-Gerüst für Kernmechaniken (noch ohne Domänenklassen)
 - [Attribute](domain/attribute.md) — benannte, messbare Eigenschaft mit Value
 - [AttributeSet](domain/attribute-set.md) — geordnete Sammlung von Attributen
 - [Skill](domain/skill.md) — Fähigkeit mit Attribut-Bindung und Level
