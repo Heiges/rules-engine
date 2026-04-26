@@ -1,5 +1,6 @@
 .detail-view {
   padding: 40px 32px;
+  text-align: left;
 
   @media (max-width: 1024px) {
     padding: 24px 20px;

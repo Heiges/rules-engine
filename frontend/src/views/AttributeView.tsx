@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRuleset } from '../context/RulesetContext'
 import { exportRuleset, saveRuleset } from '../api'
@@ -10,11 +10,8 @@ export function AttributeView() {
   const navigate = useNavigate()
   const { rulesetData, setRulesetData, currentRuleset, fileHandle } = useRuleset()
   const [attrs, setAttrs] = useState<Attribute[]>(() => rulesetData?.attributes ?? [])
-  const [editIdx, setEditIdx] = useState<number | null>(null)
-  const [editName, setEditName] = useState('')
-  const [newName, setNewName] = useState('')
+  const [selected, setSelected] = useState<Set<number>>(new Set())
   const [saveError, setSaveError] = useState<string | null>(null)
-  const skipCommit = useRef(false)
 
   async function persist(updated: Attribute[]) {
     if (!rulesetData) return
@@ -35,96 +32,97 @@ export function AttributeView() {
     }
   }
 
-  function startEdit(i: number) {
-    setEditIdx(i)
-    setEditName(attrs[i].name)
+  function toggleSelect(i: number) {
+    setSelected(prev => {
+      const next = new Set(prev)
+      if (next.has(i)) next.delete(i)
+      else next.add(i)
+      return next
+    })
   }
 
-  function commitEdit() {
-    if (skipCommit.current) {
-      skipCommit.current = false
-      setEditIdx(null)
-      return
+  function toggleAll() {
+    if (selected.size === attrs.length) {
+      setSelected(new Set())
+    } else {
+      setSelected(new Set(attrs.map((_, i) => i)))
     }
-    if (editIdx === null) return
-    const name = editName.trim()
-    if (name && !attrs.some((a, j) => j !== editIdx && a.name === name)) {
-      const updated = attrs.map((a, j) => j === editIdx ? { ...a, name } : a)
-      setAttrs(updated)
-      persist(updated)
-    }
-    setEditIdx(null)
   }
 
   function del(i: number) {
-    if (editIdx === i) setEditIdx(null)
     const updated = attrs.filter((_, j) => j !== i)
     setAttrs(updated)
+    setSelected(prev => {
+      const next = new Set<number>()
+      for (const s of prev) {
+        if (s < i) next.add(s)
+        else if (s > i) next.add(s - 1)
+      }
+      return next
+    })
     persist(updated)
   }
 
-  function add() {
-    const name = newName.trim()
-    if (!name || attrs.some(a => a.name === name)) return
-    const updated = [...attrs, { name, description: '', value: 0 }]
+  function deleteSelected() {
+    const updated = attrs.filter((_, i) => !selected.has(i))
     setAttrs(updated)
-    setNewName('')
+    setSelected(new Set())
     persist(updated)
   }
+
+  const allSelected = attrs.length > 0 && selected.size === attrs.length
 
   return (
     <div className="detail-view">
       <button className="back-button" onClick={() => navigate('/edit-ruleset')}>← Zurück</button>
-      <h1>Attribute</h1>
-      {attrs.length > 0 && <p className="attr-subtitle">{attrs.length} Attribute</p>}
-
-      <div className="attr-list">
-        {attrs.length === 0 && (
-          <p className="attr-empty">Noch keine Attribute vorhanden.</p>
-        )}
-        {attrs.map((attr, i) => (
-          <div key={i} className="attr-row">
-            {editIdx === i ? (
-              <input
-                className="attr-name-input"
-                value={editName}
-                autoFocus
-                onChange={e => setEditName(e.target.value)}
-                onBlur={commitEdit}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') (e.target as HTMLInputElement).blur()
-                  if (e.key === 'Escape') {
-                    skipCommit.current = true;
-                    (e.target as HTMLInputElement).blur()
-                  }
-                }}
-              />
-            ) : (
-              <span className="attr-name" onClick={() => startEdit(i)}>{attr.name}</span>
-            )}
-            <button className="attr-delete-btn" onClick={() => del(i)} title="Löschen">✕</button>
-          </div>
-        ))}
+      <div className="attr-header">
+        <h1>Attribute</h1>
+        <div className="attr-header-actions">
+          {selected.size > 0 && (
+            <button className="attr-delete-selected-btn" onClick={deleteSelected}>
+              {selected.size} löschen
+            </button>
+          )}
+          <button className="attr-new-btn" onClick={() => navigate('/tile/attributes/neu')}>
+            + Neues Attribut
+          </button>
+        </div>
       </div>
 
       {saveError && <p className="attr-error">{saveError}</p>}
 
-      <div className="attr-add-section">
-        <input
-          className="attr-name-input"
-          placeholder="Name des neuen Attributs …"
-          value={newName}
-          onChange={e => setNewName(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter') add() }}
-        />
-        <button
-          className="attr-add-btn"
-          onClick={add}
-          disabled={!newName.trim() || attrs.some(a => a.name === newName.trim())}
-        >
-          + Hinzufügen
-        </button>
-      </div>
+      {attrs.length === 0 ? (
+        <p className="attr-empty">Noch keine Attribute vorhanden.</p>
+      ) : (
+        <div className="attr-table-wrapper">
+        <table className="attr-table">
+          <thead>
+            <tr>
+              <th className="attr-col-check">
+                <input type="checkbox" checked={allSelected} onChange={toggleAll} />
+              </th>
+              <th className="attr-col-name">Name</th>
+              <th className="attr-col-actions">Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            {attrs.map((attr, i) => (
+              <tr key={i} className={selected.has(i) ? 'attr-row-selected' : ''}>
+                <td className="attr-col-check">
+                  <input type="checkbox" checked={selected.has(i)} onChange={() => toggleSelect(i)} />
+                </td>
+                <td className="attr-col-name">{attr.name}</td>
+                <td className="attr-col-actions">
+                  <button className="attr-action-link" onClick={() => navigate(`/tile/attributes/${i}`)}>Anzeigen</button>
+                  <button className="attr-action-link" onClick={() => navigate(`/tile/attributes/${i}`)}>Bearbeiten</button>
+                  <button className="attr-action-link attr-action-delete" onClick={() => del(i)}>Löschen</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        </div>
+      )}
     </div>
   )
 }
