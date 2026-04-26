@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ruleset>
-  <wertebereich min="-10" average="0" max="10"/>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ruleset>
+  <wertebereich min="-5" average="0" max="6"/>
   <attributeSet>
     <attribute name="Kraft" description="Kraft" value="0"/>
     <attribute name="Ausdauer" description="Ausdauer" value="0"/>

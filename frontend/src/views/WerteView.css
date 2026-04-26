@@ -32,11 +32,11 @@
   font-family: var(--sans);
   outline: none;
   text-align: right;
+}
 
-  &:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-bg);
-  }
+.werte-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
 .werte-error {
@@ -59,13 +59,14 @@
   font-family: var(--sans);
   transition: filter 0.15s;
   min-width: 120px;
+}
 
-  &:not(:disabled):hover {
-    filter: brightness(1.12);
-  }
+.werte-save-btn:not(:disabled):hover {
+  filter: brightness(1.12);
+}
 
-  &:disabled {
-    opacity: 0.35;
-    cursor: default;
-  }
+.werte-save-btn:disabled {
+  background: var(--border);
+  color: var(--text);
+  cursor: not-allowed;
 }

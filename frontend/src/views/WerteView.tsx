@@ -13,7 +13,7 @@ interface Wertebereich {
 function fromXml(xml: string | null): Wertebereich {
   if (!xml) return { min: -10, max: 10, average: 0 }
   const doc = new DOMParser().parseFromString(xml, 'application/xml')
-  const el = doc.querySelector('wertebereich')
+  const el = doc.getElementsByTagName('wertebereich')[0]
   if (!el) return { min: -10, max: 10, average: 0 }
   return {
     min: parseInt(el.getAttribute('min') ?? '-10', 10),
@@ -24,7 +24,7 @@ function fromXml(xml: string | null): Wertebereich {
 
 function toXml(base: string, w: Wertebereich): string {
   const doc = new DOMParser().parseFromString(base, 'application/xml')
-  let el = doc.querySelector('wertebereich')
+  let el: Element | null = doc.getElementsByTagName('wertebereich')[0] ?? null
   if (!el) {
     el = doc.createElement('wertebereich')
     doc.documentElement.insertBefore(el, doc.documentElement.firstChild)
@@ -37,9 +37,10 @@ function toXml(base: string, w: Wertebereich): string {
 
 export function WerteView() {
   const navigate = useNavigate()
-  const { xmlContent, setXmlContent, fileHandle } = useRuleset()
+  const { xmlContent, setXmlContent, fileHandle, currentRuleset } = useRuleset()
   const [werte, setWerte] = useState<Wertebereich>(() => fromXml(xmlContent))
   const [saved, setSaved] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const isValid = werte.min <= werte.average && werte.average <= werte.max
 
@@ -47,10 +48,25 @@ export function WerteView() {
     if (!xmlContent || !isValid) return
     const xml = toXml(xmlContent, werte)
     setXmlContent(xml)
+    setSaveError(null)
     if (fileHandle) {
-      const w = await fileHandle.createWritable()
-      await w.write(xml)
-      await w.close()
+      try {
+        const w = await fileHandle.createWritable()
+        await w.write(xml)
+        await w.close()
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err)
+        setSaveError(`Datei konnte nicht geschrieben werden: ${msg}`)
+        return
+      }
+    } else {
+      const blob = new Blob([xml], { type: 'application/xml' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = currentRuleset ?? 'regelwerk.xml'
+      a.click()
+      URL.revokeObjectURL(url)
     }
     setSaved(true)
     setTimeout(() => setSaved(false), 1800)
@@ -106,6 +122,7 @@ export function WerteView() {
             Ungültige Werte: unterster ≤ Durchschnitt ≤ oberster Wert erforderlich.
           </p>
         )}
+        {saveError && <p className="werte-error">{saveError}</p>}
 
         <button
           className="werte-save-btn"

@@ -28,6 +28,28 @@ export function HomeView() {
   const navigate = useNavigate()
   const { currentRuleset, setCurrentRuleset, setFileHandle, setXmlContent } = useRuleset()
 
+  async function handleLoadRuleset() {
+    if ('showOpenFilePicker' in window) {
+      try {
+        const [handle] = await window.showOpenFilePicker!({
+          types: [{ description: 'XML-Regelwerk', accept: { 'application/xml': ['.xml'] } }],
+          multiple: false,
+        })
+        const file = await handle.getFile()
+        const text = await file.text()
+        setFileHandle(handle)
+        setXmlContent(text)
+        setCurrentRuleset(file.name)
+      } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return
+        const msg = err instanceof Error ? err.message : String(err)
+        alert(`Fehler beim Laden des Regelwerks: ${msg}`)
+      }
+    } else {
+      fileInputRef.current?.click()
+    }
+  }
+
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (file) {
@@ -101,7 +123,7 @@ export function HomeView() {
             return <Tile key={tile.id} {...tile} onClick={handleNewRuleset} />
           }
           if (tile.id === 'load-ruleset') {
-            return <Tile key={tile.id} {...tile} onClick={() => fileInputRef.current?.click()} />
+            return <Tile key={tile.id} {...tile} onClick={handleLoadRuleset} />
           }
           return <Tile key={tile.id} {...tile} onClick={() => navigate('/edit-ruleset')} />
         })}
