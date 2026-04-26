@@ -29,6 +29,36 @@ export interface RollResult {
   paschCount: number | null
 }
 
+// Interne Darstellung des API-Formats mit Gruppen
+interface AttributeGroupApiDto {
+  group: string
+  attributes: Attribute[]
+}
+
+interface RulesetApiDto {
+  valueRange: ValueRange
+  attributeGroups: AttributeGroupApiDto[]
+  skills: Skill[]
+}
+
+function fromApiDto(dto: RulesetApiDto): RulesetData {
+  return {
+    valueRange: dto.valueRange,
+    attributes: dto.attributeGroups.flatMap(g => g.attributes),
+    skills: dto.skills,
+  }
+}
+
+function toApiDto(data: RulesetData): RulesetApiDto {
+  return {
+    valueRange: data.valueRange,
+    attributeGroups: data.attributes.length > 0
+      ? [{ group: 'Allgemein', attributes: data.attributes }]
+      : [],
+    skills: data.skills,
+  }
+}
+
 const BASE = '/api/rulesets'
 
 async function checkOk(res: Response, msg: string): Promise<void> {
@@ -45,14 +75,14 @@ export async function importRuleset(xml: string): Promise<RulesetData> {
     body: xml,
   })
   await checkOk(res, 'XML konnte nicht geladen werden')
-  return res.json()
+  return fromApiDto(await res.json())
 }
 
 export async function saveRuleset(name: string, data: RulesetData): Promise<void> {
   const res = await fetch(`${BASE}/${encodeURIComponent(name)}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    body: JSON.stringify(toApiDto(data)),
   })
   await checkOk(res, 'Regelwerk konnte nicht gespeichert werden')
 }
@@ -71,7 +101,7 @@ export async function exportRuleset(data: RulesetData): Promise<string> {
   const res = await fetch(`${BASE}/export`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    body: JSON.stringify(toApiDto(data)),
   })
   await checkOk(res, 'XML konnte nicht serialisiert werden')
   return res.text()

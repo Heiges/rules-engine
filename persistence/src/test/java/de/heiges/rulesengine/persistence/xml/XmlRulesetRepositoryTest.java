@@ -1,6 +1,7 @@
 package de.heiges.rulesengine.persistence.xml;
 
 import de.heiges.rulesengine.coreelements.domain.model.Attribute;
+import de.heiges.rulesengine.coreelements.domain.model.AttributeGroup;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeSet;
 import de.heiges.rulesengine.coreelements.domain.model.Skill;
 import de.heiges.rulesengine.coreelements.domain.model.Value;
@@ -23,11 +24,15 @@ class XmlRulesetRepositoryTest {
 
     @Test
     void speichernUndLaden_erhaltAttributeUndSkillsKorrekt(@TempDir Path tempDir) throws IOException {
-        AttributeSet attributeSet = new AttributeSet();
         Attribute staerke = new Attribute("Stärke", "Körperliche Kraft", new Value(3));
         Attribute geschicklichkeit = new Attribute("Geschicklichkeit", "Feinmotorik und Reaktion", new Value(-2));
-        attributeSet.add(staerke);
-        attributeSet.add(geschicklichkeit);
+
+        AttributeGroup koerper = new AttributeGroup("Körper");
+        koerper.add(staerke);
+        koerper.add(geschicklichkeit);
+
+        AttributeSet attributeSet = new AttributeSet();
+        attributeSet.addGroup(koerper);
 
         List<Skill> skills = List.of(
                 new Skill("Klettern", geschicklichkeit, 3),
@@ -38,6 +43,8 @@ class XmlRulesetRepositoryTest {
         repository.save(standardRange, attributeSet, skills, file);
         LoadedRuleset geladen = repository.load(file);
 
+        assertEquals(1, geladen.attributeSet().getGroups().size());
+        assertEquals("Körper", geladen.attributeSet().getGroups().iterator().next().getName());
         assertEquals(2, geladen.attributeSet().size());
         assertTrue(geladen.attributeSet().contains("Stärke"));
         assertEquals("Körperliche Kraft", geladen.attributeSet().find("Stärke").orElseThrow().getDescription());

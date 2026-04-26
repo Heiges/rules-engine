@@ -119,6 +119,7 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 - [Würfeln](domain/wuerfeln.md) — W6-Pasch-Mechanik: Erfolg wenn ≥2 gleiche Würfel; Endpunkt POST /api/roll
 - [Attribute](domain/attribute.md) — benannte, messbare Eigenschaft mit Value
 - [AttributeSet](domain/attribute-set.md) — geordnete Sammlung von Attributen
+- [AttributeGroup](domain/attribute-group.md) — benannte Gruppe von Attributen; `AttributeSet` hält nun Gruppen statt flacher Attributliste
 - [Skill](domain/skill.md) — Fähigkeit mit Attribut-Bindung und Level
 - [Value](domain/value-domain-class.md) — numerischer Wert eines Regelbausteins (pos./neg.)
 

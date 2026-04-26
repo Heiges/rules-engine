@@ -1,6 +1,7 @@
 package de.heiges.rulesengine.persistence.xml;
 
 import de.heiges.rulesengine.coreelements.domain.model.Attribute;
+import de.heiges.rulesengine.coreelements.domain.model.AttributeGroup;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeSet;
 import de.heiges.rulesengine.coreelements.domain.model.Skill;
 import de.heiges.rulesengine.coreelements.domain.model.Value;
@@ -8,6 +9,7 @@ import de.heiges.rulesengine.coreelements.domain.model.ValueRange;
 import de.heiges.rulesengine.persistence.repository.LoadedRuleset;
 import de.heiges.rulesengine.persistence.repository.RulesetRepository;
 import de.heiges.rulesengine.persistence.xml.dto.AttributeDto;
+import de.heiges.rulesengine.persistence.xml.dto.AttributeGroupDto;
 import de.heiges.rulesengine.persistence.xml.dto.RulesetDto;
 import de.heiges.rulesengine.persistence.xml.dto.SkillDto;
 import de.heiges.rulesengine.persistence.xml.dto.ValueRangeDto;
@@ -96,9 +98,13 @@ public class XmlRulesetRepository implements RulesetRepository {
     private RulesetDto toDto(ValueRange valueRange, AttributeSet attributeSet, Collection<Skill> skills) {
         RulesetDto dto = new RulesetDto();
         dto.setValueRange(new ValueRangeDto(valueRange.min(), valueRange.average(), valueRange.max()));
-        for (Attribute attribute : attributeSet.getAll()) {
-            dto.getAttributeSet().getAttributes().add(
-                    new AttributeDto(attribute.getName(), attribute.getDescription(), attribute.getValue().amount()));
+        for (AttributeGroup group : attributeSet.getGroups()) {
+            AttributeGroupDto groupDto = new AttributeGroupDto(group.getName());
+            for (Attribute attribute : group.getAll()) {
+                groupDto.getAttributes().add(
+                        new AttributeDto(attribute.getName(), attribute.getDescription(), attribute.getValue().amount()));
+            }
+            dto.getAttributeSet().getGroups().add(groupDto);
         }
         for (Skill skill : skills) {
             dto.getSkills().getSkills().add(new SkillDto(
@@ -116,11 +122,15 @@ public class XmlRulesetRepository implements RulesetRepository {
                 : DEFAULT_VALUE_RANGE;
 
         AttributeSet attributeSet = new AttributeSet();
-        for (AttributeDto attributeDto : dto.getAttributeSet().getAttributes()) {
-            attributeSet.add(new Attribute(
-                    attributeDto.getName(),
-                    attributeDto.getDescription(),
-                    new Value(attributeDto.getValue())));
+        for (AttributeGroupDto groupDto : dto.getAttributeSet().getGroups()) {
+            AttributeGroup group = new AttributeGroup(groupDto.getName());
+            for (AttributeDto attributeDto : groupDto.getAttributes()) {
+                group.add(new Attribute(
+                        attributeDto.getName(),
+                        attributeDto.getDescription(),
+                        new Value(attributeDto.getValue())));
+            }
+            attributeSet.addGroup(group);
         }
 
         List<Skill> skills = new ArrayList<>();

@@ -1,10 +1,12 @@
 package de.heiges.rulesengine.api.controller;
 
 import de.heiges.rulesengine.api.dto.AttributeApiDto;
+import de.heiges.rulesengine.api.dto.AttributeGroupApiDto;
 import de.heiges.rulesengine.api.dto.RulesetApiDto;
 import de.heiges.rulesengine.api.dto.SkillApiDto;
 import de.heiges.rulesengine.api.dto.ValueRangeApiDto;
 import de.heiges.rulesengine.coreelements.domain.model.Attribute;
+import de.heiges.rulesengine.coreelements.domain.model.AttributeGroup;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeSet;
 import de.heiges.rulesengine.coreelements.domain.model.Skill;
 import de.heiges.rulesengine.coreelements.domain.model.Value;
@@ -100,13 +102,18 @@ public class RulesetController {
                 loaded.valueRange().average(),
                 loaded.valueRange().max()
         );
-        List<AttributeApiDto> attributes = loaded.attributeSet().getAll().stream()
-                .map(a -> new AttributeApiDto(a.getName(), a.getDescription(), a.getValue().amount()))
+        List<AttributeGroupApiDto> attributeGroups = loaded.attributeSet().getGroups().stream()
+                .map(g -> new AttributeGroupApiDto(
+                        g.getName(),
+                        g.getAll().stream()
+                                .map(a -> new AttributeApiDto(a.getName(), a.getDescription(), a.getValue().amount()))
+                                .toList()
+                ))
                 .toList();
         List<SkillApiDto> skills = loaded.skills().stream()
                 .map(s -> new SkillApiDto(s.getName(), s.getLinkedAttribute().getName(), s.getLevel()))
                 .toList();
-        return new RulesetApiDto(valueRange, attributes, skills);
+        return new RulesetApiDto(valueRange, attributeGroups, skills);
     }
 
     private ValueRange toDomain(RulesetApiDto dto) {
@@ -116,8 +123,12 @@ public class RulesetController {
 
     private AttributeSet toAttributeSet(RulesetApiDto dto) {
         AttributeSet set = new AttributeSet();
-        for (AttributeApiDto a : dto.attributes()) {
-            set.add(new Attribute(a.name(), a.description(), new Value(a.value())));
+        for (AttributeGroupApiDto g : dto.attributeGroups()) {
+            AttributeGroup group = new AttributeGroup(g.group());
+            for (AttributeApiDto a : g.attributes()) {
+                group.add(new Attribute(a.name(), a.description(), new Value(a.value())));
+            }
+            set.addGroup(group);
         }
         return set;
     }

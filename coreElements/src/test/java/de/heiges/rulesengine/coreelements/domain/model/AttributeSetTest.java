@@ -17,57 +17,80 @@ class AttributeSetTest {
     }
 
     @Test
-    void addsAttribute() {
-        attributeSet.add(new Attribute("Stärke", ""));
-        assertTrue(attributeSet.contains("Stärke"));
-        assertEquals(1, attributeSet.size());
+    void addsGroup() {
+        AttributeGroup group = new AttributeGroup("Körper");
+        group.add(new Attribute("Stärke", ""));
+        attributeSet.addGroup(group);
+        assertTrue(attributeSet.containsGroup("Körper"));
+        assertEquals(1, attributeSet.getGroups().size());
     }
 
     @Test
-    void rejectsNullAttribute() {
-        assertThrows(IllegalArgumentException.class, () -> attributeSet.add(null));
+    void rejectsNullGroup() {
+        assertThrows(IllegalArgumentException.class, () -> attributeSet.addGroup(null));
     }
 
     @Test
-    void rejectsDuplicateAttribute() {
-        attributeSet.add(new Attribute("Stärke", ""));
-        assertThrows(IllegalArgumentException.class, () -> attributeSet.add(new Attribute("Stärke", "Andere")));
+    void rejectsDuplicateGroupName() {
+        attributeSet.addGroup(new AttributeGroup("Körper"));
+        assertThrows(IllegalArgumentException.class, () -> attributeSet.addGroup(new AttributeGroup("Körper")));
     }
 
     @Test
-    void removesAttribute() {
-        attributeSet.add(new Attribute("Stärke", ""));
-        attributeSet.remove("Stärke");
-        assertFalse(attributeSet.contains("Stärke"));
-        assertEquals(0, attributeSet.size());
+    void rejectsAttributeNameCollisionAcrossGroups() {
+        AttributeGroup koerper = new AttributeGroup("Körper");
+        koerper.add(new Attribute("Stärke", ""));
+        attributeSet.addGroup(koerper);
+
+        AttributeGroup geist = new AttributeGroup("Geist");
+        geist.add(new Attribute("Stärke", "Kollidierender Name"));
+        assertThrows(IllegalArgumentException.class, () -> attributeSet.addGroup(geist));
     }
 
     @Test
-    void rejectsRemoveOfUnknownAttribute() {
-        assertThrows(IllegalArgumentException.class, () -> attributeSet.remove("Geschicklichkeit"));
+    void removesGroup() {
+        attributeSet.addGroup(new AttributeGroup("Körper"));
+        attributeSet.removeGroup("Körper");
+        assertFalse(attributeSet.containsGroup("Körper"));
+        assertEquals(0, attributeSet.getGroups().size());
     }
 
     @Test
-    void rejectsRemoveWithBlankName() {
-        assertThrows(IllegalArgumentException.class, () -> attributeSet.remove(""));
-        assertThrows(IllegalArgumentException.class, () -> attributeSet.remove("  "));
+    void rejectsRemoveOfUnknownGroup() {
+        assertThrows(IllegalArgumentException.class, () -> attributeSet.removeGroup("Geist"));
     }
 
     @Test
-    void modifiesAttributeDescription() {
-        attributeSet.add(new Attribute("Stärke", "Alt"));
-        attributeSet.modify("Stärke", "Neu");
-        assertEquals("Neu", attributeSet.find("Stärke").map(Attribute::getDescription).orElseThrow());
+    void rejectsRemoveWithBlankGroupName() {
+        assertThrows(IllegalArgumentException.class, () -> attributeSet.removeGroup(""));
+        assertThrows(IllegalArgumentException.class, () -> attributeSet.removeGroup("  "));
     }
 
     @Test
-    void rejectsModifyOfUnknownAttribute() {
-        assertThrows(IllegalArgumentException.class, () -> attributeSet.modify("Stärke", "Beschreibung"));
+    void findsGroupByName() {
+        attributeSet.addGroup(new AttributeGroup("Körper"));
+        Optional<AttributeGroup> result = attributeSet.findGroup("Körper");
+        assertTrue(result.isPresent());
+        assertEquals("Körper", result.get().getName());
     }
 
     @Test
-    void findsAttributeByName() {
-        attributeSet.add(new Attribute("Stärke", ""));
+    void returnsEmptyForUnknownGroup() {
+        assertTrue(attributeSet.findGroup("Unbekannt").isEmpty());
+    }
+
+    @Test
+    void getGroupsIsUnmodifiable() {
+        attributeSet.addGroup(new AttributeGroup("Körper"));
+        assertThrows(UnsupportedOperationException.class, () -> attributeSet.getGroups().clear());
+    }
+
+    @Test
+    void findsAttributeCrossGroup() {
+        AttributeGroup koerper = new AttributeGroup("Körper");
+        koerper.add(new Attribute("Stärke", ""));
+        attributeSet.addGroup(koerper);
+
         Optional<Attribute> result = attributeSet.find("Stärke");
         assertTrue(result.isPresent());
         assertEquals("Stärke", result.get().getName());
@@ -79,15 +102,45 @@ class AttributeSetTest {
     }
 
     @Test
-    void getAllReturnsAllAttributes() {
-        attributeSet.add(new Attribute("Stärke", ""));
-        attributeSet.add(new Attribute("Geschicklichkeit", ""));
-        assertEquals(2, attributeSet.getAll().size());
+    void containsAttributeCrossGroup() {
+        AttributeGroup koerper = new AttributeGroup("Körper");
+        koerper.add(new Attribute("Stärke", ""));
+        attributeSet.addGroup(koerper);
+
+        assertTrue(attributeSet.contains("Stärke"));
+        assertFalse(attributeSet.contains("Ausdauer"));
     }
 
     @Test
-    void getAllIsUnmodifiable() {
-        attributeSet.add(new Attribute("Stärke", ""));
-        assertThrows(UnsupportedOperationException.class, () -> attributeSet.getAll().clear());
+    void getAllReturnsAllAttributesAcrossGroups() {
+        AttributeGroup koerper = new AttributeGroup("Körper");
+        koerper.add(new Attribute("Stärke", ""));
+        koerper.add(new Attribute("Ausdauer", ""));
+        attributeSet.addGroup(koerper);
+
+        AttributeGroup geist = new AttributeGroup("Geist");
+        geist.add(new Attribute("Intelligenz", ""));
+        attributeSet.addGroup(geist);
+
+        assertEquals(3, attributeSet.getAll().size());
+    }
+
+    @Test
+    void sizeReturnsTotalAttributeCount() {
+        AttributeGroup koerper = new AttributeGroup("Körper");
+        koerper.add(new Attribute("Stärke", ""));
+        koerper.add(new Attribute("Ausdauer", ""));
+        attributeSet.addGroup(koerper);
+
+        AttributeGroup geist = new AttributeGroup("Geist");
+        geist.add(new Attribute("Intelligenz", ""));
+        attributeSet.addGroup(geist);
+
+        assertEquals(3, attributeSet.size());
+    }
+
+    @Test
+    void sizeIsZeroForEmptySet() {
+        assertEquals(0, attributeSet.size());
     }
 }

@@ -12,10 +12,10 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AttributeSetDto {
 
-    @XmlElement(name = "attribute")
-    private List<AttributeDto> attributes = new ArrayList<>();
+    @XmlElement(name = "group")
+    private List<AttributeGroupDto> groups = new ArrayList<>();
 
     public AttributeSetDto() {}
 
-    public List<AttributeDto> getAttributes() { return attributes; }
+    public List<AttributeGroupDto> getGroups() { return groups; }
 }

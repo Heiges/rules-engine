@@ -1,26 +1,29 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ruleset>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset>
   <wertebereich min="-5" average="0" max="6"/>
   <attributeSet>
-    <attribute name="Kraft" description="Kraft" value="0"/>
-    <attribute name="Ausdauer" description="Ausdauer" value="0"/>
-    <attribute name="Resilienz" description="Resilienz" value="0"/>
-    <attribute name="Regeneration" description="Regeneration" value="0"/>
-    <attribute name="Geschicklichkeit" description="Geschicklichkeit" value="0"/>
-    <attribute name="Beweglichkeit" description="Beweglichkeit" value="0"/>
-    <attribute name="Tempo" description="Tempo" value="0"/>
-    <attribute name="Reflexe" description="Reflexe" value="0"/>
-    <attribute name="Intelligenz" description="Intelligenz" value="0"/>
-    <attribute name="Gedächtnis" description="Gedächtnis" value="0"/>
-    <attribute name="Kreativität" description="Kreativität" value="0"/>
-    <attribute name="Intuition" description="Intuition" value="0"/>
-    <attribute name="Wahrnehmung" description="Wahrnehmung" value="0"/>
-    <attribute name="Empathie" description="Empathie" value="0"/>
-    <attribute name="Charisma" description="Charisma" value="0"/>
-    <attribute name="Einfluss" description="Einfluss" value="0"/>
-    <attribute name="Glaube" description="Glaube" value="0"/>
-    <attribute name="Mut" description="Mut" value="0"/>
-    <attribute name="Willenskraft" description="Willenskraft" value="0"/>
-    <attribute name="Disziplin" description="Disziplin" value="0"/>
+    <group name="Allgemein">
+      <attribute name="Kraft" description="Kraft" value="0"/>
+      <attribute name="Ausdauer" description="Ausdauer" value="0"/>
+      <attribute name="Resilienz" description="Resilienz" value="0"/>
+      <attribute name="Regeneration" description="Regeneration" value="0"/>
+      <attribute name="Geschicklichkeit" description="Geschicklichkeit" value="0"/>
+      <attribute name="Beweglichkeit" description="Beweglichkeit" value="0"/>
+      <attribute name="Tempo" description="Tempo" value="0"/>
+      <attribute name="Reflexe" description="Reflexe" value="0"/>
+      <attribute name="Intelligenz" description="Intelligenz" value="0"/>
+      <attribute name="Gedächtnis" description="Gedächtnis" value="0"/>
+      <attribute name="Kreativität" description="Kreativität" value="0"/>
+      <attribute name="Intuition" description="Intuition" value="0"/>
+      <attribute name="Wahrnehmung" description="Wahrnehmung" value="0"/>
+      <attribute name="Empathie" description="Empathie" value="0"/>
+      <attribute name="Charisma" description="Charisma" value="0"/>
+      <attribute name="Einfluss" description="Einfluss" value="0"/>
+      <attribute name="Glaube" description="Glaube" value="0"/>
+      <attribute name="Mut" description="Mut" value="0"/>
+      <attribute name="Willenskraft" description="Willenskraft" value="0"/>
+      <attribute name="Disziplin" description="Disziplin" value="0"/>
+    </group>
   </attributeSet>
   <skills>
     <skill name="Wissen" linkedAttributeName="Kraft" level="0"/>

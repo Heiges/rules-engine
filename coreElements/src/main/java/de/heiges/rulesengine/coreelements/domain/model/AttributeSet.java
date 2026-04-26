@@ -8,52 +8,64 @@ import java.util.Optional;
 
 public class AttributeSet {
 
-    private final Map<String, Attribute> attributes = new LinkedHashMap<>();
+    private final Map<String, AttributeGroup> groups = new LinkedHashMap<>();
 
-    public void add(Attribute attribute) {
-        if (attribute == null) {
-            throw new IllegalArgumentException("Attribute must not be null");
+    public void addGroup(AttributeGroup group) {
+        if (group == null) {
+            throw new IllegalArgumentException("AttributeGroup must not be null");
         }
-        if (attributes.containsKey(attribute.getName())) {
-            throw new IllegalArgumentException("Attribute already exists: " + attribute.getName());
+        if (groups.containsKey(group.getName())) {
+            throw new IllegalArgumentException("Group already exists: " + group.getName());
         }
-        attributes.put(attribute.getName(), attribute);
+        for (Attribute attribute : group.getAll()) {
+            if (contains(attribute.getName())) {
+                throw new IllegalArgumentException("Attribute already exists in another group: " + attribute.getName());
+            }
+        }
+        groups.put(group.getName(), group);
     }
 
-    public void remove(String name) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Attribute name must not be blank");
+    public void removeGroup(String groupName) {
+        if (groupName == null || groupName.isBlank()) {
+            throw new IllegalArgumentException("Group name must not be blank");
         }
-        if (!attributes.containsKey(name)) {
-            throw new IllegalArgumentException("Attribute not found: " + name);
+        if (!groups.containsKey(groupName)) {
+            throw new IllegalArgumentException("Group not found: " + groupName);
         }
-        attributes.remove(name);
+        groups.remove(groupName);
     }
 
-    public void modify(String name, String newDescription) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Attribute name must not be blank");
-        }
-        Attribute attribute = attributes.get(name);
-        if (attribute == null) {
-            throw new IllegalArgumentException("Attribute not found: " + name);
-        }
-        attribute.setDescription(newDescription);
+    public Optional<AttributeGroup> findGroup(String groupName) {
+        return Optional.ofNullable(groups.get(groupName));
+    }
+
+    public boolean containsGroup(String groupName) {
+        return groups.containsKey(groupName);
+    }
+
+    public Collection<AttributeGroup> getGroups() {
+        return Collections.unmodifiableCollection(groups.values());
     }
 
     public Optional<Attribute> find(String name) {
-        return Optional.ofNullable(attributes.get(name));
+        for (AttributeGroup group : groups.values()) {
+            Optional<Attribute> attr = group.find(name);
+            if (attr.isPresent()) return attr;
+        }
+        return Optional.empty();
     }
 
     public boolean contains(String name) {
-        return attributes.containsKey(name);
+        return groups.values().stream().anyMatch(g -> g.contains(name));
     }
 
     public Collection<Attribute> getAll() {
-        return Collections.unmodifiableCollection(attributes.values());
+        return groups.values().stream()
+                .flatMap(g -> g.getAll().stream())
+                .toList();
     }
 
     public int size() {
-        return attributes.size();
+        return groups.values().stream().mapToInt(AttributeGroup::size).sum();
     }
 }
