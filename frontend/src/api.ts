@@ -22,6 +22,13 @@ export interface RulesetData {
   skills: Skill[]
 }
 
+export interface RollResult {
+  dice: number[]
+  success: boolean
+  paschValue: number | null
+  paschCount: number | null
+}
+
 const BASE = '/api/rulesets'
 
 async function checkOk(res: Response, msg: string): Promise<void> {
@@ -48,6 +55,16 @@ export async function saveRuleset(name: string, data: RulesetData): Promise<void
     body: JSON.stringify(data),
   })
   await checkOk(res, 'Regelwerk konnte nicht gespeichert werden')
+}
+
+export async function rollDice(value: number): Promise<RollResult> {
+  const res = await fetch('/api/roll', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ value }),
+  })
+  await checkOk(res, 'Würfeln fehlgeschlagen')
+  return res.json()
 }
 
 export async function exportRuleset(data: RulesetData): Promise<string> {

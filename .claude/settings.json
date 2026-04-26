@@ -20,7 +20,10 @@
       "Read(//usr/share/apparmor/extra-profiles/**)",
       "Read(//etc/apparmor.d/**)",
       "Read(//usr/share/apparmor/**)",
-      "Bash(snap connections *)"
+      "Bash(snap connections *)",
+      "Bash(lsof -ti:8080)",
+      "Bash(kill 7710)",
+      "Bash(curl -s http://localhost:8080/api/roll -X POST -H \"Content-Type: application/json\" -d '{\"value\":3}')"
     ],
     "deny": [
       "Read(/home/hheiges/.ssh/**)",

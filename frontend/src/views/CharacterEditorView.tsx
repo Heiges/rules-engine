@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRuleset } from '../context/RulesetContext'
+import { rollDice } from '../api'
+import type { RollResult } from '../api'
 import './DetailView.css'
 import './CharacterEditorView.css'
 
@@ -20,6 +22,18 @@ export function CharacterEditorView() {
   const [skillLevels, setSkillLevels] = useState<Record<string, number>>(() =>
     Object.fromEntries(skills.map(s => [s.name, 0]))
   )
+  const [rollResults, setRollResults] = useState<Record<string, RollResult>>({})
+  const [rollingFor, setRollingFor] = useState<string | null>(null)
+
+  async function roll(attrName: string) {
+    setRollingFor(attrName)
+    try {
+      const result = await rollDice(attrValues[attrName] ?? valueRange.average)
+      setRollResults(prev => ({ ...prev, [attrName]: result }))
+    } finally {
+      setRollingFor(null)
+    }
+  }
 
   function setAttr(name: string, raw: string) {
     const val = parseInt(raw, 10)
@@ -54,27 +68,56 @@ export function CharacterEditorView() {
           <h2>Attribute</h2>
           <p className="char-range-hint">Wertebereich: {valueRange.min} bis {valueRange.max} (Ø {valueRange.average})</p>
           <div className="char-attr-grid">
-            {attributes.map(attr => (
-              <div key={attr.name} className="char-attr-row">
-                <span className="char-attr-name">{attr.name}</span>
-                <input
-                  type="range"
-                  className="char-slider"
-                  min={valueRange.min}
-                  max={valueRange.max}
-                  value={attrValues[attr.name] ?? valueRange.average}
-                  onChange={e => setAttr(attr.name, e.target.value)}
-                />
-                <input
-                  type="number"
-                  className="char-value-input"
-                  min={valueRange.min}
-                  max={valueRange.max}
-                  value={attrValues[attr.name] ?? valueRange.average}
-                  onChange={e => setAttr(attr.name, e.target.value)}
-                />
-              </div>
-            ))}
+            {attributes.map(attr => {
+              const result = rollResults[attr.name]
+              return (
+                <div key={attr.name} className="char-attr-row">
+                  <span className="char-attr-name">{attr.name}</span>
+                  <input
+                    type="range"
+                    className="char-slider"
+                    min={valueRange.min}
+                    max={valueRange.max}
+                    value={attrValues[attr.name] ?? valueRange.average}
+                    onChange={e => setAttr(attr.name, e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    className="char-value-input"
+                    min={valueRange.min}
+                    max={valueRange.max}
+                    value={attrValues[attr.name] ?? valueRange.average}
+                    onChange={e => setAttr(attr.name, e.target.value)}
+                  />
+                  <button
+                    className="char-roll-btn"
+                    onClick={() => roll(attr.name)}
+                    disabled={rollingFor === attr.name}
+                  >
+                    {rollingFor === attr.name ? '…' : 'Würfeln'}
+                  </button>
+                  {result && (
+                    <span className="char-roll-result">
+                      <span className="char-dice">
+                        {result.dice.map((d, i) => (
+                          <span
+                            key={i}
+                            className={`char-die${result.success && d === result.paschValue ? ' char-die--pasch' : ''}`}
+                          >
+                            {d}
+                          </span>
+                        ))}
+                      </span>
+                      <span className={`char-outcome char-outcome--${result.success ? 'success' : 'failure'}`}>
+                        {result.success
+                          ? `Erfolg (${result.paschCount}× ${result.paschValue})`
+                          : 'Misserfolg'}
+                      </span>
+                    </span>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </div>
       )}
