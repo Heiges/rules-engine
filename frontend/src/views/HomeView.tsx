@@ -18,7 +18,7 @@ const XML_SAVE_OPTS: SaveFilePickerOptions = {
 
 export function HomeView() {
   const navigate = useNavigate()
-  const { setCurrentRuleset, setRulesetData, setFileHandle } = useRuleset()
+  const { currentRuleset, setCurrentRuleset, setRulesetData, setFileHandle } = useRuleset()
   const [error, setError] = useState<string | null>(null)
 
   async function handleLoad() {
@@ -113,6 +113,14 @@ export function HomeView() {
           description="XML-Datei öffnen und bearbeiten"
           onClick={handleLoad}
         />
+        {currentRuleset && (
+          <Tile
+            id="edit-ruleset"
+            name={`Regelwerk ${currentRuleset} bearbeiten`}
+            description="Das Regelwerk bearbeiten."
+            onClick={() => navigate('/edit-ruleset')}
+          />
+        )}
       </div>
     </div>
   )

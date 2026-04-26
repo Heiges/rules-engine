@@ -8,7 +8,7 @@ Sobald ein Regelwerk geladen ist, erscheint auf der Startseite eine dritte Kache
 
 - Die Kachel erscheint nur, wenn `currentRuleset !== null` (Regelwerk geladen).
 - Kachel-Name: `Regelwerk <Name> bearbeiten` — der Dateiname ohne `.xml`-Endung (Groß-/Kleinschreibung egal).
-- Kachel-Beschreibung: `Bearbeite das aktuell geladene Regelwerk` (statisch).
+- Kachel-Beschreibung: `Das Regelwerk bearbeiten.` (statisch).
 - Die Kachel-ID ist `edit-ruleset`; sie navigiert via explizitem `onClick` zu `/edit-ruleset` (nicht über den Standard-Tile-Mechanismus).
 - Die zwei Basiskacheln („Neues Regelwerk", „Regelwerk laden") sind immer sichtbar und bleiben unverändert.
 
