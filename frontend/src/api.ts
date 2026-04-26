@@ -8,6 +8,7 @@ export interface Attribute {
   name: string
   description: string
   value: number
+  groupName?: string
 }
 
 export interface Skill {
@@ -44,17 +45,26 @@ interface RulesetApiDto {
 function fromApiDto(dto: RulesetApiDto): RulesetData {
   return {
     valueRange: dto.valueRange,
-    attributes: dto.attributeGroups.flatMap(g => g.attributes),
+    attributes: dto.attributeGroups.flatMap(g =>
+      g.attributes.map(a => ({ ...a, groupName: g.group }))
+    ),
     skills: dto.skills,
   }
 }
 
 function toApiDto(data: RulesetData): RulesetApiDto {
+  const groupMap = new Map<string, Attribute[]>()
+  for (const attr of data.attributes) {
+    const key = attr.groupName ?? 'Allgemein'
+    if (!groupMap.has(key)) groupMap.set(key, [])
+    groupMap.get(key)!.push(attr)
+  }
   return {
     valueRange: data.valueRange,
-    attributeGroups: data.attributes.length > 0
-      ? [{ group: 'Allgemein', attributes: data.attributes }]
-      : [],
+    attributeGroups: Array.from(groupMap.entries()).map(([group, attributes]) => ({
+      group,
+      attributes: attributes.map(({ groupName: _g, ...rest }) => rest),
+    })),
     skills: data.skills,
   }
 }

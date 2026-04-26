@@ -118,6 +118,7 @@ export function AttributeView() {
               <th className="attr-col-name attr-col-sortable" onClick={toggleSort}>
                 Name {sortDir === 'asc' ? '▲' : sortDir === 'desc' ? '▼' : '⇅'}
               </th>
+              <th className="attr-col-group">Gruppe</th>
               <th className="attr-col-actions">Aktionen</th>
             </tr>
           </thead>
@@ -128,6 +129,7 @@ export function AttributeView() {
                   <input type="checkbox" checked={selected.has(originalIndex)} onChange={() => toggleSelect(originalIndex)} />
                 </td>
                 <td className="attr-col-name">{attr.name}</td>
+                <td className="attr-col-group">{attr.groupName ?? <span className="attr-no-value">–</span>}</td>
                 <td className="attr-col-actions">
                   <button className="attr-action-link" onClick={() => navigate(`/tile/attributes/${originalIndex}`)}>Anzeigen</button>
                   <button className="attr-action-link" onClick={() => navigate(`/tile/attributes/${originalIndex}`)}>Bearbeiten</button>

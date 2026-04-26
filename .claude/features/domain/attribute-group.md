@@ -35,6 +35,9 @@ Attribute eines Regelwerks können thematisch zusammengefasst werden (z. B. „K
 | API-DTO `AttributeGroupApiDto` | `api/src/main/java/de/heiges/rulesengine/api/dto/AttributeGroupApiDto.java` |
 | API-DTO `RulesetApiDto` (angepasst) | `api/src/main/java/de/heiges/rulesengine/api/dto/RulesetApiDto.java` |
 | REST-Controller `RulesetController` (angepasst) | `api/src/main/java/de/heiges/rulesengine/api/controller/RulesetController.java` |
+| Frontend `api.ts` (angepasst) | `frontend/src/api.ts` — `Attribute` hat `groupName?: string`; `fromApiDto` befüllt es; `toApiDto` gruppiert nach `groupName` |
+| Frontend `AttributeView.tsx` (angepasst) | `frontend/src/views/AttributeView.tsx` — Spalte „Gruppe" in der Attributtabelle |
+| Frontend `AttributeView.css` (angepasst) | `frontend/src/views/AttributeView.css` — `.attr-col-group` |
 
 ### XML-Format (nach der Änderung)
 
