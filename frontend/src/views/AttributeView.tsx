@@ -70,6 +70,19 @@ export function AttributeView() {
     persist(updated)
   }
 
+  function groupSelected() {
+    const groupName = window.prompt('Gruppenname:')
+    if (groupName === null) return
+    const trimmed = groupName.trim()
+    if (!trimmed) return
+    const updated = attrs.map((attr, i) =>
+      selected.has(i) ? { ...attr, groupName: trimmed } : attr
+    )
+    setAttrs(updated)
+    setSelected(new Set())
+    persist(updated)
+  }
+
   const [sortDir, setSortDir] = useState<'asc' | 'desc' | null>(null)
 
   function toggleSort() {
@@ -93,9 +106,14 @@ export function AttributeView() {
         <h1>Attribute</h1>
         <div className="attr-header-actions">
           {selected.size > 0 && (
-            <button className="attr-delete-selected-btn" onClick={deleteSelected}>
-              {selected.size} löschen
-            </button>
+            <>
+              <button className="attr-group-selected-btn" onClick={groupSelected}>
+                {selected.size} gruppieren
+              </button>
+              <button className="attr-delete-selected-btn" onClick={deleteSelected}>
+                {selected.size} löschen
+              </button>
+            </>
           )}
           <button className="attr-new-btn" onClick={() => navigate('/tile/attributes/neu')}>
             + Neues Attribut
