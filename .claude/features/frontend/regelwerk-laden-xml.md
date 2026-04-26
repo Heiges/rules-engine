@@ -2,30 +2,31 @@
 
 ## Ziel
 
-Ermöglicht dem Anwender, ein bestehendes Regelwerk als XML-Datei aus dem Dateisystem zu wählen. Nach der Auswahl wird der Dateiname in der Statuszeile angezeigt, sodass klar ist, welches Regelwerk aktiv ist.
+Ermöglicht dem Anwender, ein bestehendes Regelwerk als XML-Datei aus dem Dateisystem zu wählen. Nach der Auswahl ist das Regelwerk im Context aktiv und kann direkt bearbeitet und gespeichert werden.
 
 ## Anforderungen
 
-- Klick auf die Kachel „Regelwerk laden" öffnet den nativen Dateiauswahldialog des Browsers
-- Nur Dateien mit der Endung `.xml` sind auswählbar (`accept=".xml"`)
-- Nach erfolgreicher Auswahl wird der Dateiname (nicht der vollständige Pfad) als `currentRuleset` im globalen Context gesetzt
-- Die Statuszeile zeigt daraufhin `Aktuelles Regelwerk: <dateiname>`
-- Es findet keine Validierung des XML-Inhalts statt — wenn die Datei kein gültiges Regelwerk enthält, schlägt das spätere Laden einfach fehl
-- Nach der Auswahl wird `e.target.value` zurückgesetzt, damit dieselbe Datei erneut auswählbar ist
-- Die Kachel navigiert nicht zur DetailView; der Dateidialog ersetzt diese Aktion vollständig
+- Klick auf die Kachel „Regelwerk laden" öffnet den nativen Dateiauswahldialog
+- Nur Dateien mit der Endung `.xml` sind auswählbar
+- Nach erfolgreicher Auswahl wird der Dateiname als `currentRuleset` und der Inhalt als `xmlContent` im Context gesetzt
+- Wenn der Browser die File System Access API unterstützt (`showOpenFilePicker`): Das `FileSystemFileHandle` wird als `fileHandle` im Context gesetzt, so dass spätere Speicher-Operationen direkt in die Originaldatei schreiben können
+- Wenn der Browser `showOpenFilePicker` nicht unterstützt (Firefox, Safari): Fallback auf `<input type="file">`; `fileHandle` bleibt null; Änderungen können nur per Download gespeichert werden
+- Die Statuszeile zeigt `Aktuelles Regelwerk: <dateiname>`
+- Es findet keine Validierung des XML-Inhalts statt
 
 ## Entscheidungen
 
-- **Verstecktes `<input type="file">`**: Nativer Dateidialog ohne eigene UI-Komponente; `ref.click()` triggert ihn programmatisch aus der Kachel heraus. Einfachste browserkompatible Lösung.
-- **`onClick`-Prop am `Tile`**: Statt einer separaten Komponente bekommt `Tile` ein optionales `onClick`-Prop. Ist es gesetzt, ersetzt es die Navigation (`onClick ?? navigate`). Kein Breaking Change für bestehende Kacheln.
-- **Nur Dateiname speichern, kein Inhalt**: Für die Statuszeile reicht der Name. Die eigentliche Deserialisierung des XML findet zu einem späteren Zeitpunkt statt.
-- **Keine Fehlerbehandlung**: Explizit ausgelassen — zu früh für Error-States, da der Lade-Flow noch nicht vollständig ist.
+- **`showOpenFilePicker` bevorzugt**: Liefert ein schreibbares `FileSystemFileHandle`, das direktes Zurückschreiben in die Originaldatei erlaubt — ohne Download-Umweg. Fallback auf `<input type="file">` für Browser ohne Unterstützung.
+- **`fileHandle` im Context**: Wird einmalig beim Laden gesetzt und von allen Views (WerteView, AttributeView) zum Schreiben genutzt. Kein erneuter Dateidialog beim Speichern nötig.
+- **Verstecktes `<input type="file">` als Fallback**: Für Browser ohne File System Access API; `ref.click()` triggert ihn aus der Kachel. `fileHandle` wird dabei nicht gesetzt.
+- **Keine Validierung des XML-Inhalts**: Zu früh für Error-States; schlägt das spätere Parsen fehl, zeigen die Views entsprechende Fehlerzustände.
 
 ## Implementierung
 
 | Artefakt | Pfad |
 |---|---|
-| Kachel-Übersicht (Dateidialog-Logik) | `frontend/src/views/HomeView.tsx` |
+| Laden-Logik (`handleLoadRuleset`, Fallback `handleFileChange`) | `frontend/src/views/HomeView.tsx` |
+| TypeScript-Deklaration für `showOpenFilePicker` | `frontend/src/file-system-access.d.ts` |
 | Kachel-Komponente (optionaler `onClick`) | `frontend/src/components/Tile.tsx` |
 | Globaler Regelwerk-Context | `frontend/src/context/RulesetContext.tsx` |
 | Statuszeile | `frontend/src/components/StatusBar.tsx` |
@@ -33,15 +34,16 @@ Ermöglicht dem Anwender, ein bestehendes Regelwerk als XML-Datei aus dem Dateis
 ## Rekonstruktion
 
 ```
-Wenn der Anwender auf die Kachel „Regelwerk laden" klickt, soll ein nativer Dateiauswahldialog
-öffnen (nur .xml). Nach Auswahl wird der Dateiname in der Statuszeile angezeigt.
-
-Umsetzung:
-- Tile-Komponente bekommt optionales onClick-Prop; wenn gesetzt, ersetzt es navigate().
-- HomeView: useRef auf verstecktes <input type="file" accept=".xml">, onClick der load-ruleset-Kachel
-  ruft fileInputRef.current?.click() auf.
-- onChange des Inputs: setCurrentRuleset(file.name), danach e.target.value = '' zurücksetzen.
-- Keine Validierung des XML-Inhalts.
+Wenn der Anwender auf die Kachel „Regelwerk laden" klickt:
+1. Falls showOpenFilePicker verfügbar:
+   - showOpenFilePicker({ types: [{ accept: { 'application/xml': ['.xml'] } }] })
+   - handle.getFile() → text lesen
+   - setFileHandle(handle), setXmlContent(text), setCurrentRuleset(file.name)
+   - AbortError ignorieren, andere Fehler als alert anzeigen
+2. Fallback (kein showOpenFilePicker):
+   - Verstecktes <input type="file" accept=".xml"> per ref.click() triggern
+   - onChange: file.text() → setXmlContent(text), setCurrentRuleset(file.name)
+   - fileHandle bleibt null → nur Download-Speicherung möglich
 ```
 
-Kontext: `RulesetContext` (`frontend/src/context/RulesetContext.tsx`) stellt `currentRuleset` und `setCurrentRuleset` bereit. `StatusBar` liest `currentRuleset` und zeigt es an. `Tile` nutzt bereits `useNavigate`; das neue `onClick`-Prop überschreibt nur die Navigationslogik.
+Kontext: `RulesetContext` stellt `currentRuleset`, `setCurrentRuleset`, `fileHandle`, `setFileHandle`, `xmlContent`, `setXmlContent` bereit. TypeScript-Deklaration für `showOpenFilePicker` und `showSaveFilePicker` liegt in `frontend/src/file-system-access.d.ts`.

@@ -17,6 +17,7 @@ Grundgerüst der React-Anwendung: Entry Point, Routing, globales Theming. Gibt d
 - React Router statt Next.js o. ä.: keine Server-Komponenten nötig, reine Client-App
 - CSS Custom Properties statt Styling-Library: kein Framework-Lock-in, vollständige Kontrolle über Designtoken
 - `prefers-color-scheme` statt manuellem Toggle: reduziert Komplexität, respektiert Systemeinstellung
+- **`index.css` muss zwingend in `main.tsx` importiert werden** — ohne diesen Import sind alle CSS-Variablen (`--accent`, `--bg`, `--text`, etc.) undefiniert, was `background: var(--accent)` auf `transparent` fallen lässt und Buttons unsichtbar macht. CSS-Nesting (`&:hover`) in komponentenspezifischen Dateien ersetzt durch klassische Selektoren (`.klasse:hover`) für breitere Browser-Kompatibilität.
 
 ## Implementierung
 

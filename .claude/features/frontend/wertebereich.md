@@ -9,19 +9,23 @@ Der Nutzer kann unter `/tile/werte` den numerischen Wertebereich eines Regelwerk
 - Route: `/tile/werte` (spezifische Route vor dem generischen `/tile/:id`, damit `DetailView` nicht greift).
 - Drei bearbeitbare Ganzzahl-Felder: **Unterster Wert** (`min`), **Durchschnittswert** (`average`), **Oberster Wert** (`max`).
 - Invariante: `min ≤ average ≤ max`. Bei Verletzung wird eine Fehlermeldung angezeigt und der Speichern-Button deaktiviert.
-- Speichern erfolgt explizit per Button (kein Auto-Persist). Nach erfolgreichem Speichern zeigt der Button kurz „✓ Gespeichert" (1800 ms), danach wieder „Speichern".
+- Speichern erfolgt explizit per Button. Nach erfolgreichem Speichern zeigt der Button kurz „✓ Gespeichert" (1800 ms), danach wieder „Speichern".
 - Kein Regelwerk geladen (`xmlContent === null`): Speichern-Button ist deaktiviert.
 - Standardwerte wenn kein `<wertebereich>`-Element in der XML vorhanden: `min=-10`, `average=0`, `max=10`.
 - Das `<wertebereich>`-Element wird als erstes Kind von `<ruleset>` eingefügt, falls noch nicht vorhanden.
 - Zurück-Button navigiert zu `/edit-ruleset`.
-- Änderungen werden in `xmlContent` (Context) und — sofern `fileHandle` vorhanden — in die Datei geschrieben.
+- Änderungen werden in `xmlContent` (Context) und — sofern `fileHandle` vorhanden — direkt in die Datei geschrieben.
+- Ist kein `fileHandle` vorhanden (Browser ohne File System Access API), wird die geänderte XML-Datei als Download angeboten.
+- Bei Schreibfehlern (z. B. Zugriffsfehler) wird eine Fehlermeldung unter dem Formular angezeigt.
 - Die Kachel „Werte" ist die erste Kachel in der `EditRulesetView`.
 
 ## Entscheidungen
 
-- **Expliziter Speichern-Button statt Auto-Persist**: Bei Zahlenfeldern ist Auto-Persist auf jeden Keystroke störend, da Zwischenzustände (z. B. `-` beim Eintippen von `-5`) regelmäßig ungültig sind. Ein Button macht den Speicherzeitpunkt explizit.
-- **XML-Struktur als Attribut-Node**: `<wertebereich min="-10" max="10" average="0"/>` statt separater Kind-Elemente — kompakt und konsistent mit der bestehenden XML-Struktur (`<attribute name="X" value="0"/>`).
-- **DOMParser + XMLSerializer**: Konsistent mit dem Muster aus `AttributeView` — der restliche XML-Inhalt (attributeSet, skills) bleibt unberührt.
+- **Expliziter Speichern-Button statt Auto-Persist**: Bei Zahlenfeldern ist Auto-Persist auf jeden Keystroke störend, da Zwischenzustände (z. B. `-` beim Eintippen von `-5`) regelmäßig ungültig sind.
+- **XML-Struktur als Attribut-Node**: `<wertebereich min="-10" max="10" average="0"/>` statt separater Kind-Elemente — kompakt und konsistent mit der bestehenden XML-Struktur.
+- **`getElementsByTagName` statt `querySelector`**: Nach `XMLSerializer.serializeToString` können Browser Namespace-Deklarationen (`xmlns=""`) hinzufügen, die `querySelector` in XML-Dokumenten unzuverlässig machen. `getElementsByTagName` matcht immer per Local Name, unabhängig vom Namespace.
+- **Download-Fallback**: Wenn `fileHandle` null ist (Browser ohne File System Access API, z. B. Firefox), wird `<a download>` genutzt. Der Nutzer muss die Datei manuell ersetzen.
+- **Fehleranzeige statt stiller Fehler**: `createWritable()` kann fehlschlagen (Berechtigungen, gesperrte Datei). Der Fehler wird als roter Text unterhalb des Formulars angezeigt; `setSaved(true)` wird in diesem Fall nicht aufgerufen.
 - **Kein Domänenobjekt in Java**: Der Wertebereich existiert nur im Frontend-XML. Ein Java-Pendant im `coreElements`-Modul ist noch nicht vorgesehen.
 
 ## Implementierung
@@ -29,10 +33,10 @@ Der Nutzer kann unter `/tile/werte` den numerischen Wertebereich eines Regelwerk
 | Artefakt | Pfad |
 |---|---|
 | View | `frontend/src/views/WerteView.tsx` |
-| Styles | `frontend/src/views/WerteView.css` |
-| Routing (Route `/tile/werte` ergänzt) | `frontend/src/App.tsx` |
+| Styles (kein CSS-Nesting) | `frontend/src/views/WerteView.css` |
+| Routing (Route `/tile/werte` vor `/tile/:id`) | `frontend/src/App.tsx` |
 | Kachel in EditRulesetView (erste Position) | `frontend/src/views/EditRulesetView.tsx` |
-| Context (unverändert, liefert `xmlContent`, `setXmlContent`, `fileHandle`) | `frontend/src/context/RulesetContext.tsx` |
+| Context (`xmlContent`, `setXmlContent`, `fileHandle`, `currentRuleset`) | `frontend/src/context/RulesetContext.tsx` |
 
 ## Rekonstruktion
 
@@ -41,13 +45,16 @@ Erstelle eine View unter /tile/werte für den Wertebereich eines Regelwerks:
 - Drei Zahlenfelder: "Unterster Wert" (min), "Durchschnittswert" (average), "Oberster Wert" (max)
 - Validierung: min ≤ average ≤ max; bei Verletzung Fehlermeldung + Speichern deaktiviert
 - Expliziter Speichern-Button; nach Speichern kurz "✓ Gespeichert" anzeigen (1800 ms)
-- Werte aus xmlContent lesen (<wertebereich min="-10" max="10" average="0"/>);
+- Werte aus xmlContent lesen via getElementsByTagName('wertebereich')[0];
   Fallback-Defaults: min=-10, average=0, max=10
 - Speichern: xmlContent im Context aktualisieren + via fileHandle in Datei schreiben
+  (try/catch um createWritable(); Fehler als roten Text anzeigen)
+  Falls kein fileHandle: Download-Fallback via <a download>
 - <wertebereich>-Element als erstes Kind von <ruleset> einfügen falls nicht vorhanden
 - Zurück-Button navigiert zu /edit-ruleset
 - In EditRulesetView eine Kachel "Werte" / "Bearbeite den Wertebereich" als erste Kachel ergänzen
 - Route /tile/werte vor /tile/:id in App.tsx registrieren
+- Kein CSS-Nesting verwenden (statt &:hover → .klasse:hover als eigene Regel)
 ```
 
-Kontext: `RulesetContext` (`frontend/src/context/RulesetContext.tsx`) stellt `xmlContent` (XML-String), `setXmlContent` und `fileHandle` bereit. XML-Wurzelstruktur: `<ruleset><wertebereich .../><attributeSet>…</attributeSet><skills>…</skills></ruleset>`. Die Route muss vor `/tile/:id` stehen, sonst greift der generische `DetailView`.
+Kontext: `RulesetContext` stellt `xmlContent`, `setXmlContent`, `fileHandle` und `currentRuleset` bereit. XML-Wurzelstruktur: `<ruleset><wertebereich .../><attributeSet>…</attributeSet><skills>…</skills></ruleset>`. Die Route muss vor `/tile/:id` stehen, sonst greift der generische `DetailView`. `getElementsByTagName` ist in XML-Dokumenten zuverlässiger als `querySelector` nach XMLSerializer-Roundtrip.
