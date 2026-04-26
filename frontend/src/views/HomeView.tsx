@@ -121,6 +121,14 @@ export function HomeView() {
             onClick={() => navigate('/edit-ruleset')}
           />
         )}
+        {currentRuleset && (
+          <Tile
+            id="character-editor"
+            name="Charactereditor"
+            description="Erstellt einen Character."
+            onClick={() => navigate('/character-editor')}
+          />
+        )}
       </div>
     </div>
   )
