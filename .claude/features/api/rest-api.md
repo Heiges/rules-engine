@@ -10,6 +10,7 @@ Stellt eine REST API bereit, über die das React-Frontend mit der Java-Persisten
 - `GET  /api/rulesets/{name}` — Regelwerk laden; Antwort als JSON (`RulesetApiDto`)
 - `PUT  /api/rulesets/{name}` — Regelwerk speichern/aktualisieren; Body: JSON (`RulesetApiDto`); Antwort: 204 No Content
 - `POST /api/rulesets/{name}` — Neues leeres Regelwerk anlegen; Antwort: 201 Created; 409 wenn Name bereits vergeben
+- `POST /api/roll` — Würfelwurf; Body: `{ "value": N }`; Antwort: `{ "dice": [...], "success": bool, "paschValue": N|null, "paschCount": N|null }`
 - CORS: erlaubt Anfragen von `http://localhost:5173` (Vite Dev-Server)
 - Fehler werden als HTTP-Statuscodes zurückgegeben (404, 400, 409, 500)
 
@@ -30,7 +31,7 @@ Stellt eine REST API bereit, über die das React-Frontend mit der Java-Persisten
 ## Entscheidungen
 
 - **Spring Boot 3.2.x** als Framework — Auto-Konfiguration, Jackson für JSON, kein Boilerplate nötig.
-- **`coreElements` und `persistence` als Maven-Abhängigkeiten** — die bestehenden Module bleiben unverändert; der API-Layer übersetzt nur zwischen JSON und Domänenobjekten.
+- **`coreElements`, `persistence` und `coreMechanics` als Maven-Abhängigkeiten** — die bestehenden Module bleiben unverändert; der API-Layer übersetzt nur zwischen JSON und Domänenobjekten.
 - **Eigene API-DTOs (`api.dto.*`)** — entkoppelt das JSON-Format von den JAXB-Persistenz-DTOs. Änderungen am XML-Format erfordern keine Anpassung der API-Schnittstelle.
 - **`DataDirectory` aus `persistence`** — Speicherort `~/.rules-engine/data/` bleibt unverändert; der Controller greift direkt darauf zu.
 - **Vite-Proxy statt produktiver CORS-Konfiguration** — im Dev-Server leitet `/api` an `localhost:8080` weiter; CORS-Header werden nur für den direkten Zugriff ohne Proxy benötigt.
@@ -42,7 +43,10 @@ Stellt eine REST API bereit, über die das React-Frontend mit der Java-Persisten
 |---|---|
 | Maven-Modul | `api/pom.xml` |
 | Startklasse + CORS-Bean | `api/src/main/java/de/heiges/rulesengine/api/ApiApplication.java` |
-| REST-Controller | `api/src/main/java/de/heiges/rulesengine/api/controller/RulesetController.java` |
+| REST-Controller Regelwerk | `api/src/main/java/de/heiges/rulesengine/api/controller/RulesetController.java` |
+| REST-Controller Würfeln | `api/src/main/java/de/heiges/rulesengine/api/controller/RollController.java` |
+| Request-DTO Würfeln | `api/src/main/java/de/heiges/rulesengine/api/dto/RollRequestDto.java` |
+| Response-DTO Würfeln | `api/src/main/java/de/heiges/rulesengine/api/dto/RollResultApiDto.java` |
 | API-DTO Regelwerk | `api/src/main/java/de/heiges/rulesengine/api/dto/RulesetApiDto.java` |
 | API-DTO Wertebereich | `api/src/main/java/de/heiges/rulesengine/api/dto/ValueRangeApiDto.java` |
 | API-DTO Attribut | `api/src/main/java/de/heiges/rulesengine/api/dto/AttributeApiDto.java` |
@@ -68,9 +72,10 @@ JAXB-Runtime muss explizit als Dependency deklariert werden (Spring Boot managed
 ## Starten
 
 ```bash
-# Voraussetzung: coreElements und persistence sind ins lokale Maven-Repo installiert
-cd coreElements && mvn install -q
-cd persistence  && mvn install -q
+# Voraussetzung: alle Abhängigkeiten ins lokale Maven-Repo installieren
+cd coreElements  && mvn install -q
+cd coreMechanics && mvn install -q
+cd persistence   && mvn install -q
 
 # API starten
 cd api && mvn spring-boot:run

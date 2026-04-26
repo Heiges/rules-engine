@@ -2,7 +2,7 @@
 
 ## Ziel
 
-Erlaubt es, auf Basis eines geladenen Regelwerks einen Charakter zu erstellen: Name, Attributwerte (innerhalb des definierten Wertebereichs) und Fertigkeitslevel werden interaktiv eingestellt. Das Feature ist rein transient — kein Speichern, keine API-Anbindung.
+Erlaubt es, auf Basis eines geladenen Regelwerks einen Charakter zu erstellen: Name, Attributwerte (innerhalb des definierten Wertebereichs) und Fertigkeitslevel werden interaktiv eingestellt. Pro Attribut kann gewürfelt werden (`POST /api/roll`). Das Feature ist rein transient — kein Speichern des Charakters.
 
 ## Anforderungen
 
