@@ -2,7 +2,7 @@
 
 ## Ziel
 
-Der Nutzer kann unter `/tile/attributes` die Attribute eines Regelwerks vollständig verwalten: bestehende umbenennen, löschen und neue anlegen. Jede Änderung wird sofort in den `RulesetContext` zurückgeschrieben und — sofern ein `fileHandle` vorhanden ist — automatisch in die XML-Datei persistiert.
+Der Nutzer kann unter `/tile/attributes` die Attribute eines Regelwerks vollständig verwalten: bestehende umbenennen, löschen und neue anlegen. Jede Änderung wird sofort in den `RulesetContext` zurückgeschrieben und — sofern ein `fileHandle` vorhanden ist — direkt in die XML-Datei persistiert. Ohne `fileHandle` wird die geänderte XML als Download angeboten. Schreibfehler werden als roter Fehlertext angezeigt.
 
 ## Anforderungen
 
