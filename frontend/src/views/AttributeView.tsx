@@ -1,14 +1,14 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRuleset } from '../context/RulesetContext'
-import { saveRuleset } from '../api'
+import { exportRuleset, saveRuleset } from '../api'
 import type { Attribute } from '../api'
 import './DetailView.css'
 import './AttributeView.css'
 
 export function AttributeView() {
   const navigate = useNavigate()
-  const { rulesetData, setRulesetData, currentRuleset } = useRuleset()
+  const { rulesetData, setRulesetData, currentRuleset, fileHandle } = useRuleset()
   const [attrs, setAttrs] = useState<Attribute[]>(() => rulesetData?.attributes ?? [])
   const [editIdx, setEditIdx] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
@@ -17,12 +17,19 @@ export function AttributeView() {
   const skipCommit = useRef(false)
 
   async function persist(updated: Attribute[]) {
-    if (!rulesetData || !currentRuleset) return
+    if (!rulesetData) return
     const updatedData = { ...rulesetData, attributes: updated }
     setRulesetData(updatedData)
     setSaveError(null)
     try {
-      await saveRuleset(currentRuleset, updatedData)
+      if (fileHandle) {
+        const xml = await exportRuleset(updatedData)
+        const writable = await fileHandle.createWritable()
+        await writable.write(xml)
+        await writable.close()
+      } else if (currentRuleset) {
+        await saveRuleset(currentRuleset, updatedData)
+      }
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : String(err))
     }

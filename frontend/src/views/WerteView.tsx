@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRuleset } from '../context/RulesetContext'
-import { saveRuleset } from '../api'
+import { exportRuleset, saveRuleset } from '../api'
 import type { ValueRange } from '../api'
 import './DetailView.css'
 import './WerteView.css'
 
 export function WerteView() {
   const navigate = useNavigate()
-  const { rulesetData, setRulesetData, currentRuleset } = useRuleset()
+  const { rulesetData, setRulesetData, currentRuleset, fileHandle } = useRuleset()
   const [werte, setWerte] = useState<ValueRange>(() => rulesetData?.valueRange ?? { min: -10, average: 0, max: 10 })
   const [saved, setSaved] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -16,12 +16,19 @@ export function WerteView() {
   const isValid = werte.min <= werte.average && werte.average <= werte.max
 
   async function save() {
-    if (!rulesetData || !currentRuleset || !isValid) return
+    if (!rulesetData || !isValid) return
     const updatedData = { ...rulesetData, valueRange: werte }
     setRulesetData(updatedData)
     setSaveError(null)
     try {
-      await saveRuleset(currentRuleset, updatedData)
+      if (fileHandle) {
+        const xml = await exportRuleset(updatedData)
+        const writable = await fileHandle.createWritable()
+        await writable.write(xml)
+        await writable.close()
+      } else if (currentRuleset) {
+        await saveRuleset(currentRuleset, updatedData)
+      }
       setSaved(true)
       setTimeout(() => setSaved(false), 1800)
     } catch (err) {
@@ -84,7 +91,7 @@ export function WerteView() {
         <button
           className="werte-save-btn"
           onClick={save}
-          disabled={!isValid || !rulesetData || !currentRuleset}
+          disabled={!isValid || !rulesetData}
         >
           {saved ? '✓ Gespeichert' : 'Speichern'}
         </button>
