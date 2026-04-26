@@ -13,7 +13,14 @@
       "Bash(javap *)",
       "Bash(node_modules/.bin/tsc --version)",
       "Bash(node_modules/.bin/tsc --noEmit)",
-      "Bash(xargs cat *)"
+      "Bash(xargs cat *)",
+      "Read(//proc/sys/kernel/**)",
+      "Bash(aa-status)",
+      "Bash(snap list *)",
+      "Read(//usr/share/apparmor/extra-profiles/**)",
+      "Read(//etc/apparmor.d/**)",
+      "Read(//usr/share/apparmor/**)",
+      "Bash(snap connections *)"
     ],
     "deny": [
       "Read(/home/hheiges/.ssh/**)",
