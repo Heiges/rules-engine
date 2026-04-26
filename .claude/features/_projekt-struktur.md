@@ -142,3 +142,4 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 - [Edit-Regelwerk-View](frontend/edit-ruleset-view.md) — Bearbeitungsansicht unter /edit-ruleset mit Attributanzahl aus rulesetData
 - [Attribute-View (CRUD)](frontend/attribute-view.md) — Liste, Umbenennen, Löschen, Anlegen von Attributen; persistiert via PUT /api/rulesets/{name}
 - [Wertebereich](frontend/wertebereich.md) — Bearbeiten von min, average, max; persistiert via PUT /api/rulesets/{name}
+- [Charactereditor](frontend/charactereditor.md) — Charakter auf Basis geladenen Regelwerks erstellen (Name, Attributwerte, Fertigkeitslevel); rein transient, kein Speichern
