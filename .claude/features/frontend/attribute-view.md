@@ -2,53 +2,65 @@
 
 ## Ziel
 
-Der Nutzer kann unter `/tile/attributes` die Attribute eines Regelwerks vollständig verwalten: bestehende umbenennen, löschen und neue anlegen. Jede Änderung wird sofort persistiert — zurück in die Originaldatei (via `fileHandle`) oder bei fehlendem Handle via API.
+Kompakte Tabellenübersicht aller Attribute eines Regelwerks unter `/tile/attributes`, ergänzt durch einen separaten Detail-View für Anlage und Bearbeitung. Jede Mutation wird sofort persistiert.
 
 ## Anforderungen
 
-- Route: `/tile/attributes` (spezifische Route vor dem generischen `/tile/:id`)
-- Liste aller Attribute aus `rulesetData.attributes` im Context
-- **Umbenennen**: Klick auf einen Namen aktiviert ein Inline-Input-Feld. Bestätigung per Enter oder Blur. Escape bricht ab (`skipCommit`-Ref). Leere Namen und Duplikate werden still verworfen.
-- **Löschen**: Sofort per ✕-Button; kein Bestätigungsdialog
-- **Neu anlegen**: Eingabefeld am Ende; Bestätigung per Button oder Enter. Button deaktiviert wenn Name leer oder bereits vorhanden. Neue Attribute: `description: ''`, `value: 0`
-- Anzahl der Attribute als Untertitel (`n Attribute`)
-- Leerzustand: „Noch keine Attribute vorhanden."
+- Route `/tile/attributes` (spezifisch, vor dem generischen `/tile/:id`)
+- Tabelle mit Spalten: Checkbox | Name (sortierbar) | Aktionen (Anzeigen, Bearbeiten, Löschen)
+- **Checkbox-Spalte**: Einzel-Auswahl pro Zeile; Kopfzeilen-Checkbox wählt alle aus / ab. Wenn ≥1 selektiert: Button „N löschen" für Massenlöschung erscheint im Header-Bereich
+- **Sortierung Name**: Klick auf Spaltenheader „Name" wechselt zyklisch ⇅ → ▲ (A–Z, `localeCompare 'de'`) → ▼ (Z–A) → ⇅. Original-Indizes bleiben erhalten, damit Aktions-Links nach dem Sortieren korrekt navigieren
+- **Aktionen pro Zeile**: Anzeigen / Bearbeiten (beide navigieren zu `/tile/attributes/:index`), Löschen (sofort, kein Dialog)
+- Button „+ Neues Attribut" oben rechts navigiert zu `/tile/attributes/neu`
+- Leerzustand: Hinweistext „Noch keine Attribute vorhanden."
+- Schreibfehler: roter Fehlertext unterhalb des Headers
 - Zurück-Button navigiert zu `/edit-ruleset`
-- Schreibfehler werden als roter Fehlertext angezeigt
+- **Detail-View** (`AttributeDetailView`): Formular mit Feldern Name, Beschreibung, Wert. Speichern prüft auf Duplikate (gleicher Name, anderer Index). Enter im Name-Feld löst Speichern aus. Nach Speichern: Rücknavigation zu `/tile/attributes`. Neue Attribute: `description: ''`, `value: 0` als Startwerte
+- Beide Views persistieren sofort: `fileHandle` vorhanden → `exportRuleset` → `fileHandle.createWritable()`; sonst `saveRuleset` → `PUT /api/rulesets/{name}`
 
 ## Entscheidungen
 
-- **Auto-Persist auf jede Mutation**: Löschen, Umbenennen, Hinzufügen rufen sofort `persist()`. Wenn `fileHandle` vorhanden: `exportRuleset` → `fileHandle.createWritable()` → Originaldatei. Fallback: `saveRuleset` → `PUT /api/rulesets/{name}`.
-- **Vollständiges `rulesetData` an `saveRuleset` übergeben**: Die API nimmt immer das komplette Regelwerk entgegen (`PUT`); der Controller ersetzt die Datei atomar. Partial-Update-Endpunkte wären Mehraufwand ohne Mehrwert.
-- **`skipCommit`-Ref für Escape**: `onBlur` feuert immer (auch nach Escape). Ein `useRef`-Flag verhindert, dass Escape einen ungewollten Commit auslöst.
-- **`key={i}` (Index)**: Bei kontrollierten Inputs ohne Reorder sind Index-Keys sicher und verhindern ungewollte Remounts beim Tippen.
-- **Kein Value-Editing**: Attributwerte werden bei der Charaktererstellung gesetzt; hier werden nur Namen verwaltet.
+- **Tabelle statt Inline-Edit-Liste**: Kompakter, übersichtlicher; Aktionen als Textlinks statt Icon-Buttons. Inline-Edit (`skipCommit`-Ref-Pattern) wurde durch den Detail-View ersetzt.
+- **Wrapper-Div für Tabellenrahmen**: `border-collapse: collapse` auf `<table>` verhindert, dass `border-radius` + `overflow: hidden` direkt am `<table>` funktioniert. Der `div.attr-table-wrapper` trägt Rahmen und Radius.
+- **`originalIndex` beim Sortieren mitführen**: Die Sortierung arbeitet auf einer abgeleiteten `rows`-Liste (`{ attr, originalIndex }`). Aktions-Links und Checkbox-Selection referenzieren immer den Original-Index im `attrs`-Array — verhindert falsche Navigation nach Sortierung.
+- **`text-align: left` auf `.detail-view`**: Der globale `#root`-Style setzt `text-align: center`; das wird in `DetailView.css` überschrieben, damit alle Detail-Views linksbündig sind.
+- **Index-basiertes Routing** (`/tile/attributes/:index`): Einfacher als Name-Encoding; stabil solange kein Reorder zwischen Navigation und Bearbeitung stattfindet.
+- **Kein separater Anzeigen-only-Modus**: Anzeigen und Bearbeiten zeigen denselben Detail-View. Ein Read-only-Modus kann später ergänzt werden.
 
 ## Implementierung
 
 | Artefakt | Pfad |
 |---|---|
-| View | `frontend/src/views/AttributeView.tsx` |
-| Styles | `frontend/src/views/AttributeView.css` |
-| Routing (Route `/tile/attributes` vor `/tile/:id`) | `frontend/src/App.tsx` |
+| Listen-View | `frontend/src/views/AttributeView.tsx` |
+| Detail-View (Anlage/Bearbeitung) | `frontend/src/views/AttributeDetailView.tsx` |
+| Styles (Liste + Formular) | `frontend/src/views/AttributeView.css` |
+| Globale `text-align: left`-Korrektur | `frontend/src/views/DetailView.css` |
+| Routing (Routen vor `/tile/:id`) | `frontend/src/App.tsx` |
 | API-Funktionen `exportRuleset`, `saveRuleset` | `frontend/src/api.ts` |
 | Context (`rulesetData`, `setRulesetData`, `currentRuleset`, `fileHandle`) | `frontend/src/context/RulesetContext.tsx` |
 
 ## Rekonstruktion
 
 ```
-AttributeView liest attrs aus rulesetData.attributes (Context-Initialwert).
-persist(updated: Attribute[]):
-  const updatedData = { ...rulesetData, attributes: updated }
-  setRulesetData(updatedData)
-  if (fileHandle):
-    xml = await exportRuleset(updatedData)
-    await fileHandle.createWritable() → write → close   // schreibt Originaldatei
-  else if (currentRuleset):
-    await saveRuleset(currentRuleset, updatedData)       // PUT /api/rulesets/{name}
-  bei Fehler: saveError-State setzen
+Erstelle zwei Views für Attribute-Verwaltung:
 
-Umbenennen: Inline-Input; skipCommit-Ref verhindert Blur-Commit nach Escape.
-Löschen: filter + persist.
-Hinzufügen: { name, description: '', value: 0 } + persist.
+1. AttributeView (/tile/attributes):
+   - Tabelle: Checkbox | Name (sortierbar ⇅/▲/▼ via localeCompare 'de') | Aktionen
+   - Sortierung: rows = attrs.map((attr, originalIndex) => ...).sort(...); Aktions-Links nutzen originalIndex
+   - Massenauswahl: Set<number> selected; Kopfzeilen-Checkbox; "N löschen"-Button wenn selected.size > 0
+   - Aktionen: Anzeigen + Bearbeiten → navigate(`/tile/attributes/${originalIndex}`); Löschen → sofort + persist
+   - Tabellenrahmen: div.attr-table-wrapper (border + border-radius + overflow:hidden); table selbst ohne border
+   - "Neues Attribut"-Button → navigate('/tile/attributes/neu')
+
+2. AttributeDetailView (/tile/attributes/neu und /tile/attributes/:index):
+   - useParams({ index }); isNew = index === 'neu'
+   - Felder: Name (input), Beschreibung (textarea), Wert (number input)
+   - save(): Duplikatprüfung (gleicher Name, anderer Index) → persist → navigate('/tile/attributes')
+   - persist(): identisch zu AttributeView (fileHandle oder saveRuleset)
+
+3. App.tsx: Route /tile/attributes/:index vor /tile/:id eintragen
+
+4. DetailView.css: text-align: left auf .detail-view (überschreibt #root text-align: center)
 ```
+
+Kontext: `Attribute`-Interface in `api.ts` hat `name: string`, `description: string`, `value: number`. Persistenz via `saveRuleset` (PUT) oder `exportRuleset` + `fileHandle`. `RulesetContext` liefert `rulesetData`, `setRulesetData`, `currentRuleset`, `fileHandle`.
