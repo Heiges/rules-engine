@@ -4,17 +4,11 @@ import { useRuleset } from '../context/RulesetContext'
 import './DetailView.css'
 import './HomeView.css'
 
-function countAttributes(xml: string | null): number {
-  if (!xml) return 0
-  const doc = new DOMParser().parseFromString(xml, 'application/xml')
-  return doc.querySelectorAll('attributeSet > attribute').length
-}
-
 export function EditRulesetView() {
   const navigate = useNavigate()
-  const { xmlContent, currentRuleset } = useRuleset()
-  const attributeCount = countAttributes(xmlContent)
-  const rulesetName = currentRuleset?.replace(/\.xml$/i, '') ?? ''
+  const { rulesetData, currentRuleset } = useRuleset()
+  const attributeCount = rulesetData?.attributes.length ?? 0
+  const rulesetName = currentRuleset ?? ''
 
   return (
     <div className="detail-view">

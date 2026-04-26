@@ -1,132 +1,118 @@
-import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Tile } from '../components/Tile'
 import { useRuleset } from '../context/RulesetContext'
+import { exportRuleset, importRuleset } from '../api'
+import type { RulesetData } from '../api'
+import { useState } from 'react'
 import './HomeView.css'
 
-const EMPTY_RULESET_XML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ruleset>
-    <attributeSet/>
-    <skills/>
-</ruleset>`
+const XML_PICKER_OPTS: OpenFilePickerOptions = {
+  types: [{ description: 'XML-Regelwerk', accept: { 'text/xml': ['.xml'] } }],
+  multiple: false,
+}
 
-const staticTiles = [
-  {
-    id: 'new-ruleset',
-    name: 'Neues Regelwerk',
-    description: 'Ein neues Regelwerk erstellen',
-  },
-  {
-    id: 'load-ruleset',
-    name: 'Regelwerk laden',
-    description: 'Ein bestehendes Regelwerk laden',
-  },
-]
+const XML_SAVE_OPTS: SaveFilePickerOptions = {
+  suggestedName: 'regelwerk.xml',
+  types: [{ description: 'XML-Regelwerk', accept: { 'text/xml': ['.xml'] } }],
+}
 
 export function HomeView() {
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
-  const { currentRuleset, setCurrentRuleset, setFileHandle, setXmlContent } = useRuleset()
+  const { setCurrentRuleset, setRulesetData, setFileHandle } = useRuleset()
+  const [error, setError] = useState<string | null>(null)
 
-  async function handleLoadRuleset() {
-    if ('showOpenFilePicker' in window) {
+  async function handleLoad() {
+    setError(null)
+    if (window.showOpenFilePicker) {
       try {
-        const [handle] = await window.showOpenFilePicker!({
-          types: [{ description: 'XML-Regelwerk', accept: { 'application/xml': ['.xml'] } }],
-          multiple: false,
-        })
+        const [handle] = await window.showOpenFilePicker(XML_PICKER_OPTS)
         const file = await handle.getFile()
-        const text = await file.text()
+        const xml = await file.text()
+        const data = await importRuleset(xml)
         setFileHandle(handle)
-        setXmlContent(text)
-        setCurrentRuleset(file.name)
-      } catch (err) {
-        if (err instanceof DOMException && err.name === 'AbortError') return
-        const msg = err instanceof Error ? err.message : String(err)
-        alert(`Fehler beim Laden des Regelwerks: ${msg}`)
+        setCurrentRuleset(handle.name.replace(/\.xml$/i, ''))
+        setRulesetData(data)
+        navigate('/edit-ruleset')
+      } catch (e) {
+        if (e instanceof DOMException && e.name === 'AbortError') return
+        setError(e instanceof Error ? e.message : String(e))
       }
     } else {
-      fileInputRef.current?.click()
+      const input = document.createElement('input')
+      input.type = 'file'
+      input.accept = '.xml,text/xml'
+      input.onchange = async () => {
+        const file = input.files?.[0]
+        if (!file) return
+        try {
+          const xml = await file.text()
+          const data = await importRuleset(xml)
+          setFileHandle(null)
+          setCurrentRuleset(file.name.replace(/\.xml$/i, ''))
+          setRulesetData(data)
+          navigate('/edit-ruleset')
+        } catch (e) {
+          setError(e instanceof Error ? e.message : String(e))
+        }
+      }
+      input.click()
     }
   }
 
-  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (file) {
-      const text = await file.text()
-      setXmlContent(text)
-      setCurrentRuleset(file.name)
-    }
-    e.target.value = ''
-  }
-
-  async function handleNewRuleset() {
-    if ('showSaveFilePicker' in window) {
+  async function handleNew() {
+    setError(null)
+    if (window.showSaveFilePicker) {
       try {
-        const handle = await window.showSaveFilePicker!({
-          suggestedName: 'regelwerk.xml',
-          types: [{ description: 'XML-Regelwerk', accept: { 'application/xml': ['.xml'] } }],
-        })
+        const handle = await window.showSaveFilePicker(XML_SAVE_OPTS)
+        const emptyData: RulesetData = {
+          valueRange: { min: -10, average: 0, max: 10 },
+          attributes: [],
+          skills: [],
+        }
+        const xml = await exportRuleset(emptyData)
         const writable = await handle.createWritable()
-        await writable.write(EMPTY_RULESET_XML)
+        await writable.write(xml)
         await writable.close()
         setFileHandle(handle)
-        setXmlContent(EMPTY_RULESET_XML)
-        setCurrentRuleset(handle.name)
-      } catch (err) {
-        if (err instanceof DOMException && err.name === 'AbortError') return
-        const msg = err instanceof Error ? err.message : String(err)
-        alert(`Fehler beim Erstellen des Regelwerks: ${msg}`)
+        setCurrentRuleset(handle.name.replace(/\.xml$/i, ''))
+        setRulesetData(emptyData)
+        navigate('/edit-ruleset')
+      } catch (e) {
+        if (e instanceof DOMException && e.name === 'AbortError') return
+        setError(e instanceof Error ? e.message : String(e))
       }
     } else {
-      const input = window.prompt('Name des neuen Regelwerks:', 'regelwerk')
-      if (!input) return
-      const filename = input.endsWith('.xml') ? input : `${input}.xml`
-      const blob = new Blob([EMPTY_RULESET_XML], { type: 'application/xml' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = filename
-      a.click()
-      URL.revokeObjectURL(url)
-      setXmlContent(EMPTY_RULESET_XML)
-      setCurrentRuleset(filename)
+      const name = window.prompt('Name des Regelwerks:', 'Neues Regelwerk')
+      if (!name) return
+      const emptyData: RulesetData = {
+        valueRange: { min: -10, average: 0, max: 10 },
+        attributes: [],
+        skills: [],
+      }
+      setFileHandle(null)
+      setCurrentRuleset(name)
+      setRulesetData(emptyData)
+      navigate('/edit-ruleset')
     }
   }
-
-  const rulesetDisplayName = currentRuleset?.replace(/\.xml$/i, '') ?? ''
-
-  const tiles = currentRuleset
-    ? [
-        ...staticTiles,
-        {
-          id: 'edit-ruleset',
-          name: `Regelwerk ${rulesetDisplayName} bearbeiten`,
-          description: 'Bearbeite das aktuell geladene Regelwerk',
-        },
-      ]
-    : staticTiles
 
   return (
     <div className="home-view">
       <h1>Rules Engine</h1>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".xml"
-        style={{ display: 'none' }}
-        onChange={handleFileChange}
-      />
+      {error && <p className="home-error">{error}</p>}
       <div className="tile-grid">
-        {tiles.map((tile) => {
-          if (tile.id === 'new-ruleset') {
-            return <Tile key={tile.id} {...tile} onClick={handleNewRuleset} />
-          }
-          if (tile.id === 'load-ruleset') {
-            return <Tile key={tile.id} {...tile} onClick={handleLoadRuleset} />
-          }
-          return <Tile key={tile.id} {...tile} onClick={() => navigate('/edit-ruleset')} />
-        })}
+        <Tile
+          id="new-ruleset"
+          name="Neues Regelwerk"
+          description="Ein neues Regelwerk erstellen und speichern"
+          onClick={handleNew}
+        />
+        <Tile
+          id="load-ruleset"
+          name="Regelwerk laden"
+          description="XML-Datei öffnen und bearbeiten"
+          onClick={handleLoad}
+        />
       </div>
     </div>
   )

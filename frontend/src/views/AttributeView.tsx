@@ -1,68 +1,30 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRuleset } from '../context/RulesetContext'
+import { saveRuleset } from '../api'
+import type { Attribute } from '../api'
 import './DetailView.css'
 import './AttributeView.css'
 
-interface Attr { name: string; value: number }
-
-function fromXml(xml: string | null): Attr[] {
-  if (!xml) return []
-  const doc = new DOMParser().parseFromString(xml, 'application/xml')
-  const set = doc.getElementsByTagName('attributeSet')[0]
-  if (!set) return []
-  return Array.from(set.getElementsByTagName('attribute')).map(el => ({
-    name: el.getAttribute('name') ?? '',
-    value: parseInt(el.getAttribute('value') ?? '0', 10),
-  }))
-}
-
-function toXml(base: string, attrs: Attr[]): string {
-  const doc = new DOMParser().parseFromString(base, 'application/xml')
-  const set = doc.getElementsByTagName('attributeSet')[0] ?? null
-  if (!set) return base
-  Array.from(set.getElementsByTagName('attribute')).forEach(el => el.remove())
-  attrs.forEach(({ name, value }) => {
-    const el = doc.createElement('attribute')
-    el.setAttribute('name', name)
-    el.setAttribute('value', String(value))
-    set.appendChild(el)
-  })
-  return new XMLSerializer().serializeToString(doc)
-}
-
 export function AttributeView() {
   const navigate = useNavigate()
-  const { xmlContent, setXmlContent, fileHandle, currentRuleset } = useRuleset()
-  const [attrs, setAttrs] = useState<Attr[]>(() => fromXml(xmlContent))
+  const { rulesetData, setRulesetData, currentRuleset } = useRuleset()
+  const [attrs, setAttrs] = useState<Attribute[]>(() => rulesetData?.attributes ?? [])
   const [editIdx, setEditIdx] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
   const [newName, setNewName] = useState('')
   const [saveError, setSaveError] = useState<string | null>(null)
   const skipCommit = useRef(false)
 
-  async function persist(updated: Attr[]) {
-    if (!xmlContent) return
-    const xml = toXml(xmlContent, updated)
-    setXmlContent(xml)
+  async function persist(updated: Attribute[]) {
+    if (!rulesetData || !currentRuleset) return
+    const updatedData = { ...rulesetData, attributes: updated }
+    setRulesetData(updatedData)
     setSaveError(null)
-    if (fileHandle) {
-      try {
-        const w = await fileHandle.createWritable()
-        await w.write(xml)
-        await w.close()
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err)
-        setSaveError(`Datei konnte nicht geschrieben werden: ${msg}`)
-      }
-    } else {
-      const blob = new Blob([xml], { type: 'application/xml' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = currentRuleset ?? 'regelwerk.xml'
-      a.click()
-      URL.revokeObjectURL(url)
+    try {
+      await saveRuleset(currentRuleset, updatedData)
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : String(err))
     }
   }
 
@@ -97,7 +59,7 @@ export function AttributeView() {
   function add() {
     const name = newName.trim()
     if (!name || attrs.some(a => a.name === name)) return
-    const updated = [...attrs, { name, value: 0 }]
+    const updated = [...attrs, { name, description: '', value: 0 }]
     setAttrs(updated)
     setNewName('')
     persist(updated)

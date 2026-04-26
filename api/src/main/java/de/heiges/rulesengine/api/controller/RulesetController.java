@@ -11,7 +11,6 @@ import de.heiges.rulesengine.coreelements.domain.model.Value;
 import de.heiges.rulesengine.coreelements.domain.model.ValueRange;
 import de.heiges.rulesengine.persistence.DataDirectory;
 import de.heiges.rulesengine.persistence.repository.LoadedRuleset;
-import de.heiges.rulesengine.persistence.repository.RulesetRepository;
 import de.heiges.rulesengine.persistence.xml.XmlRulesetRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,7 @@ import java.util.List;
 @RequestMapping("/api/rulesets")
 public class RulesetController {
 
-    private final RulesetRepository repository = new XmlRulesetRepository();
+    private final XmlRulesetRepository repository = new XmlRulesetRepository();
 
     @GetMapping
     public List<String> list() {
@@ -74,6 +73,24 @@ public class RulesetController {
             throw e;
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Regelwerk konnte nicht angelegt werden", e);
+        }
+    }
+
+    @PostMapping(value = "/import", consumes = "text/xml", produces = "application/json")
+    public RulesetApiDto importFromXml(@RequestBody String xml) {
+        try {
+            return toApiDto(repository.fromXml(xml));
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ungültiges XML: " + e.getMessage(), e);
+        }
+    }
+
+    @PostMapping(value = "/export", consumes = "application/json", produces = "text/xml;charset=UTF-8")
+    public String exportToXml(@RequestBody RulesetApiDto dto) {
+        try {
+            return repository.toXml(toDomain(dto), toAttributeSet(dto), toSkills(dto));
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "XML-Serialisierung fehlgeschlagen", e);
         }
     }
 

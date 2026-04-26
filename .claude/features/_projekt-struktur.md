@@ -35,28 +35,52 @@ persistence/
 - JAXB-Annotationen ausschließlich in DTOs, nie in Domain-Klassen
 - Build (nach `coreElements install`): `cd persistence && mvn test`
 
+### `api/`
+
+Spring Boot REST API — verbindet Frontend und Persistenzschicht.
+
+```
+api/
+  src/main/java/de/heiges/rulesengine/api/
+    ApiApplication.java          ← Startklasse + CORS-Konfiguration
+    controller/
+      RulesetController.java     ← REST-Endpunkte /api/rulesets
+    dto/
+      RulesetApiDto.java         ← JSON-Transferobjekt (records)
+      ValueRangeApiDto.java
+      AttributeApiDto.java
+      SkillApiDto.java
+  src/main/resources/
+    application.properties       ← server.port=8080
+```
+
+- Abhängigkeiten: `api` → `persistence` → `coreElements`
+- Starten: `cd api && mvn spring-boot:run` (Port 8080)
+- Build: `cd api && mvn package`
+
 ### `frontend/`
 
-React-UI — kennt keine Java-Module, kommuniziert künftig über eine API.
+React-UI — kommuniziert über `/api` mit dem Spring Boot Backend.
 
 ```
 frontend/
   src/
-    components/   ← Wiederverwendbare UI-Komponenten
-    views/        ← Seiten (HomeView, Detail-Views)
-  dist/           ← Build-Artefakt (nach npm run build)
+    api.ts           ← Typen (RulesetData, Attribute, …) + fetch-Funktionen
+    components/      ← Wiederverwendbare UI-Komponenten
+    context/         ← RulesetContext (currentRuleset, rulesetData)
+    views/           ← Seiten (HomeView, Detail-Views)
+  dist/              ← Build-Artefakt (nach npm run build)
 ```
 
 - Stack: React 19 + TypeScript + Vite
 - Dev-Server: `cd frontend && npm run dev` (Port 5173)
-- Keine direkte Abhängigkeit zu Java-Modulen
+- Vite-Proxy leitet `/api` an `http://localhost:8080` weiter
+- Kein XML im Frontend; kein File System Access API
 
 ## Abhängigkeitsrichtung
 
 ```
-frontend  (keine Java-Abhängigkeit)
-    ↕  (künftig über API)
-persistence  →  coreElements
+frontend  →  /api (HTTP)  →  api  →  persistence  →  coreElements
 ```
 
 Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind verboten.
@@ -86,14 +110,18 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 - [XML-Persistenz](persistence/persistenz-xml.md) — Regelwerk (AttributeSet + Skills) als einzelne XML-Datei speichern/laden (JAXB)
 - [Datenspeicher](persistence/datenspeicher.md) — Fester Speicherort `~/.rules-engine/data/`, Regelwerke per Dateiname identifizierbar
 
+### API (`api/`)
+
+- [Spring Boot REST API](api/rest-api.md) — REST-Endpunkte für Regelwerk laden/speichern/anlegen; JSON als Transportformat
+
 ### Frontend (`frontend/`)
 
 - [Anwendungsrahmen](frontend/frontend-anwendungsrahmen.md) — Entry Point, Routing, globales Theming
 - [Kacheln](frontend/frontend-kacheln.md) — Kachel-Navigation (HomeView, Tile-Komponente, DetailView)
 - [Statuszeile](frontend/statusbar-aktuelles-regelwerk.md) — Statuszeile am unteren Rand mit aktuellem Regelwerk-Namen (React Context)
-- [Regelwerk laden (XML-Dateiauswahl)](frontend/regelwerk-laden-xml.md) — nativer Dateidialog über Kachel, setzt Dateinamen in Statuszeile
-- [Edit-Regelwerk-Kachel](frontend/edit-ruleset-tile.md) — dritte Kachel auf HomeView, nur sichtbar wenn Regelwerk geladen, navigiert zu /edit-ruleset
-- [Edit-Regelwerk-View](frontend/edit-ruleset-view.md) — Bearbeitungsansicht unter /edit-ruleset mit Attribut-Kachel inkl. Attributanzahl aus XML
-- [Attribute-View (CRUD)](frontend/attribute-view.md) — Liste, Umbenennen, Löschen, Anlegen von Attributen unter /tile/attributes
-- [Neues Regelwerk erstellen](frontend/neues-regelwerk-erstellen.md) — nativer Speichern-Dialog, legt leere XML-Datei an und setzt sie als aktives Regelwerk
-- [Wertebereich](frontend/wertebereich.md) — Bearbeiten von min, average, max unter /tile/werte; Speicherung als `<wertebereich>`-Element in der XML
+- [Regelwerk-Auswahl über API](frontend/regelwerk-laden-xml.md) — HomeView listet alle Regelwerke per API-Call; Klick öffnet Regelwerk direkt ohne Dateidialog
+- [Neues Regelwerk erstellen](frontend/neues-regelwerk-erstellen.md) — Name per prompt → POST /api/rulesets/{name} → direkt öffnen
+- [Edit-Regelwerk-Kachel](frontend/edit-ruleset-tile.md) — Kachel in HomeView navigiert zu /edit-ruleset
+- [Edit-Regelwerk-View](frontend/edit-ruleset-view.md) — Bearbeitungsansicht unter /edit-ruleset mit Attributanzahl aus rulesetData
+- [Attribute-View (CRUD)](frontend/attribute-view.md) — Liste, Umbenennen, Löschen, Anlegen von Attributen; persistiert via PUT /api/rulesets/{name}
+- [Wertebereich](frontend/wertebereich.md) — Bearbeiten von min, average, max; persistiert via PUT /api/rulesets/{name}

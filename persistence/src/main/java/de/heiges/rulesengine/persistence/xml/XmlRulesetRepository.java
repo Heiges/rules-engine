@@ -16,6 +16,8 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -64,6 +66,30 @@ public class XmlRulesetRepository implements RulesetRepository {
                     .filter(p -> p.getFileName().toString().endsWith(".xml"))
                     .sorted()
                     .toList();
+        }
+    }
+
+    public LoadedRuleset fromXml(String xml) throws IOException {
+        try {
+            JAXBContext context = JAXBContext.newInstance(RulesetDto.class);
+            RulesetDto dto = (RulesetDto) context.createUnmarshaller().unmarshal(new StringReader(xml));
+            return toDomain(dto);
+        } catch (JAXBException e) {
+            throw new IOException("XML-Deserialisierung fehlgeschlagen", e);
+        }
+    }
+
+    public String toXml(ValueRange valueRange, AttributeSet attributeSet, Collection<Skill> skills) throws IOException {
+        RulesetDto dto = toDto(valueRange, attributeSet, skills);
+        try {
+            JAXBContext context = JAXBContext.newInstance(RulesetDto.class);
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            StringWriter writer = new StringWriter();
+            marshaller.marshal(dto, writer);
+            return writer.toString();
+        } catch (JAXBException e) {
+            throw new IOException("XML-Serialisierung fehlgeschlagen", e);
         }
     }
 

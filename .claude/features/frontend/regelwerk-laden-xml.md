@@ -1,49 +1,50 @@
-# Regelwerk laden (XML-Dateiauswahl)
+# Regelwerk laden – Dateidialog + API
 
 ## Ziel
 
-Ermöglicht dem Anwender, ein bestehendes Regelwerk als XML-Datei aus dem Dateisystem zu wählen. Nach der Auswahl ist das Regelwerk im Context aktiv und kann direkt bearbeitet und gespeichert werden.
+Die Kachel „Regelwerk laden" öffnet einen Dateidialog (browsernativ oder Fallback) und schickt den XML-Inhalt über die REST API ans Backend zum Parsen.
 
 ## Anforderungen
 
-- Klick auf die Kachel „Regelwerk laden" öffnet den nativen Dateiauswahldialog
-- Nur Dateien mit der Endung `.xml` sind auswählbar
-- Nach erfolgreicher Auswahl wird der Dateiname als `currentRuleset` und der Inhalt als `xmlContent` im Context gesetzt
-- Wenn der Browser die File System Access API unterstützt (`showOpenFilePicker`): Das `FileSystemFileHandle` wird als `fileHandle` im Context gesetzt, so dass spätere Speicher-Operationen direkt in die Originaldatei schreiben können
-- Wenn der Browser `showOpenFilePicker` nicht unterstützt (Firefox, Safari): Fallback auf `<input type="file">`; `fileHandle` bleibt null; Änderungen können nur per Download gespeichert werden
-- Die Statuszeile zeigt `Aktuelles Regelwerk: <dateiname>`
-- Es findet keine Validierung des XML-Inhalts statt
+- Klick auf „Regelwerk laden" öffnet einen Dateiauswahl-Dialog, gefiltert auf `.xml`
+- Der XML-Inhalt wird per `POST /api/rulesets/import` ans Backend gesendet; das Backend gibt strukturierte Daten zurück
+- Das geladene Regelwerk wird in `RulesetContext` gesetzt; Navigation zu `/edit-ruleset`
+- Unterstützte Browser: alle (Chromium-Pfad und Fallback)
+
+## Browser-Kompatibilität
+
+| Browser | Methode |
+|---|---|
+| Chromium (Chrome, Edge) | `window.showOpenFilePicker` (File System Access API) – liefert ein `FileSystemFileHandle` |
+| Brave, Firefox, Safari | `<input type="file">` (programmatisch erzeugt und geklickt) – kein `FileHandle` |
+
+Im Fallback-Pfad wird `fileHandle` im Context auf `null` gesetzt; Speichern via Handle ist dann nicht möglich (Workaround nötig).
 
 ## Entscheidungen
 
-- **`showOpenFilePicker` bevorzugt**: Liefert ein schreibbares `FileSystemFileHandle`, das direktes Zurückschreiben in die Originaldatei erlaubt — ohne Download-Umweg. Fallback auf `<input type="file">` für Browser ohne Unterstützung.
-- **`fileHandle` im Context**: Wird einmalig beim Laden gesetzt und von allen Views (WerteView, AttributeView) zum Schreiben genutzt. Kein erneuter Dateidialog beim Speichern nötig.
-- **Verstecktes `<input type="file">` als Fallback**: Für Browser ohne File System Access API; `ref.click()` triggert ihn aus der Kachel. `fileHandle` wird dabei nicht gesetzt.
-- **Keine Validierung des XML-Inhalts**: Zu früh für Error-States; schlägt das spätere Parsen fehl, zeigen die Views entsprechende Fehlerzustände.
+- **Primärpfad**: `showOpenFilePicker` wenn verfügbar, sonst Fallback — kein Error-Abbruch
+- **API für das Parsen**: das Frontend liest nur den XML-Text; das Parsen übernimmt `POST /api/rulesets/import`
+- Kein direktes Lesen des Dateisystems im Backend (kein Pfad übergeben)
 
 ## Implementierung
 
 | Artefakt | Pfad |
 |---|---|
-| Laden-Logik (`handleLoadRuleset`, Fallback `handleFileChange`) | `frontend/src/views/HomeView.tsx` |
-| TypeScript-Deklaration für `showOpenFilePicker` | `frontend/src/file-system-access.d.ts` |
-| Kachel-Komponente (optionaler `onClick`) | `frontend/src/components/Tile.tsx` |
-| Globaler Regelwerk-Context | `frontend/src/context/RulesetContext.tsx` |
-| Statuszeile | `frontend/src/components/StatusBar.tsx` |
+| View (Kacheln + Dialoge) | `frontend/src/views/HomeView.tsx` |
+| API-Funktionen | `frontend/src/api.ts` (`importRuleset`) |
+| Backend-Endpunkt | `api/src/main/java/de/heiges/rulesengine/api/controller/RulesetController.java` (`POST /api/rulesets/import`) |
+| Context | `frontend/src/context/RulesetContext.tsx` |
 
 ## Rekonstruktion
 
 ```
-Wenn der Anwender auf die Kachel „Regelwerk laden" klickt:
-1. Falls showOpenFilePicker verfügbar:
-   - showOpenFilePicker({ types: [{ accept: { 'application/xml': ['.xml'] } }] })
-   - handle.getFile() → text lesen
-   - setFileHandle(handle), setXmlContent(text), setCurrentRuleset(file.name)
-   - AbortError ignorieren, andere Fehler als alert anzeigen
-2. Fallback (kein showOpenFilePicker):
-   - Verstecktes <input type="file" accept=".xml"> per ref.click() triggern
-   - onChange: file.text() → setXmlContent(text), setCurrentRuleset(file.name)
-   - fileHandle bleibt null → nur Download-Speicherung möglich
+HomeView: Klick auf "Regelwerk laden" → handleLoad()
+  Wenn window.showOpenFilePicker verfügbar:
+    showOpenFilePicker → handle → file.text() → importRuleset(xml)
+    → setFileHandle(handle), setCurrentRuleset(handle.name), setRulesetData(data)
+  Sonst (Brave, Firefox):
+    <input type="file"> erzeugen, .click()
+    onchange → file.text() → importRuleset(xml)
+    → setFileHandle(null), setCurrentRuleset(file.name), setRulesetData(data)
+  → navigate('/edit-ruleset')
 ```
-
-Kontext: `RulesetContext` stellt `currentRuleset`, `setCurrentRuleset`, `fileHandle`, `setFileHandle`, `xmlContent`, `setXmlContent` bereit. TypeScript-Deklaration für `showOpenFilePicker` und `showSaveFilePicker` liegt in `frontend/src/file-system-access.d.ts`.

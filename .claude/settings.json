@@ -24,6 +24,9 @@
       "Read(/var/**)",
       "Read(/root/**)"
     ],
-    "defaultMode": "dontAsk"
+    "defaultMode": "dontAsk",
+    "additionalDirectories": [
+      "/home/hheiges/Dev/workspace-code/rules-engine/.claude/features"
+    ]
   }
 }
