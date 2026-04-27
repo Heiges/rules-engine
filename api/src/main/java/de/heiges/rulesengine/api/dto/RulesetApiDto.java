@@ -5,5 +5,6 @@ import java.util.List;
 public record RulesetApiDto(
         ValueRangeApiDto valueRange,
         List<AttributeGroupApiDto> attributeGroups,
-        List<SkillApiDto> skills
+        List<SkillApiDto> skills,
+        List<SkillDomainApiDto> skillDomains
 ) {}

@@ -68,6 +68,7 @@ export function HomeView() {
           valueRange: { min: -10, average: 0, max: 10 },
           attributes: [],
           skills: [],
+          skillDomains: [],
         }
         const xml = await exportRuleset(emptyData)
         const writable = await handle.createWritable()
@@ -88,6 +89,7 @@ export function HomeView() {
         valueRange: { min: -10, average: 0, max: 10 },
         attributes: [],
         skills: [],
+        skillDomains: [],
       }
       setFileHandle(null)
       setCurrentRuleset(name)

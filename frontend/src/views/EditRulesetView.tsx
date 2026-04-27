@@ -9,6 +9,7 @@ export function EditRulesetView() {
   const { rulesetData, currentRuleset } = useRuleset()
   const attributeCount = rulesetData?.attributes.length ?? 0
   const skillCount = rulesetData?.skills.length ?? 0
+  const domainCount = rulesetData?.skillDomains.length ?? 0
   const rulesetName = currentRuleset ?? ''
 
   return (
@@ -29,7 +30,7 @@ export function EditRulesetView() {
         <Tile
           id="skills"
           name="Skills"
-          description={`Skill anlegen und modifizieren (${skillCount} Skills)`}
+          description={`Skill anlegen und modifizieren (${skillCount} Verben, ${domainCount} Domänen)`}
         />
       </div>
     </div>

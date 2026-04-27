@@ -16,10 +16,16 @@ export interface SkillVerb {
   description: string
 }
 
+export interface SkillDomain {
+  name: string
+  description: string
+}
+
 export interface RulesetData {
   valueRange: ValueRange
   attributes: Attribute[]
   skills: SkillVerb[]
+  skillDomains: SkillDomain[]
 }
 
 export interface RollResult {
@@ -39,6 +45,7 @@ interface RulesetApiDto {
   valueRange: ValueRange
   attributeGroups: AttributeGroupApiDto[]
   skills: SkillVerb[]
+  skillDomains: SkillDomain[]
 }
 
 function fromApiDto(dto: RulesetApiDto): RulesetData {
@@ -48,6 +55,7 @@ function fromApiDto(dto: RulesetApiDto): RulesetData {
       g.attributes.map(a => ({ ...a, groupName: g.group }))
     ),
     skills: dto.skills,
+    skillDomains: dto.skillDomains ?? [],
   }
 }
 
@@ -65,6 +73,7 @@ function toApiDto(data: RulesetData): RulesetApiDto {
       attributes: attributes.map(({ groupName: _g, ...rest }) => rest),
     })),
     skills: data.skills,
+    skillDomains: data.skillDomains,
   }
 }
 

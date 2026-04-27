@@ -3,6 +3,7 @@ package de.heiges.rulesengine.persistence.xml;
 import de.heiges.rulesengine.coreelements.domain.model.Attribute;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeGroup;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeSet;
+import de.heiges.rulesengine.coreelements.domain.model.SkillDomain;
 import de.heiges.rulesengine.coreelements.domain.model.SkillVerb;
 import de.heiges.rulesengine.coreelements.domain.model.Value;
 import de.heiges.rulesengine.coreelements.domain.model.ValueRange;
@@ -11,6 +12,7 @@ import de.heiges.rulesengine.persistence.repository.RulesetRepository;
 import de.heiges.rulesengine.persistence.xml.dto.AttributeDto;
 import de.heiges.rulesengine.persistence.xml.dto.AttributeGroupDto;
 import de.heiges.rulesengine.persistence.xml.dto.RulesetDto;
+import de.heiges.rulesengine.persistence.xml.dto.SkillDomainDto;
 import de.heiges.rulesengine.persistence.xml.dto.SkillDto;
 import de.heiges.rulesengine.persistence.xml.dto.ValueRangeDto;
 import jakarta.xml.bind.JAXBContext;
@@ -32,8 +34,8 @@ public class XmlRulesetRepository implements RulesetRepository {
     private static final ValueRange DEFAULT_VALUE_RANGE = new ValueRange(-10, 0, 10);
 
     @Override
-    public void save(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills, Path file) throws IOException {
-        RulesetDto dto = toDto(valueRange, attributeSet, skills);
+    public void save(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills, Collection<SkillDomain> skillDomains, Path file) throws IOException {
+        RulesetDto dto = toDto(valueRange, attributeSet, skills, skillDomains);
         try {
             JAXBContext context = JAXBContext.newInstance(RulesetDto.class);
             Marshaller marshaller = context.createMarshaller();
@@ -81,8 +83,8 @@ public class XmlRulesetRepository implements RulesetRepository {
         }
     }
 
-    public String toXml(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills) throws IOException {
-        RulesetDto dto = toDto(valueRange, attributeSet, skills);
+    public String toXml(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills, Collection<SkillDomain> skillDomains) throws IOException {
+        RulesetDto dto = toDto(valueRange, attributeSet, skills, skillDomains);
         try {
             JAXBContext context = JAXBContext.newInstance(RulesetDto.class);
             Marshaller marshaller = context.createMarshaller();
@@ -95,7 +97,7 @@ public class XmlRulesetRepository implements RulesetRepository {
         }
     }
 
-    private RulesetDto toDto(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills) {
+    private RulesetDto toDto(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills, Collection<SkillDomain> skillDomains) {
         RulesetDto dto = new RulesetDto();
         dto.setValueRange(new ValueRangeDto(valueRange.min(), valueRange.average(), valueRange.max()));
         for (AttributeGroup group : attributeSet.getGroups()) {
@@ -108,6 +110,9 @@ public class XmlRulesetRepository implements RulesetRepository {
         }
         for (SkillVerb skill : skills) {
             dto.getSkills().getSkills().add(new SkillDto(skill.getName(), skill.getDescription()));
+        }
+        for (SkillDomain domain : skillDomains) {
+            dto.getSkillDomains().getSkillDomains().add(new SkillDomainDto(domain.getName(), domain.getDescription()));
         }
         return dto;
     }
@@ -134,6 +139,11 @@ public class XmlRulesetRepository implements RulesetRepository {
             skills.add(new SkillVerb(skillDto.getName(), skillDto.getDescription()));
         }
 
-        return new LoadedRuleset(valueRange, attributeSet, skills);
+        List<SkillDomain> skillDomains = new ArrayList<>();
+        for (SkillDomainDto domainDto : dto.getSkillDomains().getSkillDomains()) {
+            skillDomains.add(new SkillDomain(domainDto.getName(), domainDto.getDescription()));
+        }
+
+        return new LoadedRuleset(valueRange, attributeSet, skills, skillDomains);
     }
 }

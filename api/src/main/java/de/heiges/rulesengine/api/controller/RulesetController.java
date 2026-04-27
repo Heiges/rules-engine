@@ -4,10 +4,12 @@ import de.heiges.rulesengine.api.dto.AttributeApiDto;
 import de.heiges.rulesengine.api.dto.AttributeGroupApiDto;
 import de.heiges.rulesengine.api.dto.RulesetApiDto;
 import de.heiges.rulesengine.api.dto.SkillApiDto;
+import de.heiges.rulesengine.api.dto.SkillDomainApiDto;
 import de.heiges.rulesengine.api.dto.ValueRangeApiDto;
 import de.heiges.rulesengine.coreelements.domain.model.Attribute;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeGroup;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeSet;
+import de.heiges.rulesengine.coreelements.domain.model.SkillDomain;
 import de.heiges.rulesengine.coreelements.domain.model.SkillVerb;
 import de.heiges.rulesengine.coreelements.domain.model.Value;
 import de.heiges.rulesengine.coreelements.domain.model.ValueRange;
@@ -54,7 +56,7 @@ public class RulesetController {
     public void save(@PathVariable String name, @RequestBody RulesetApiDto dto) {
         try {
             DataDirectory.ensureExists();
-            repository.save(toDomain(dto), toAttributeSet(dto), toSkillVerbs(dto), DataDirectory.rulesetPath(name));
+            repository.save(toDomain(dto), toAttributeSet(dto), toSkillVerbs(dto), toSkillDomains(dto), DataDirectory.rulesetPath(name));
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         } catch (IOException e) {
@@ -70,7 +72,7 @@ public class RulesetController {
             if (Files.exists(DataDirectory.rulesetPath(name))) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Regelwerk existiert bereits: " + name);
             }
-            repository.save(new ValueRange(-10, 0, 10), new AttributeSet(), List.of(), DataDirectory.rulesetPath(name));
+            repository.save(new ValueRange(-10, 0, 10), new AttributeSet(), List.of(), List.of(), DataDirectory.rulesetPath(name));
         } catch (ResponseStatusException e) {
             throw e;
         } catch (IOException e) {
@@ -90,7 +92,7 @@ public class RulesetController {
     @PostMapping(value = "/export", consumes = "application/json", produces = "text/xml;charset=UTF-8")
     public String exportToXml(@RequestBody RulesetApiDto dto) {
         try {
-            return repository.toXml(toDomain(dto), toAttributeSet(dto), toSkillVerbs(dto));
+            return repository.toXml(toDomain(dto), toAttributeSet(dto), toSkillVerbs(dto), toSkillDomains(dto));
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "XML-Serialisierung fehlgeschlagen", e);
         }
@@ -113,7 +115,10 @@ public class RulesetController {
         List<SkillApiDto> skills = loaded.skills().stream()
                 .map(s -> new SkillApiDto(s.getName(), s.getDescription()))
                 .toList();
-        return new RulesetApiDto(valueRange, attributeGroups, skills);
+        List<SkillDomainApiDto> skillDomains = loaded.skillDomains().stream()
+                .map(d -> new SkillDomainApiDto(d.getName(), d.getDescription()))
+                .toList();
+        return new RulesetApiDto(valueRange, attributeGroups, skills, skillDomains);
     }
 
     private ValueRange toDomain(RulesetApiDto dto) {
@@ -136,6 +141,13 @@ public class RulesetController {
     private List<SkillVerb> toSkillVerbs(RulesetApiDto dto) {
         return dto.skills().stream()
                 .map(s -> new SkillVerb(s.name(), s.description()))
+                .toList();
+    }
+
+    private List<SkillDomain> toSkillDomains(RulesetApiDto dto) {
+        if (dto.skillDomains() == null) return List.of();
+        return dto.skillDomains().stream()
+                .map(d -> new SkillDomain(d.name(), d.description()))
                 .toList();
     }
 }

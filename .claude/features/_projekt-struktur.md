@@ -64,6 +64,7 @@ api/
       ValueRangeApiDto.java
       AttributeApiDto.java
       SkillApiDto.java
+      SkillDomainApiDto.java
   src/main/resources/
     application.properties       ← server.port=8080
 ```
@@ -121,6 +122,7 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 - [AttributeSet](domain/attribute-set.md) — geordnete Sammlung von Attributen
 - [AttributeGroup](domain/attribute-group.md) — benannte Gruppe von Attributen; `AttributeSet` hält nun Gruppen statt flacher Attributliste
 - [SkillVerb](domain/skill.md) — Fähigkeit (Verb) mit Name und Beschreibung; keine Attribut-Bindung, kein Level
+- [SkillDomain](domain/skill-domain.md) — Domäne (Wissensbereich) für SkillVerben; Name + Beschreibung
 - [Value](domain/value-domain-class.md) — numerischer Wert eines Regelbausteins (pos./neg.)
 
 ### Persistenz (`persistence/`)
@@ -142,6 +144,6 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 - [Edit-Regelwerk-Kachel](frontend/edit-ruleset-tile.md) — Kachel in HomeView navigiert zu /edit-ruleset
 - [Edit-Regelwerk-View](frontend/edit-ruleset-view.md) — Bearbeitungsansicht unter /edit-ruleset mit Kacheln für Werte, Attribute und Skills (je mit Anzahl aus rulesetData)
 - [Attribute-View (CRUD)](frontend/attribute-view.md) — Tabellenübersicht mit Sortierung, Massenauswahl und Detail-View für Anlage/Bearbeitung; persistiert via PUT /api/rulesets/{name}
-- [SkillVerb-View (CRUD)](frontend/skill-verb-view.md) — Tabellenübersicht mit Sortierung, Massenauswahl und Inline-Anlage; persistiert via PUT /api/rulesets/{name}
+- [SkillVerb-View (CRUD)](frontend/skill-verb-view.md) — zwei Tabellen (Verb + Domäne) mit Sortierung, Massenauswahl, Detail-Views; persistiert via PUT /api/rulesets/{name}
 - [Wertebereich](frontend/wertebereich.md) — Bearbeiten von min, average, max; persistiert via PUT /api/rulesets/{name}
 - [Charactereditor](frontend/charactereditor.md) — Charakter auf Basis geladenen Regelwerks erstellen (Name, Attributwerte); Skills werden informativ angezeigt; rein transient, kein Speichern

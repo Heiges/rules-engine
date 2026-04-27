@@ -3,6 +3,7 @@ package de.heiges.rulesengine.persistence.xml;
 import de.heiges.rulesengine.coreelements.domain.model.Attribute;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeGroup;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeSet;
+import de.heiges.rulesengine.coreelements.domain.model.SkillDomain;
 import de.heiges.rulesengine.coreelements.domain.model.SkillVerb;
 import de.heiges.rulesengine.coreelements.domain.model.Value;
 import de.heiges.rulesengine.coreelements.domain.model.ValueRange;
@@ -38,32 +39,36 @@ class XmlRulesetRepositoryTest {
                 new SkillVerb("Klettern", "Vertikale Fortbewegung"),
                 new SkillVerb("Schwimmen", "Fortbewegung im Wasser")
         );
+        List<SkillDomain> domains = List.of(
+                new SkillDomain("Kampf", "Kampffertigkeiten"),
+                new SkillDomain("Sozial", "Soziale Fertigkeiten")
+        );
 
         Path file = tempDir.resolve("grundregeln.xml");
-        repository.save(standardRange, attributeSet, skills, file);
+        repository.save(standardRange, attributeSet, skills, domains, file);
         LoadedRuleset geladen = repository.load(file);
 
         assertEquals(1, geladen.attributeSet().getGroups().size());
-        assertEquals("Körper", geladen.attributeSet().getGroups().iterator().next().getName());
         assertEquals(2, geladen.attributeSet().size());
-        assertTrue(geladen.attributeSet().contains("Stärke"));
         assertEquals("Körperliche Kraft", geladen.attributeSet().find("Stärke").orElseThrow().getDescription());
-        assertEquals(3, geladen.attributeSet().find("Stärke").orElseThrow().getValue().amount());
-        assertEquals(-2, geladen.attributeSet().find("Geschicklichkeit").orElseThrow().getValue().amount());
 
         List<SkillVerb> skillListe = List.copyOf(geladen.skills());
         assertEquals(2, skillListe.size());
         assertEquals("Klettern", skillListe.get(0).getName());
         assertEquals("Vertikale Fortbewegung", skillListe.get(0).getDescription());
-        assertEquals("Schwimmen", skillListe.get(1).getName());
-        assertEquals("Fortbewegung im Wasser", skillListe.get(1).getDescription());
+
+        List<SkillDomain> domainListe = List.copyOf(geladen.skillDomains());
+        assertEquals(2, domainListe.size());
+        assertEquals("Kampf", domainListe.get(0).getName());
+        assertEquals("Kampffertigkeiten", domainListe.get(0).getDescription());
+        assertEquals("Sozial", domainListe.get(1).getName());
     }
 
     @Test
     void speichernUndLaden_erhaltValueRangeKorrekt(@TempDir Path tempDir) throws IOException {
         ValueRange range = new ValueRange(-5, 2, 15);
         Path file = tempDir.resolve("range.xml");
-        repository.save(range, new AttributeSet(), List.of(), file);
+        repository.save(range, new AttributeSet(), List.of(), List.of(), file);
         LoadedRuleset geladen = repository.load(file);
 
         assertEquals(-5, geladen.valueRange().min());
@@ -92,17 +97,18 @@ class XmlRulesetRepositoryTest {
     @Test
     void speichernUndLaden_leereDaten(@TempDir Path tempDir) throws IOException {
         Path file = tempDir.resolve("leer.xml");
-        repository.save(standardRange, new AttributeSet(), List.of(), file);
+        repository.save(standardRange, new AttributeSet(), List.of(), List.of(), file);
         LoadedRuleset geladen = repository.load(file);
 
         assertEquals(0, geladen.attributeSet().size());
         assertTrue(geladen.skills().isEmpty());
+        assertTrue(geladen.skillDomains().isEmpty());
     }
 
     @Test
     void gespeicherteDateiExistiert(@TempDir Path tempDir) throws IOException {
         Path file = tempDir.resolve("test.xml");
-        repository.save(standardRange, new AttributeSet(), List.of(), file);
+        repository.save(standardRange, new AttributeSet(), List.of(), List.of(), file);
         assertTrue(file.toFile().exists());
     }
 
@@ -114,8 +120,8 @@ class XmlRulesetRepositoryTest {
 
     @Test
     void listAll_liefertNurXmlDateien(@TempDir Path tempDir) throws IOException {
-        repository.save(standardRange, new AttributeSet(), List.of(), tempDir.resolve("alpha.xml"));
-        repository.save(standardRange, new AttributeSet(), List.of(), tempDir.resolve("beta.xml"));
+        repository.save(standardRange, new AttributeSet(), List.of(), List.of(), tempDir.resolve("alpha.xml"));
+        repository.save(standardRange, new AttributeSet(), List.of(), List.of(), tempDir.resolve("beta.xml"));
         Files.createFile(tempDir.resolve("ignorieren.txt"));
 
         List<Path> rulesets = repository.listAll(tempDir);

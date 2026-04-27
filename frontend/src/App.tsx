@@ -10,6 +10,7 @@ import { WerteView } from './views/WerteView'
 import { CharacterEditorView } from './views/CharacterEditorView'
 import { SkillVerbView } from './views/SkillVerbView'
 import { SkillVerbDetailView } from './views/SkillVerbDetailView'
+import { SkillDomainDetailView } from './views/SkillDomainDetailView'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/tile/attributes" element={<AttributeView />} />
           <Route path="/tile/attributes/:index" element={<AttributeDetailView />} />
           <Route path="/tile/skills" element={<SkillVerbView />} />
+          <Route path="/tile/skills/domains/:index" element={<SkillDomainDetailView />} />
           <Route path="/tile/skills/:index" element={<SkillVerbDetailView />} />
           <Route path="/character-editor" element={<CharacterEditorView />} />
           <Route path="/tile/:id" element={<DetailView />} />
