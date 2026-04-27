@@ -1,7 +1,7 @@
 package de.heiges.rulesengine.persistence.repository;
 
 import de.heiges.rulesengine.coreelements.domain.model.AttributeSet;
-import de.heiges.rulesengine.coreelements.domain.model.Skill;
+import de.heiges.rulesengine.coreelements.domain.model.SkillVerb;
 import de.heiges.rulesengine.coreelements.domain.model.ValueRange;
 
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface RulesetRepository {
 
-    void save(ValueRange valueRange, AttributeSet attributeSet, Collection<Skill> skills, Path file) throws IOException;
+    void save(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills, Path file) throws IOException;
 
     LoadedRuleset load(Path file) throws IOException;
 

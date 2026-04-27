@@ -10,21 +10,16 @@ public class SkillDto {
     @XmlAttribute(required = true)
     private String name;
 
-    @XmlAttribute(required = true)
-    private String linkedAttributeName;
-
-    @XmlAttribute(required = true)
-    private int level;
+    @XmlAttribute
+    private String description;
 
     public SkillDto() {}
 
-    public SkillDto(String name, String linkedAttributeName, int level) {
+    public SkillDto(String name, String description) {
         this.name = name;
-        this.linkedAttributeName = linkedAttributeName;
-        this.level = level;
+        this.description = description;
     }
 
     public String getName() { return name; }
-    public String getLinkedAttributeName() { return linkedAttributeName; }
-    public int getLevel() { return level; }
+    public String getDescription() { return description != null ? description : ""; }
 }

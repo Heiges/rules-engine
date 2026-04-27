@@ -2,17 +2,16 @@
 
 ## Ziel
 
-Erlaubt es, auf Basis eines geladenen Regelwerks einen Charakter zu erstellen: Name, Attributwerte (innerhalb des definierten Wertebereichs) und Fertigkeitslevel werden interaktiv eingestellt. Pro Attribut kann gewürfelt werden (`POST /api/roll`). Das Feature ist rein transient — kein Speichern des Charakters.
+Erlaubt es, auf Basis eines geladenen Regelwerks einen Charakter zu erstellen: Name und Attributwerte (innerhalb des definierten Wertebereichs) werden interaktiv eingestellt. Pro Attribut kann gewürfelt werden (`POST /api/roll`). Das Feature ist rein transient — kein Speichern des Charakters.
 
 ## Anforderungen
 
 - Die Kachel „Charactereditor" erscheint in der HomeView **nur**, wenn ein Regelwerk geladen ist (`currentRuleset !== null` im RulesetContext).
 - Attributwerte werden auf `[valueRange.min, valueRange.max]` geklemmt; Initialbelegung ist `valueRange.average`.
-- Fertigkeitslevel haben als Untergrenze 0 (kein oberes Limit definiert); Initialbelegung ist `0`.
 - Jedes Attribut wird mit Slider **und** Zahleneingabe angezeigt; beide sind synchron.
-- Jede Fertigkeit zeigt ihr verknüpftes Attribut (`linkedAttributeName`) in Klammern an.
-- Enthält das Regelwerk weder Attribute noch Fertigkeiten, erscheint ein Hinweistext statt der leeren Abschnitte.
-- Der Zustand (Name, Attributwerte, Fertigkeitslevel) wird einmalig beim Mounten aus dem RulesetContext initialisiert und danach lokal gehalten.
+- Skills werden mit Name und Beschreibung (falls vorhanden) angezeigt — rein informativ, kein Level-Input.
+- Enthält das Regelwerk weder Attribute noch Skills, erscheint ein Hinweistext statt der leeren Abschnitte.
+- Der Zustand (Name, Attributwerte) wird einmalig beim Mounten aus dem RulesetContext initialisiert und danach lokal gehalten.
 - Hinter jedem Attribut gibt es einen „Würfeln"-Button; beim Klick wird `POST /api/roll` mit dem aktuellen Attributwert aufgerufen.
 - Das Würfelergebnis wird inline in der Attributzeile angezeigt: alle geworfenen Würfel als kleine Kacheln, Pasch-Würfel farblich hervorgehoben, daneben „Erfolg (N× X)" oder „Misserfolg".
 - Erfolg = mindestens ein Pasch (≥ 2 gleiche Würfel); Misserfolg sonst.
@@ -21,6 +20,8 @@ Erlaubt es, auf Basis eines geladenen Regelwerks einen Charakter zu erstellen: N
 
 ## Entscheidungen
 
+- **Kein Level-Input für Skills**: `SkillVerb` hat kein `level`-Feld mehr; der Charactereditor zeigt Skills daher nur informativ an.
+- **Kein `linkedAttributeName`**: `SkillVerb` hat keine Attribut-Bindung; die frühere Klammern-Anzeige `(Attributname)` entfällt.
 - **Kein Persistieren, keine API für den Charakter** — der Charakter lebt nur im Arbeitsspeicher bis zur nächsten Navigation.
 - **State einmalig initialisieren** — `useState(() => ...)` mit Lazy-Initializer, damit der Zustand nicht bei jedem Re-Render des Kontexts zurückgesetzt wird.
 - **`DetailView.css` als gemeinsame Basis** — Layout-Klassen `.detail-view` und `.back-button` werden projektübergreifend wiederverwendet.
@@ -41,14 +42,14 @@ Erlaubt es, auf Basis eines geladenen Regelwerks einen Charakter zu erstellen: N
 
 ```
 Neues Feature: Charactereditor-View im Frontend.
-- Neue Kachel "Charactereditor" in HomeView — nur sichtbar, wenn ein Regelwerk geladen ist (currentRuleset !== null).
+- Neue Kachel "Charactereditor" in HomeView — nur sichtbar, wenn ein Regelwerk geladen ist.
 - Route /character-editor → CharacterEditorView.
-- View zeigt: Namensfeld, alle Attribute aus rulesetData mit Slider + Zahleneingabe (Wertebereich min/max,
-  Initialwert average) + "Würfeln"-Button pro Attribut, alle Skills mit Zahleneingabe (min 0, Initialwert 0)
-  und Anzeige des linkedAttributeName.
+- View zeigt: Namensfeld, alle Attribute aus rulesetData mit Slider + Zahleneingabe (Wertebereich
+  min/max, Initialwert average) + "Würfeln"-Button pro Attribut, alle Skills (SkillVerb) mit Name
+  und Beschreibung — rein informativ.
 - Würfeln: POST /api/roll { value } → { dice, success, paschValue, paschCount }.
-  Erfolg wenn success=true (mindestens Pasch). Würfel als Kacheln anzeigen, Pasch-Würfel hervorgehoben.
+  Erfolg wenn success=true. Würfel als Kacheln anzeigen, Pasch-Würfel hervorgehoben.
 - Kein Speichern des Charakters — nur lokaler State.
 ```
 
-Kontext: `POST /api/roll` existiert im Backend (`RollController`). `RollResult`-Interface in `api.ts` hinzufügen. RulesetContext stellt `rulesetData` (Typen aus `api.ts`) bereit. Routing über React Router v6. Layout-Basis aus `DetailView.css`.
+Kontext: `POST /api/roll` existiert im Backend (`RollController`). `RollResult`-Interface in `api.ts`. RulesetContext stellt `rulesetData` (Typen aus `api.ts`) bereit. `SkillVerb` hat nur `name` und `description`, kein `level` und kein `linkedAttributeName`. Routing über React Router v6. Layout-Basis aus `DetailView.css`.

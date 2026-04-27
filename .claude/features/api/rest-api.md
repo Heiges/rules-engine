@@ -19,11 +19,16 @@ Stellt eine REST API bereit, über die das React-Frontend mit der Java-Persisten
 ```json
 {
   "valueRange": { "min": -10, "average": 0, "max": 10 },
-  "attributes": [
-    { "name": "Stärke", "description": "", "value": 0 }
+  "attributeGroups": [
+    {
+      "group": "Körper",
+      "attributes": [
+        { "name": "Stärke", "description": "", "value": 0 }
+      ]
+    }
   ],
   "skills": [
-    { "name": "Klettern", "linkedAttributeName": "Stärke", "level": 0 }
+    { "name": "Klettern", "description": "Vertikale Fortbewegung" }
   ]
 }
 ```

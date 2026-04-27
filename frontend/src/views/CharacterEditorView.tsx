@@ -19,9 +19,6 @@ export function CharacterEditorView() {
   const [attrValues, setAttrValues] = useState<Record<string, number>>(() =>
     Object.fromEntries(attributes.map(a => [a.name, valueRange.average]))
   )
-  const [skillLevels, setSkillLevels] = useState<Record<string, number>>(() =>
-    Object.fromEntries(skills.map(s => [s.name, 0]))
-  )
   const [rollResults, setRollResults] = useState<Record<string, RollResult>>({})
   const [rollingFor, setRollingFor] = useState<string | null>(null)
 
@@ -39,11 +36,6 @@ export function CharacterEditorView() {
     const val = parseInt(raw, 10)
     if (isNaN(val)) return
     setAttrValues(prev => ({ ...prev, [name]: Math.min(valueRange.max, Math.max(valueRange.min, val)) }))
-  }
-
-  function setSkill(name: string, raw: string) {
-    const val = parseInt(raw, 10)
-    if (!isNaN(val)) setSkillLevels(prev => ({ ...prev, [name]: Math.max(0, val) }))
   }
 
   return (
@@ -129,14 +121,9 @@ export function CharacterEditorView() {
             {skills.map(skill => (
               <div key={skill.name} className="char-skill-row">
                 <span className="char-skill-name">{skill.name}</span>
-                <span className="char-skill-linked">({skill.linkedAttributeName})</span>
-                <input
-                  type="number"
-                  className="char-value-input"
-                  min={0}
-                  value={skillLevels[skill.name] ?? 0}
-                  onChange={e => setSkill(skill.name, e.target.value)}
-                />
+                {skill.description && (
+                  <span className="char-skill-linked">{skill.description}</span>
+                )}
               </div>
             ))}
           </div>

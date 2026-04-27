@@ -3,7 +3,7 @@ package de.heiges.rulesengine.persistence.xml;
 import de.heiges.rulesengine.coreelements.domain.model.Attribute;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeGroup;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeSet;
-import de.heiges.rulesengine.coreelements.domain.model.Skill;
+import de.heiges.rulesengine.coreelements.domain.model.SkillVerb;
 import de.heiges.rulesengine.coreelements.domain.model.Value;
 import de.heiges.rulesengine.coreelements.domain.model.ValueRange;
 import de.heiges.rulesengine.persistence.repository.LoadedRuleset;
@@ -32,7 +32,7 @@ public class XmlRulesetRepository implements RulesetRepository {
     private static final ValueRange DEFAULT_VALUE_RANGE = new ValueRange(-10, 0, 10);
 
     @Override
-    public void save(ValueRange valueRange, AttributeSet attributeSet, Collection<Skill> skills, Path file) throws IOException {
+    public void save(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills, Path file) throws IOException {
         RulesetDto dto = toDto(valueRange, attributeSet, skills);
         try {
             JAXBContext context = JAXBContext.newInstance(RulesetDto.class);
@@ -81,7 +81,7 @@ public class XmlRulesetRepository implements RulesetRepository {
         }
     }
 
-    public String toXml(ValueRange valueRange, AttributeSet attributeSet, Collection<Skill> skills) throws IOException {
+    public String toXml(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills) throws IOException {
         RulesetDto dto = toDto(valueRange, attributeSet, skills);
         try {
             JAXBContext context = JAXBContext.newInstance(RulesetDto.class);
@@ -95,7 +95,7 @@ public class XmlRulesetRepository implements RulesetRepository {
         }
     }
 
-    private RulesetDto toDto(ValueRange valueRange, AttributeSet attributeSet, Collection<Skill> skills) {
+    private RulesetDto toDto(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills) {
         RulesetDto dto = new RulesetDto();
         dto.setValueRange(new ValueRangeDto(valueRange.min(), valueRange.average(), valueRange.max()));
         for (AttributeGroup group : attributeSet.getGroups()) {
@@ -106,12 +106,8 @@ public class XmlRulesetRepository implements RulesetRepository {
             }
             dto.getAttributeSet().getGroups().add(groupDto);
         }
-        for (Skill skill : skills) {
-            dto.getSkills().getSkills().add(new SkillDto(
-                    skill.getName(),
-                    skill.getLinkedAttribute().getName(),
-                    skill.getLevel()
-            ));
+        for (SkillVerb skill : skills) {
+            dto.getSkills().getSkills().add(new SkillDto(skill.getName(), skill.getDescription()));
         }
         return dto;
     }
@@ -133,12 +129,9 @@ public class XmlRulesetRepository implements RulesetRepository {
             attributeSet.addGroup(group);
         }
 
-        List<Skill> skills = new ArrayList<>();
+        List<SkillVerb> skills = new ArrayList<>();
         for (SkillDto skillDto : dto.getSkills().getSkills()) {
-            Attribute linkedAttribute = attributeSet.find(skillDto.getLinkedAttributeName())
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Attribut nicht gefunden: " + skillDto.getLinkedAttributeName()));
-            skills.add(new Skill(skillDto.getName(), linkedAttribute, skillDto.getLevel()));
+            skills.add(new SkillVerb(skillDto.getName(), skillDto.getDescription()));
         }
 
         return new LoadedRuleset(valueRange, attributeSet, skills);

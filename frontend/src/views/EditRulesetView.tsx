@@ -8,6 +8,7 @@ export function EditRulesetView() {
   const navigate = useNavigate()
   const { rulesetData, currentRuleset } = useRuleset()
   const attributeCount = rulesetData?.attributes.length ?? 0
+  const skillCount = rulesetData?.skills.length ?? 0
   const rulesetName = currentRuleset ?? ''
 
   return (
@@ -24,6 +25,11 @@ export function EditRulesetView() {
           id="attributes"
           name="Attribute"
           description={`Attribute bearbeiten (${attributeCount} Attribute)`}
+        />
+        <Tile
+          id="skills"
+          name="Skills"
+          description={`Skill anlegen und modifizieren (${skillCount} Skills)`}
         />
       </div>
     </div>

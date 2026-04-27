@@ -8,7 +8,7 @@ import de.heiges.rulesengine.api.dto.ValueRangeApiDto;
 import de.heiges.rulesengine.coreelements.domain.model.Attribute;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeGroup;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeSet;
-import de.heiges.rulesengine.coreelements.domain.model.Skill;
+import de.heiges.rulesengine.coreelements.domain.model.SkillVerb;
 import de.heiges.rulesengine.coreelements.domain.model.Value;
 import de.heiges.rulesengine.coreelements.domain.model.ValueRange;
 import de.heiges.rulesengine.persistence.DataDirectory;
@@ -54,7 +54,7 @@ public class RulesetController {
     public void save(@PathVariable String name, @RequestBody RulesetApiDto dto) {
         try {
             DataDirectory.ensureExists();
-            repository.save(toDomain(dto), toAttributeSet(dto), toSkills(dto), DataDirectory.rulesetPath(name));
+            repository.save(toDomain(dto), toAttributeSet(dto), toSkillVerbs(dto), DataDirectory.rulesetPath(name));
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         } catch (IOException e) {
@@ -90,7 +90,7 @@ public class RulesetController {
     @PostMapping(value = "/export", consumes = "application/json", produces = "text/xml;charset=UTF-8")
     public String exportToXml(@RequestBody RulesetApiDto dto) {
         try {
-            return repository.toXml(toDomain(dto), toAttributeSet(dto), toSkills(dto));
+            return repository.toXml(toDomain(dto), toAttributeSet(dto), toSkillVerbs(dto));
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "XML-Serialisierung fehlgeschlagen", e);
         }
@@ -111,7 +111,7 @@ public class RulesetController {
                 ))
                 .toList();
         List<SkillApiDto> skills = loaded.skills().stream()
-                .map(s -> new SkillApiDto(s.getName(), s.getLinkedAttribute().getName(), s.getLevel()))
+                .map(s -> new SkillApiDto(s.getName(), s.getDescription()))
                 .toList();
         return new RulesetApiDto(valueRange, attributeGroups, skills);
     }
@@ -133,15 +133,9 @@ public class RulesetController {
         return set;
     }
 
-    private List<Skill> toSkills(RulesetApiDto dto) {
-        AttributeSet set = toAttributeSet(dto);
+    private List<SkillVerb> toSkillVerbs(RulesetApiDto dto) {
         return dto.skills().stream()
-                .map(s -> {
-                    Attribute attr = set.find(s.linkedAttributeName())
-                            .orElseThrow(() -> new IllegalArgumentException(
-                                    "Attribut nicht gefunden: " + s.linkedAttributeName()));
-                    return new Skill(s.name(), attr, s.level());
-                })
+                .map(s -> new SkillVerb(s.name(), s.description()))
                 .toList();
     }
 }

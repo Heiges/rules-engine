@@ -6,20 +6,20 @@ Alle Regelwerk-Daten (Attribute und Skills) in einer einzigen XML-Datei pro Rege
 
 ## Anforderungen
 
-- `save(AttributeSet, Collection<Skill>, Path)` schreibt eine XML-Datei an den vom Aufrufer übergebenen Pfad
-- `load(Path)` liest die Datei ein und rekonstruiert `AttributeSet` + `Collection<Skill>` als `LoadedRuleset`
+- `save(ValueRange, AttributeSet, Collection<SkillVerb>, Path)` schreibt eine XML-Datei an den vom Aufrufer übergebenen Pfad
+- `load(Path)` liest die Datei ein und rekonstruiert `ValueRange`, `AttributeSet` + `Collection<SkillVerb>` als `LoadedRuleset`
 - `listAll(Path directory)` gibt alle `.xml`-Dateien im Verzeichnis sortiert zurück
 - Datei existiert nicht beim Laden → `IOException` mit klarer Meldung
 - JAXB-Fehler werden als `IOException` weitergegeben (kein Leak von JAXBException)
 - XML-Ausgabe ist formatiert (`JAXB_FORMATTED_OUTPUT = true`)
-- Skills beim Laden: Attribut-Referenz wird per Name aus dem im gleichen File gespeicherten AttributeSet aufgelöst; fehlendes Attribut → `IllegalArgumentException`
+- Skills haben keine Attribut-Bindung — `SkillDto` speichert nur `name` und `description`
 - Domänenklassen bleiben annotation-frei — alle JAXB-Annotationen nur in DTOs
 
 ## Entscheidungen
 
 - **Ein File pro Regelwerk** statt getrennter Dateien für AttributeSet und Skills: kein Mehrwert durch Trennung, Dateiname = Regelwerk-Name
 - **DTO-Schicht statt annotierter Domain-Klassen**: Domänenmodell hat keine Persistenz-Abhängigkeit; Konvertierung liegt vollständig im Repository
-- **`LoadedRuleset` Record** als Rückgabetyp von `load()`: kein neues Domänenobjekt, nur ein Datenhüllen-Record im Persistence-Modul
+- **`LoadedRuleset` Record** als Rückgabetyp von `load()`: hält `ValueRange`, `AttributeSet` und `Collection<SkillVerb>`; kein neues Domänenobjekt, nur ein Datenhüllen-Record im Persistence-Modul
 - **XML statt Datenbank**: für ein Regelwerk mit überschaubaren Datenmengen ausreichend; keine DB-Infrastruktur nötig
 
 ## Implementierung
@@ -44,11 +44,14 @@ Alle Regelwerk-Daten (Attribute und Skills) in einer einzigen XML-Datei pro Rege
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ruleset>
+  <wertebereich min="-10" average="0" max="10"/>
   <attributeSet>
-    <attribute name="Stärke" value="10"/>
+    <group name="Körper">
+      <attribute name="Stärke" description="Körperliche Kraft" value="3"/>
+    </group>
   </attributeSet>
   <skills>
-    <skill name="Klettern" linkedAttributeName="Stärke" level="3"/>
+    <skill name="Klettern" description="Vertikale Fortbewegung"/>
   </skills>
 </ruleset>
 ```
@@ -57,10 +60,11 @@ Alle Regelwerk-Daten (Attribute und Skills) in einer einzigen XML-Datei pro Rege
 
 ```
 Erstelle im Modul `persistence` eine XML-Persistenzschicht, die alle Regelwerk-Daten
-(AttributeSet + Skills) in einer einzigen Datei speichert.
+(ValueRange + AttributeSet + SkillVerbs) in einer einzigen Datei speichert.
 Muster: RulesetDto als @XmlRootElement mit verschachteltem AttributeSetDto und SkillSetDto,
-RulesetRepository-Interface mit save(AttributeSet, Collection<Skill>, Path) / load(Path) / listAll(Path),
-LoadedRuleset als Record-Rückgabetyp. Domänenklassen bleiben annotation-frei.
+RulesetRepository-Interface mit save(ValueRange, AttributeSet, Collection<SkillVerb>, Path) /
+load(Path) / listAll(Path), LoadedRuleset als Record-Rückgabetyp. Domänenklassen bleiben annotation-frei.
+SkillDto hat nur name und description — keine Attribut-Referenz.
 ```
 
-Kontext: JAXB 4.x / Jakarta; JAXBException in IOException wrappen; Pfad vom Aufrufer übergeben; Skills werden beim Laden gegen das mitgespeicherte AttributeSet per Name aufgelöst.
+Kontext: JAXB 4.x / Jakarta; JAXBException in IOException wrappen; Pfad vom Aufrufer übergeben. `SkillVerb` hat kein `linkedAttribute` mehr — Auflösung gegen das AttributeSet beim Laden entfällt.

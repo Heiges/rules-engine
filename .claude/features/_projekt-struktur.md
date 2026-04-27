@@ -120,7 +120,7 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 - [Attribute](domain/attribute.md) — benannte, messbare Eigenschaft mit Value
 - [AttributeSet](domain/attribute-set.md) — geordnete Sammlung von Attributen
 - [AttributeGroup](domain/attribute-group.md) — benannte Gruppe von Attributen; `AttributeSet` hält nun Gruppen statt flacher Attributliste
-- [Skill](domain/skill.md) — Fähigkeit mit Attribut-Bindung und Level
+- [SkillVerb](domain/skill.md) — Fähigkeit (Verb) mit Name und Beschreibung; keine Attribut-Bindung, kein Level
 - [Value](domain/value-domain-class.md) — numerischer Wert eines Regelbausteins (pos./neg.)
 
 ### Persistenz (`persistence/`)
@@ -140,7 +140,8 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 - [Regelwerk-Auswahl über API](frontend/regelwerk-laden-xml.md) — HomeView listet alle Regelwerke per API-Call; Klick öffnet Regelwerk direkt ohne Dateidialog
 - [Neues Regelwerk erstellen](frontend/neues-regelwerk-erstellen.md) — Name per prompt → POST /api/rulesets/{name} → direkt öffnen
 - [Edit-Regelwerk-Kachel](frontend/edit-ruleset-tile.md) — Kachel in HomeView navigiert zu /edit-ruleset
-- [Edit-Regelwerk-View](frontend/edit-ruleset-view.md) — Bearbeitungsansicht unter /edit-ruleset mit Attributanzahl aus rulesetData
+- [Edit-Regelwerk-View](frontend/edit-ruleset-view.md) — Bearbeitungsansicht unter /edit-ruleset mit Kacheln für Werte, Attribute und Skills (je mit Anzahl aus rulesetData)
 - [Attribute-View (CRUD)](frontend/attribute-view.md) — Tabellenübersicht mit Sortierung, Massenauswahl und Detail-View für Anlage/Bearbeitung; persistiert via PUT /api/rulesets/{name}
+- [SkillVerb-View (CRUD)](frontend/skill-verb-view.md) — Tabellenübersicht mit Sortierung, Massenauswahl und Inline-Anlage; persistiert via PUT /api/rulesets/{name}
 - [Wertebereich](frontend/wertebereich.md) — Bearbeiten von min, average, max; persistiert via PUT /api/rulesets/{name}
-- [Charactereditor](frontend/charactereditor.md) — Charakter auf Basis geladenen Regelwerks erstellen (Name, Attributwerte, Fertigkeitslevel); rein transient, kein Speichern
+- [Charactereditor](frontend/charactereditor.md) — Charakter auf Basis geladenen Regelwerks erstellen (Name, Attributwerte); Skills werden informativ angezeigt; rein transient, kein Speichern

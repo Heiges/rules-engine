@@ -11,16 +11,15 @@ export interface Attribute {
   groupName?: string
 }
 
-export interface Skill {
+export interface SkillVerb {
   name: string
-  linkedAttributeName: string
-  level: number
+  description: string
 }
 
 export interface RulesetData {
   valueRange: ValueRange
   attributes: Attribute[]
-  skills: Skill[]
+  skills: SkillVerb[]
 }
 
 export interface RollResult {
@@ -39,7 +38,7 @@ interface AttributeGroupApiDto {
 interface RulesetApiDto {
   valueRange: ValueRange
   attributeGroups: AttributeGroupApiDto[]
-  skills: Skill[]
+  skills: SkillVerb[]
 }
 
 function fromApiDto(dto: RulesetApiDto): RulesetData {

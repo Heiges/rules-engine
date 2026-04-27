@@ -3,7 +3,7 @@ package de.heiges.rulesengine.persistence.xml;
 import de.heiges.rulesengine.coreelements.domain.model.Attribute;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeGroup;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeSet;
-import de.heiges.rulesengine.coreelements.domain.model.Skill;
+import de.heiges.rulesengine.coreelements.domain.model.SkillVerb;
 import de.heiges.rulesengine.coreelements.domain.model.Value;
 import de.heiges.rulesengine.coreelements.domain.model.ValueRange;
 import de.heiges.rulesengine.persistence.repository.LoadedRuleset;
@@ -34,9 +34,9 @@ class XmlRulesetRepositoryTest {
         AttributeSet attributeSet = new AttributeSet();
         attributeSet.addGroup(koerper);
 
-        List<Skill> skills = List.of(
-                new Skill("Klettern", geschicklichkeit, 3),
-                new Skill("Schwimmen", staerke, 2)
+        List<SkillVerb> skills = List.of(
+                new SkillVerb("Klettern", "Vertikale Fortbewegung"),
+                new SkillVerb("Schwimmen", "Fortbewegung im Wasser")
         );
 
         Path file = tempDir.resolve("grundregeln.xml");
@@ -51,13 +51,12 @@ class XmlRulesetRepositoryTest {
         assertEquals(3, geladen.attributeSet().find("Stärke").orElseThrow().getValue().amount());
         assertEquals(-2, geladen.attributeSet().find("Geschicklichkeit").orElseThrow().getValue().amount());
 
-        List<Skill> skillListe = List.copyOf(geladen.skills());
+        List<SkillVerb> skillListe = List.copyOf(geladen.skills());
         assertEquals(2, skillListe.size());
         assertEquals("Klettern", skillListe.get(0).getName());
-        assertEquals("Geschicklichkeit", skillListe.get(0).getLinkedAttribute().getName());
-        assertEquals(3, skillListe.get(0).getLevel());
+        assertEquals("Vertikale Fortbewegung", skillListe.get(0).getDescription());
         assertEquals("Schwimmen", skillListe.get(1).getName());
-        assertEquals(2, skillListe.get(1).getLevel());
+        assertEquals("Fortbewegung im Wasser", skillListe.get(1).getDescription());
     }
 
     @Test
@@ -111,22 +110,6 @@ class XmlRulesetRepositoryTest {
     void laden_nichtExistenteDatei_wirftIOException() {
         Path nichtVorhanden = Path.of("/tmp/ruleset-existiert-nicht-abc123.xml");
         assertThrows(IOException.class, () -> repository.load(nichtVorhanden));
-    }
-
-    @Test
-    void laden_unbekannterAttributName_wirftIllegalArgumentException(@TempDir Path tempDir) throws IOException {
-        String xml = """
-                <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                <ruleset>
-                  <attributeSet/>
-                  <skills>
-                    <skill name="Bogenschießen" linkedAttributeName="NichtVorhanden" level="1"/>
-                  </skills>
-                </ruleset>
-                """;
-        Path file = tempDir.resolve("broken.xml");
-        Files.writeString(file, xml);
-        assertThrows(IllegalArgumentException.class, () -> repository.load(file));
     }
 
     @Test
