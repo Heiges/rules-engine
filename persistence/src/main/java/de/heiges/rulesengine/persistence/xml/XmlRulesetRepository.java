@@ -3,6 +3,7 @@ package de.heiges.rulesengine.persistence.xml;
 import de.heiges.rulesengine.coreelements.domain.model.Attribute;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeGroup;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeSet;
+import de.heiges.rulesengine.coreelements.domain.model.Cheat;
 import de.heiges.rulesengine.coreelements.domain.model.SkillDomain;
 import de.heiges.rulesengine.coreelements.domain.model.SkillVerb;
 import de.heiges.rulesengine.coreelements.domain.model.Value;
@@ -11,6 +12,7 @@ import de.heiges.rulesengine.persistence.repository.LoadedRuleset;
 import de.heiges.rulesengine.persistence.repository.RulesetRepository;
 import de.heiges.rulesengine.persistence.xml.dto.AttributeDto;
 import de.heiges.rulesengine.persistence.xml.dto.AttributeGroupDto;
+import de.heiges.rulesengine.persistence.xml.dto.CheatDto;
 import de.heiges.rulesengine.persistence.xml.dto.RulesetDto;
 import de.heiges.rulesengine.persistence.xml.dto.SkillDomainDto;
 import de.heiges.rulesengine.persistence.xml.dto.SkillDto;
@@ -34,8 +36,8 @@ public class XmlRulesetRepository implements RulesetRepository {
     private static final ValueRange DEFAULT_VALUE_RANGE = new ValueRange(-10, 0, 10);
 
     @Override
-    public void save(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills, Collection<SkillDomain> skillDomains, Path file) throws IOException {
-        RulesetDto dto = toDto(valueRange, attributeSet, skills, skillDomains);
+    public void save(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills, Collection<SkillDomain> skillDomains, Collection<Cheat> cheats, Path file) throws IOException {
+        RulesetDto dto = toDto(valueRange, attributeSet, skills, skillDomains, cheats);
         try {
             JAXBContext context = JAXBContext.newInstance(RulesetDto.class);
             Marshaller marshaller = context.createMarshaller();
@@ -83,8 +85,8 @@ public class XmlRulesetRepository implements RulesetRepository {
         }
     }
 
-    public String toXml(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills, Collection<SkillDomain> skillDomains) throws IOException {
-        RulesetDto dto = toDto(valueRange, attributeSet, skills, skillDomains);
+    public String toXml(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills, Collection<SkillDomain> skillDomains, Collection<Cheat> cheats) throws IOException {
+        RulesetDto dto = toDto(valueRange, attributeSet, skills, skillDomains, cheats);
         try {
             JAXBContext context = JAXBContext.newInstance(RulesetDto.class);
             Marshaller marshaller = context.createMarshaller();
@@ -97,7 +99,7 @@ public class XmlRulesetRepository implements RulesetRepository {
         }
     }
 
-    private RulesetDto toDto(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills, Collection<SkillDomain> skillDomains) {
+    private RulesetDto toDto(ValueRange valueRange, AttributeSet attributeSet, Collection<SkillVerb> skills, Collection<SkillDomain> skillDomains, Collection<Cheat> cheats) {
         RulesetDto dto = new RulesetDto();
         dto.setValueRange(new ValueRangeDto(valueRange.min(), valueRange.average(), valueRange.max()));
         for (AttributeGroup group : attributeSet.getGroups()) {
@@ -113,6 +115,9 @@ public class XmlRulesetRepository implements RulesetRepository {
         }
         for (SkillDomain domain : skillDomains) {
             dto.getSkillDomains().getSkillDomains().add(new SkillDomainDto(domain.getName(), domain.getDescription()));
+        }
+        for (Cheat cheat : cheats) {
+            dto.getCheats().getCheats().add(new CheatDto(cheat.getName(), cheat.getDescription()));
         }
         return dto;
     }
@@ -144,6 +149,11 @@ public class XmlRulesetRepository implements RulesetRepository {
             skillDomains.add(new SkillDomain(domainDto.getName(), domainDto.getDescription()));
         }
 
-        return new LoadedRuleset(valueRange, attributeSet, skills, skillDomains);
+        List<Cheat> cheats = new ArrayList<>();
+        for (CheatDto cheatDto : dto.getCheats().getCheats()) {
+            cheats.add(new Cheat(cheatDto.getName(), cheatDto.getDescription()));
+        }
+
+        return new LoadedRuleset(valueRange, attributeSet, skills, skillDomains, cheats);
     }
 }

@@ -21,11 +21,17 @@ export interface SkillDomain {
   description: string
 }
 
+export interface Cheat {
+  name: string
+  description: string
+}
+
 export interface RulesetData {
   valueRange: ValueRange
   attributes: Attribute[]
   skills: SkillVerb[]
   skillDomains: SkillDomain[]
+  cheats: Cheat[]
 }
 
 export interface RollResult {
@@ -46,6 +52,7 @@ interface RulesetApiDto {
   attributeGroups: AttributeGroupApiDto[]
   skills: SkillVerb[]
   skillDomains: SkillDomain[]
+  cheats: Cheat[]
 }
 
 function fromApiDto(dto: RulesetApiDto): RulesetData {
@@ -56,6 +63,7 @@ function fromApiDto(dto: RulesetApiDto): RulesetData {
     ),
     skills: dto.skills,
     skillDomains: dto.skillDomains ?? [],
+    cheats: dto.cheats ?? [],
   }
 }
 
@@ -74,6 +82,7 @@ function toApiDto(data: RulesetData): RulesetApiDto {
     })),
     skills: data.skills,
     skillDomains: data.skillDomains,
+    cheats: data.cheats,
   }
 }
 

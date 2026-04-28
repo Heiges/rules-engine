@@ -69,6 +69,7 @@ export function HomeView() {
           attributes: [],
           skills: [],
           skillDomains: [],
+          cheats: [],
         }
         const xml = await exportRuleset(emptyData)
         const writable = await handle.createWritable()
@@ -90,6 +91,7 @@ export function HomeView() {
         attributes: [],
         skills: [],
         skillDomains: [],
+        cheats: [],
       }
       setFileHandle(null)
       setCurrentRuleset(name)

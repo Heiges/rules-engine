@@ -123,6 +123,7 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 - [AttributeGroup](domain/attribute-group.md) — benannte Gruppe von Attributen; `AttributeSet` hält nun Gruppen statt flacher Attributliste
 - [SkillVerb](domain/skill.md) — Fähigkeit (Verb) mit Name und Beschreibung; keine Attribut-Bindung, kein Level
 - [SkillDomain](domain/skill-domain.md) — Domäne (Wissensbereich) für SkillVerben; Name + Beschreibung
+- [Cheat](domain/cheat.md) — Regelrubrik für Sonderregeln; Name + Beschreibung
 - [Value](domain/value-domain-class.md) — numerischer Wert eines Regelbausteins (pos./neg.)
 
 ### Persistenz (`persistence/`)
@@ -147,3 +148,4 @@ Abhängigkeiten zeigen immer nach unten / innen. Umgekehrte Abhängigkeiten sind
 - [SkillVerb-View (CRUD)](frontend/skill-verb-view.md) — zwei Tabellen (Verb + Domäne) mit Sortierung, Massenauswahl, Detail-Views; persistiert via PUT /api/rulesets/{name}
 - [Wertebereich](frontend/wertebereich.md) — Bearbeiten von min, average, max; persistiert via PUT /api/rulesets/{name}
 - [Charactereditor](frontend/charactereditor.md) — Charakter auf Basis geladenen Regelwerks erstellen (Name, Attributwerte); Skills werden informativ angezeigt; rein transient, kein Speichern
+- [Cheats-View (CRUD)](frontend/cheats-view.md) — Liste + Detail-View für Cheats; Kachel in EditRulesetView; persistiert via PUT /api/rulesets/{name}

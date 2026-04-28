@@ -28,4 +28,6 @@
   <skills>
     <skill name="Wissen" linkedAttributeName="Kraft" level="0"/>
   </skills>
+  <skillDomains/>
+  <cheats/>
 </ruleset>

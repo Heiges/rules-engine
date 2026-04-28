@@ -10,6 +10,7 @@ export function EditRulesetView() {
   const attributeCount = rulesetData?.attributes.length ?? 0
   const skillCount = rulesetData?.skills.length ?? 0
   const domainCount = rulesetData?.skillDomains.length ?? 0
+  const cheatCount = rulesetData?.cheats.length ?? 0
   const rulesetName = currentRuleset ?? ''
 
   return (
@@ -31,6 +32,11 @@ export function EditRulesetView() {
           id="skills"
           name="Skills"
           description={`Skill anlegen und modifizieren (${skillCount} Verben, ${domainCount} Domänen)`}
+        />
+        <Tile
+          id="cheats"
+          name="Cheats"
+          description={`Cheats anlegen und bearbeiten (${cheatCount} Cheats)`}
         />
       </div>
     </div>

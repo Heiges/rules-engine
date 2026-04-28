@@ -6,5 +6,6 @@ public record RulesetApiDto(
         ValueRangeApiDto valueRange,
         List<AttributeGroupApiDto> attributeGroups,
         List<SkillApiDto> skills,
-        List<SkillDomainApiDto> skillDomains
+        List<SkillDomainApiDto> skillDomains,
+        List<CheatApiDto> cheats
 ) {}

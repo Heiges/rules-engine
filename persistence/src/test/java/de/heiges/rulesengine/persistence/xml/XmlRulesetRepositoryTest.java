@@ -3,6 +3,7 @@ package de.heiges.rulesengine.persistence.xml;
 import de.heiges.rulesengine.coreelements.domain.model.Attribute;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeGroup;
 import de.heiges.rulesengine.coreelements.domain.model.AttributeSet;
+import de.heiges.rulesengine.coreelements.domain.model.Cheat;
 import de.heiges.rulesengine.coreelements.domain.model.SkillDomain;
 import de.heiges.rulesengine.coreelements.domain.model.SkillVerb;
 import de.heiges.rulesengine.coreelements.domain.model.Value;
@@ -45,7 +46,7 @@ class XmlRulesetRepositoryTest {
         );
 
         Path file = tempDir.resolve("grundregeln.xml");
-        repository.save(standardRange, attributeSet, skills, domains, file);
+        repository.save(standardRange, attributeSet, skills, domains, List.of(), file);
         LoadedRuleset geladen = repository.load(file);
 
         assertEquals(1, geladen.attributeSet().getGroups().size());
@@ -68,7 +69,7 @@ class XmlRulesetRepositoryTest {
     void speichernUndLaden_erhaltValueRangeKorrekt(@TempDir Path tempDir) throws IOException {
         ValueRange range = new ValueRange(-5, 2, 15);
         Path file = tempDir.resolve("range.xml");
-        repository.save(range, new AttributeSet(), List.of(), List.of(), file);
+        repository.save(range, new AttributeSet(), List.of(), List.of(), List.of(), file);
         LoadedRuleset geladen = repository.load(file);
 
         assertEquals(-5, geladen.valueRange().min());
@@ -97,18 +98,19 @@ class XmlRulesetRepositoryTest {
     @Test
     void speichernUndLaden_leereDaten(@TempDir Path tempDir) throws IOException {
         Path file = tempDir.resolve("leer.xml");
-        repository.save(standardRange, new AttributeSet(), List.of(), List.of(), file);
+        repository.save(standardRange, new AttributeSet(), List.of(), List.of(), List.of(), file);
         LoadedRuleset geladen = repository.load(file);
 
         assertEquals(0, geladen.attributeSet().size());
         assertTrue(geladen.skills().isEmpty());
         assertTrue(geladen.skillDomains().isEmpty());
+        assertTrue(geladen.cheats().isEmpty());
     }
 
     @Test
     void gespeicherteDateiExistiert(@TempDir Path tempDir) throws IOException {
         Path file = tempDir.resolve("test.xml");
-        repository.save(standardRange, new AttributeSet(), List.of(), List.of(), file);
+        repository.save(standardRange, new AttributeSet(), List.of(), List.of(), List.of(), file);
         assertTrue(file.toFile().exists());
     }
 
@@ -120,8 +122,8 @@ class XmlRulesetRepositoryTest {
 
     @Test
     void listAll_liefertNurXmlDateien(@TempDir Path tempDir) throws IOException {
-        repository.save(standardRange, new AttributeSet(), List.of(), List.of(), tempDir.resolve("alpha.xml"));
-        repository.save(standardRange, new AttributeSet(), List.of(), List.of(), tempDir.resolve("beta.xml"));
+        repository.save(standardRange, new AttributeSet(), List.of(), List.of(), List.of(), tempDir.resolve("alpha.xml"));
+        repository.save(standardRange, new AttributeSet(), List.of(), List.of(), List.of(), tempDir.resolve("beta.xml"));
         Files.createFile(tempDir.resolve("ignorieren.txt"));
 
         List<Path> rulesets = repository.listAll(tempDir);
@@ -135,5 +137,22 @@ class XmlRulesetRepositoryTest {
     void listAll_nichtExistentesVerzeichnis_liefertLeere(@TempDir Path tempDir) throws IOException {
         List<Path> rulesets = repository.listAll(tempDir.resolve("nicht-vorhanden"));
         assertTrue(rulesets.isEmpty());
+    }
+
+    @Test
+    void speichernUndLaden_erhaltCheatsKorrekt(@TempDir Path tempDir) throws IOException {
+        List<Cheat> cheats = List.of(
+                new Cheat("Unverwundbar", "Nimmt keinen Schaden"),
+                new Cheat("Allwissend", "Kennt alle Geheimnisse")
+        );
+        Path file = tempDir.resolve("cheats.xml");
+        repository.save(standardRange, new AttributeSet(), List.of(), List.of(), cheats, file);
+        LoadedRuleset geladen = repository.load(file);
+
+        List<Cheat> cheatListe = List.copyOf(geladen.cheats());
+        assertEquals(2, cheatListe.size());
+        assertEquals("Unverwundbar", cheatListe.get(0).getName());
+        assertEquals("Nimmt keinen Schaden", cheatListe.get(0).getDescription());
+        assertEquals("Allwissend", cheatListe.get(1).getName());
     }
 }

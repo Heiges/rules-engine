@@ -21,6 +21,9 @@ public class RulesetDto {
     @XmlElement(name = "skillDomains")
     private SkillDomainSetDto skillDomains = new SkillDomainSetDto();
 
+    @XmlElement(name = "cheats")
+    private CheatSetDto cheats = new CheatSetDto();
+
     public RulesetDto() {}
 
     public ValueRangeDto getValueRange() { return valueRange; }
@@ -28,4 +31,5 @@ public class RulesetDto {
     public AttributeSetDto getAttributeSet() { return attributeSet; }
     public SkillSetDto getSkills() { return skills; }
     public SkillDomainSetDto getSkillDomains() { return skillDomains; }
+    public CheatSetDto getCheats() { return cheats != null ? cheats : new CheatSetDto(); }
 }
