@@ -21,8 +21,10 @@ function App() {
           <Route path="/" element={<HomeView />} />
           <Route path="/edit-ruleset" element={<EditRulesetView />} />
           <Route path="/tile/werte" element={<WerteView />} />
-          <Route path="/tile/attributes" element={<AttributeView />} />
-          <Route path="/tile/attributes/:index" element={<AttributeDetailView />} />
+          <Route path="/tile/attributes" element={<AttributeView allowGrouping={false} backPath="/edit-ruleset" detailBasePath="/tile/attributes" />} />
+          <Route path="/tile/attributes/:index" element={<AttributeDetailView listPath="/tile/attributes" />} />
+          <Route path="/world/attributes" element={<AttributeView allowGrouping={true} backPath="/create-world" detailBasePath="/world/attributes" />} />
+          <Route path="/world/attributes/:index" element={<AttributeDetailView listPath="/world/attributes" />} />
           <Route path="/tile/skills" element={<SkillVerbView />} />
           <Route path="/tile/skills/domains/:index" element={<SkillDomainDetailView />} />
           <Route path="/tile/skills/:index" element={<SkillVerbDetailView />} />

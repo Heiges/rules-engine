@@ -6,7 +6,11 @@ import type { Attribute } from '../api'
 import './DetailView.css'
 import './AttributeView.css'
 
-export function AttributeDetailView() {
+interface Props {
+  listPath: string
+}
+
+export function AttributeDetailView({ listPath }: Props) {
   const navigate = useNavigate()
   const { index } = useParams<{ index: string }>()
   const { rulesetData, setRulesetData, currentRuleset, fileHandle } = useRuleset()
@@ -58,12 +62,12 @@ export function AttributeDetailView() {
     }
 
     await persist(updated)
-    navigate('/tile/attributes')
+    navigate(listPath)
   }
 
   return (
     <div className="detail-view">
-      <button className="back-button" onClick={() => navigate('/tile/attributes')}>← Zurück</button>
+      <button className="back-button" onClick={() => navigate(listPath)}>← Zurück</button>
       <h1>{isNew ? 'Neues Attribut' : 'Attribut bearbeiten'}</h1>
 
       <div className="attr-form">
@@ -99,7 +103,7 @@ export function AttributeDetailView() {
         {saveError && <p className="attr-error">{saveError}</p>}
 
         <div className="attr-form-actions">
-          <button className="attr-cancel-btn" onClick={() => navigate('/tile/attributes')}>Abbrechen</button>
+          <button className="attr-cancel-btn" onClick={() => navigate(listPath)}>Abbrechen</button>
           <button className="attr-save-btn" onClick={save} disabled={!name.trim()}>
             Speichern
           </button>

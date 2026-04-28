@@ -13,6 +13,12 @@ export function SpielweltView() {
       <p>Hier wird das Anlegen einer neuen Spielwelt implementiert.</p>
       <div className="tile-grid">
         <Tile
+          id="world-attributes"
+          name="Attribute"
+          description="Attribute der Spielwelt verwalten und gruppieren."
+          onClick={() => navigate('/world/attributes')}
+        />
+        <Tile
           id="character-editor"
           name="Charactereditor"
           description="Erstellt einen Character."

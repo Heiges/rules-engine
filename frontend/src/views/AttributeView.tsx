@@ -6,7 +6,13 @@ import type { Attribute } from '../api'
 import './DetailView.css'
 import './AttributeView.css'
 
-export function AttributeView() {
+interface Props {
+  allowGrouping: boolean
+  backPath: string
+  detailBasePath: string
+}
+
+export function AttributeView({ allowGrouping, backPath, detailBasePath }: Props) {
   const navigate = useNavigate()
   const { rulesetData, setRulesetData, currentRuleset, fileHandle } = useRuleset()
   const [attrs, setAttrs] = useState<Attribute[]>(() => rulesetData?.attributes ?? [])
@@ -101,21 +107,23 @@ export function AttributeView() {
 
   return (
     <div className="detail-view">
-      <button className="back-button" onClick={() => navigate('/edit-ruleset')}>← Zurück</button>
+      <button className="back-button" onClick={() => navigate(backPath)}>← Zurück</button>
       <div className="attr-header">
         <h1>Attribute</h1>
         <div className="attr-header-actions">
           {selected.size > 0 && (
             <>
-              <button className="attr-group-selected-btn" onClick={groupSelected}>
-                {selected.size} gruppieren
-              </button>
+              {allowGrouping && (
+                <button className="attr-group-selected-btn" onClick={groupSelected}>
+                  {selected.size} gruppieren
+                </button>
+              )}
               <button className="attr-delete-selected-btn" onClick={deleteSelected}>
                 {selected.size} löschen
               </button>
             </>
           )}
-          <button className="attr-new-btn" onClick={() => navigate('/tile/attributes/neu')}>
+          <button className="attr-new-btn" onClick={() => navigate(`${detailBasePath}/neu`)}>
             + Neues Attribut
           </button>
         </div>
@@ -136,7 +144,7 @@ export function AttributeView() {
               <th className="attr-col-name attr-col-sortable" onClick={toggleSort}>
                 Name {sortDir === 'asc' ? '▲' : sortDir === 'desc' ? '▼' : '⇅'}
               </th>
-              <th className="attr-col-group">Gruppe</th>
+              {allowGrouping && <th className="attr-col-group">Gruppe</th>}
               <th className="attr-col-actions">Aktionen</th>
             </tr>
           </thead>
@@ -147,10 +155,10 @@ export function AttributeView() {
                   <input type="checkbox" checked={selected.has(originalIndex)} onChange={() => toggleSelect(originalIndex)} />
                 </td>
                 <td className="attr-col-name">{attr.name}</td>
-                <td className="attr-col-group">{(attr.groupName && attr.groupName !== 'Allgemein') ? attr.groupName : <span className="attr-no-value">–</span>}</td>
+                {allowGrouping && <td className="attr-col-group">{(attr.groupName && attr.groupName !== 'Allgemein') ? attr.groupName : <span className="attr-no-value">–</span>}</td>}
                 <td className="attr-col-actions">
-                  <button className="attr-action-link" onClick={() => navigate(`/tile/attributes/${originalIndex}`)}>Anzeigen</button>
-                  <button className="attr-action-link" onClick={() => navigate(`/tile/attributes/${originalIndex}`)}>Bearbeiten</button>
+                  <button className="attr-action-link" onClick={() => navigate(`${detailBasePath}/${originalIndex}`)}>Anzeigen</button>
+                  <button className="attr-action-link" onClick={() => navigate(`${detailBasePath}/${originalIndex}`)}>Bearbeiten</button>
                   <button className="attr-action-link attr-action-delete" onClick={() => del(originalIndex)}>Löschen</button>
                 </td>
               </tr>

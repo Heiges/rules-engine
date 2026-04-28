@@ -2,20 +2,23 @@
 
 ## Ziel
 
-Kompakte Tabellenübersicht aller Attribute eines Regelwerks unter `/tile/attributes`, ergänzt durch einen separaten Detail-View für Anlage und Bearbeitung. Jede Mutation wird sofort persistiert.
+Kompakte Tabellenübersicht aller Attribute eines Regelwerks. Der View wird in zwei Kontexten genutzt: Referenzregeln (`/tile/attributes`) und Spielwelt (`/world/attributes`). Im Spielwelt-Kontext ist zusätzlich die Gruppierung von Attributen möglich. Jede Mutation wird sofort persistiert.
 
 ## Anforderungen
 
-- Route `/tile/attributes` (spezifisch, vor dem generischen `/tile/:id`)
-- Tabelle mit Spalten: Checkbox | Name (sortierbar) | Aktionen (Anzeigen, Bearbeiten, Löschen)
-- **Checkbox-Spalte**: Einzel-Auswahl pro Zeile; Kopfzeilen-Checkbox wählt alle aus / ab. Wenn ≥1 selektiert: Button „N löschen" für Massenlöschung erscheint im Header-Bereich
+- `AttributeView` akzeptiert Props: `allowGrouping: boolean`, `backPath: string`, `detailBasePath: string`
+- Routen: `/tile/attributes` (Referenzregeln, kein Gruppieren) und `/world/attributes` (Spielwelt, Gruppieren erlaubt)
+- Tabelle mit Spalten: Checkbox | Name (sortierbar) | Gruppe | Aktionen (Anzeigen, Bearbeiten, Löschen)
+- **Checkbox-Spalte**: Einzel-Auswahl pro Zeile; Kopfzeilen-Checkbox wählt alle aus / ab. Wenn ≥1 selektiert: Button „N löschen" und (wenn `allowGrouping`) Button „N gruppieren" erscheinen im Header
+- **Gruppieren**: nur wenn `allowGrouping=true`; `window.prompt` für Gruppenname; setzt `groupName` auf den selektierten Attributen
 - **Sortierung Name**: Klick auf Spaltenheader „Name" wechselt zyklisch ⇅ → ▲ (A–Z, `localeCompare 'de'`) → ▼ (Z–A) → ⇅. Original-Indizes bleiben erhalten, damit Aktions-Links nach dem Sortieren korrekt navigieren
-- **Aktionen pro Zeile**: Anzeigen / Bearbeiten (beide navigieren zu `/tile/attributes/:index`), Löschen (sofort, kein Dialog)
-- Button „+ Neues Attribut" oben rechts navigiert zu `/tile/attributes/neu`
+- **Aktionen pro Zeile**: Anzeigen / Bearbeiten (navigieren zu `{detailBasePath}/:index`), Löschen (sofort, kein Dialog)
+- Button „+ Neues Attribut" oben rechts navigiert zu `{detailBasePath}/neu`
 - Leerzustand: Hinweistext „Noch keine Attribute vorhanden."
 - Schreibfehler: roter Fehlertext unterhalb des Headers
-- Zurück-Button navigiert zu `/edit-ruleset`
-- **Detail-View** (`AttributeDetailView`): Formular mit Feldern Name, Beschreibung, Wert. Speichern prüft auf Duplikate (gleicher Name, anderer Index). Enter im Name-Feld löst Speichern aus. Nach Speichern: Rücknavigation zu `/tile/attributes`. Neue Attribute: `description: ''`, `value: 0` als Startwerte
+- Zurück-Button navigiert zu `backPath`
+- `AttributeDetailView` akzeptiert Prop `listPath: string`; Zurück, Abbrechen und nach Speichern navigieren zu `listPath`
+- Routen für Detail: `/tile/attributes/:index` und `/world/attributes/:index`
 - Beide Views persistieren sofort: `fileHandle` vorhanden → `exportRuleset` → `fileHandle.createWritable()`; sonst `saveRuleset` → `PUT /api/rulesets/{name}`
 
 ## Entscheidungen
@@ -24,8 +27,9 @@ Kompakte Tabellenübersicht aller Attribute eines Regelwerks unter `/tile/attrib
 - **Wrapper-Div für Tabellenrahmen**: `border-collapse: collapse` auf `<table>` verhindert, dass `border-radius` + `overflow: hidden` direkt am `<table>` funktioniert. Der `div.attr-table-wrapper` trägt Rahmen und Radius.
 - **`originalIndex` beim Sortieren mitführen**: Die Sortierung arbeitet auf einer abgeleiteten `rows`-Liste (`{ attr, originalIndex }`). Aktions-Links und Checkbox-Selection referenzieren immer den Original-Index im `attrs`-Array — verhindert falsche Navigation nach Sortierung.
 - **`text-align: left` auf `.detail-view`**: Der globale `#root`-Style setzt `text-align: center`; das wird in `DetailView.css` überschrieben, damit alle Detail-Views linksbündig sind.
-- **Index-basiertes Routing** (`/tile/attributes/:index`): Einfacher als Name-Encoding; stabil solange kein Reorder zwischen Navigation und Bearbeitung stattfindet.
+- **Index-basiertes Routing** (`/tile/attributes/:index`, `/world/attributes/:index`): Einfacher als Name-Encoding; stabil solange kein Reorder zwischen Navigation und Bearbeitung stattfindet.
 - **Kein separater Anzeigen-only-Modus**: Anzeigen und Bearbeiten zeigen denselben Detail-View. Ein Read-only-Modus kann später ergänzt werden.
+- **Props statt Duplizierung**: `allowGrouping`, `backPath`, `detailBasePath` in `AttributeView` und `listPath` in `AttributeDetailView` ermöglichen die Wiederverwendung in Referenzregeln- und Spielwelt-Kontext ohne Code-Duplizierung.
 
 ## Implementierung
 
