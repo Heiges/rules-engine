@@ -123,6 +123,12 @@ export function HomeView() {
             onClick={() => navigate('/edit-ruleset')}
           />
         )}
+        <Tile
+          id="create-world"
+          name="Spielwelt anlegen"
+          description="Eine neue Spielwelt anlegen."
+          onClick={() => navigate('/create-world')}
+        />
         {currentRuleset && (
           <Tile
             id="character-editor"
@@ -131,12 +137,6 @@ export function HomeView() {
             onClick={() => navigate('/character-editor')}
           />
         )}
-        <Tile
-          id="create-world"
-          name="Spielwelt anlegen"
-          description="Eine neue Spielwelt anlegen."
-          onClick={() => navigate('/create-world')}
-        />
       </div>
     </div>
   )
