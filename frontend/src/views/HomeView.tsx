@@ -119,7 +119,7 @@ export function HomeView() {
           <Tile
             id="edit-ruleset"
             name={`Referenzregeln ${currentRuleset} bearbeiten`}
-            description="Die Referenzregeln bearbeiten."
+            description={`Die Referenzregeln ${currentRuleset} bearbeiten.`}
             onClick={() => navigate('/edit-ruleset')}
           />
         )}
