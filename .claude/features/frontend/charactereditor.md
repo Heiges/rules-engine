@@ -8,15 +8,17 @@ Erlaubt es, auf Basis eines geladenen Regelwerks einen Charakter zu erstellen: N
 
 - Die Kachel „Charactereditor" erscheint in der HomeView **nur**, wenn ein Regelwerk geladen ist (`currentRuleset !== null` im RulesetContext).
 - Attributwerte werden auf `[valueRange.min, valueRange.max]` geklemmt; Initialbelegung ist `valueRange.average`.
-- Jedes Attribut wird mit Slider **und** Zahleneingabe angezeigt; beide sind synchron.
+- **Gruppierte Attribute** (gleicher `groupName`, nicht `'Allgemein'`) erscheinen im Editor als **ein einziger Eintrag** mit dem Gruppennamen — die einzelnen Attribute der Gruppe werden zusammengefasst.
+- **Ungroupierte Attribute** (kein `groupName` oder `groupName === 'Allgemein'`) erscheinen weiterhin einzeln unter ihrem Attributnamen.
+- Jeder Eintrag (Gruppe oder Einzelattribut) wird mit Slider **und** Zahleneingabe angezeigt; beide sind synchron.
 - Skills werden mit Name und Beschreibung (falls vorhanden) angezeigt — rein informativ, kein Level-Input.
-- Enthält das Regelwerk weder Attribute noch Skills, erscheint ein Hinweistext statt der leeren Abschnitte.
+- Enthält das Regelwerk weder (effektive) Attribute noch Skills, erscheint ein Hinweistext statt der leeren Abschnitte.
 - Der Zustand (Name, Attributwerte) wird einmalig beim Mounten aus dem RulesetContext initialisiert und danach lokal gehalten.
-- Hinter jedem Attribut gibt es einen „Würfeln"-Button; beim Klick wird `POST /api/roll` mit dem aktuellen Attributwert aufgerufen.
-- Das Würfelergebnis wird inline in der Attributzeile angezeigt: alle geworfenen Würfel als kleine Kacheln, Pasch-Würfel farblich hervorgehoben, daneben „Erfolg (N× X)" oder „Misserfolg".
+- Hinter jedem Eintrag gibt es einen „Würfeln"-Button; beim Klick wird `POST /api/roll` mit dem aktuellen Wert aufgerufen.
+- Das Würfelergebnis wird inline in der Zeile angezeigt: alle geworfenen Würfel als kleine Kacheln, Pasch-Würfel farblich hervorgehoben, daneben „Erfolg (N× X)" oder „Misserfolg".
 - Erfolg = mindestens ein Pasch (≥ 2 gleiche Würfel); Misserfolg sonst.
 - Während des laufenden Requests ist der Button deaktiviert und zeigt „…".
-- Das letzte Ergebnis bleibt stehen bis zum nächsten Würfelwurf für dieses Attribut.
+- Das letzte Ergebnis bleibt stehen bis zum nächsten Würfelwurf für diesen Eintrag.
 
 ## Entscheidungen
 
@@ -26,7 +28,8 @@ Erlaubt es, auf Basis eines geladenen Regelwerks einen Charakter zu erstellen: N
 - **State einmalig initialisieren** — `useState(() => ...)` mit Lazy-Initializer, damit der Zustand nicht bei jedem Re-Render des Kontexts zurückgesetzt wird.
 - **`DetailView.css` als gemeinsame Basis** — Layout-Klassen `.detail-view` und `.back-button` werden projektübergreifend wiederverwendet.
 - **Würfel-API-Typen in `api.ts`** — `RollResult`-Interface und `rollDice()`-Funktion liegen zentral in `api.ts`, nicht inline in der View.
-- **Pro-Attribut-Ergebnisstate** — `Record<string, RollResult>` statt eines einzelnen Ergebnisses, damit mehrere Attributwürfe gleichzeitig sichtbar bleiben.
+- **Pro-Eintrag-Ergebnisstate** — `Record<string, RollResult>` mit dem effektiven Key (Gruppenname oder Attributname) als Schlüssel.
+- **`buildEffectiveAttrs`-Hilfsfunktion** — berechnet die deduplizierte Liste der anzuzeigenden Einträge aus dem `attributes`-Array; Gruppen werden anhand von `groupName` (≠ `'Allgemein'`) erkannt und nur einmalig eingetragen. Das `isGroup`-Flag ist für spätere visuelle Differenzierung vorgehalten.
 
 ## Implementierung
 
@@ -53,3 +56,13 @@ Neues Feature: Charactereditor-View im Frontend.
 ```
 
 Kontext: `POST /api/roll` existiert im Backend (`RollController`). `RollResult`-Interface in `api.ts`. RulesetContext stellt `rulesetData` (Typen aus `api.ts`) bereit. `SkillVerb` hat nur `name` und `description`, kein `level` und kein `linkedAttributeName`. Routing über React Router v6. Layout-Basis aus `DetailView.css`.
+
+### Änderung: Gruppierte Attribute im Editor
+
+```
+Charactereditor anpassen: Gruppierte Attribute (groupName ≠ 'Allgemein') sollen im Editor
+als ein einziger Eintrag mit dem Gruppennamen erscheinen, nicht als einzelne Attribute.
+Ungroupierte Attribute bleiben einzeln.
+```
+
+Kontext: Jedes `Attribute` in `rulesetData.attributes` hat ein optionales `groupName`-Feld (befüllt durch `fromApiDto` in `api.ts`). `groupName === 'Allgemein'` gilt als ungroupiert. Hilfsfunktion `buildEffectiveAttrs` in `CharacterEditorView.tsx`.

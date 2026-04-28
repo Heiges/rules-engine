@@ -2,9 +2,31 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRuleset } from '../context/RulesetContext'
 import { rollDice } from '../api'
-import type { RollResult } from '../api'
+import type { Attribute, RollResult } from '../api'
 import './DetailView.css'
 import './CharacterEditorView.css'
+
+interface EffectiveAttr {
+  key: string
+  isGroup: boolean
+}
+
+function buildEffectiveAttrs(attributes: Attribute[]): EffectiveAttr[] {
+  const seenGroups = new Set<string>()
+  const result: EffectiveAttr[] = []
+  for (const attr of attributes) {
+    const group = attr.groupName && attr.groupName !== 'Allgemein' ? attr.groupName : null
+    if (group) {
+      if (!seenGroups.has(group)) {
+        seenGroups.add(group)
+        result.push({ key: group, isGroup: true })
+      }
+    } else {
+      result.push({ key: attr.name, isGroup: false })
+    }
+  }
+  return result
+}
 
 export function CharacterEditorView() {
   const navigate = useNavigate()
@@ -15,9 +37,11 @@ export function CharacterEditorView() {
     skills: [],
   }
 
+  const effectiveAttrs = buildEffectiveAttrs(attributes)
+
   const [charName, setCharName] = useState('')
   const [attrValues, setAttrValues] = useState<Record<string, number>>(() =>
-    Object.fromEntries(attributes.map(a => [a.name, valueRange.average]))
+    Object.fromEntries(effectiveAttrs.map(e => [e.key, valueRange.average]))
   )
   const [rollResults, setRollResults] = useState<Record<string, RollResult>>({})
   const [rollingFor, setRollingFor] = useState<string | null>(null)
@@ -55,38 +79,38 @@ export function CharacterEditorView() {
         />
       </div>
 
-      {attributes.length > 0 && (
+      {effectiveAttrs.length > 0 && (
         <div className="char-section">
           <h2>Attribute</h2>
           <p className="char-range-hint">Wertebereich: {valueRange.min} bis {valueRange.max} (Ø {valueRange.average})</p>
           <div className="char-attr-grid">
-            {attributes.map(attr => {
-              const result = rollResults[attr.name]
+            {effectiveAttrs.map(eff => {
+              const result = rollResults[eff.key]
               return (
-                <div key={attr.name} className="char-attr-row">
-                  <span className="char-attr-name">{attr.name}</span>
+                <div key={eff.key} className="char-attr-row">
+                  <span className="char-attr-name">{eff.key}</span>
                   <input
                     type="range"
                     className="char-slider"
                     min={valueRange.min}
                     max={valueRange.max}
-                    value={attrValues[attr.name] ?? valueRange.average}
-                    onChange={e => setAttr(attr.name, e.target.value)}
+                    value={attrValues[eff.key] ?? valueRange.average}
+                    onChange={e => setAttr(eff.key, e.target.value)}
                   />
                   <input
                     type="number"
                     className="char-value-input"
                     min={valueRange.min}
                     max={valueRange.max}
-                    value={attrValues[attr.name] ?? valueRange.average}
-                    onChange={e => setAttr(attr.name, e.target.value)}
+                    value={attrValues[eff.key] ?? valueRange.average}
+                    onChange={e => setAttr(eff.key, e.target.value)}
                   />
                   <button
                     className="char-roll-btn"
-                    onClick={() => roll(attr.name)}
-                    disabled={rollingFor === attr.name}
+                    onClick={() => roll(eff.key)}
+                    disabled={rollingFor === eff.key}
                   >
-                    {rollingFor === attr.name ? '…' : 'Würfeln'}
+                    {rollingFor === eff.key ? '…' : 'Würfeln'}
                   </button>
                   {result && (
                     <span className="char-roll-result">
@@ -130,7 +154,7 @@ export function CharacterEditorView() {
         </div>
       )}
 
-      {attributes.length === 0 && skills.length === 0 && (
+      {effectiveAttrs.length === 0 && skills.length === 0 && (
         <p className="char-empty">Das Regelwerk enthält noch keine Attribute oder Fertigkeiten.</p>
       )}
     </div>
