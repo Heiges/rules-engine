@@ -8,7 +8,7 @@ Ermöglicht dem Nutzer, über die HomeView ein neues, leeres Regelwerk anzulegen
 
 ## Anforderungen
 
-- Klick auf „Neues Regelwerk" → `window.prompt` für den Namen
+- Klick auf „Neue Referenzregeln" → `window.prompt` für den Namen (Fallback) oder `showSaveFilePicker`
 - `POST /api/rulesets/{name}` legt ein leeres Regelwerk an (Default: min=-10, average=0, max=10, keine Attribute, keine Skills)
 - Danach `GET /api/rulesets/{name}` → `rulesetData` im Context setzen
 - Navigation zu `/edit-ruleset`

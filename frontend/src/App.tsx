@@ -11,6 +11,7 @@ import { CharacterEditorView } from './views/CharacterEditorView'
 import { SkillVerbView } from './views/SkillVerbView'
 import { SkillVerbDetailView } from './views/SkillVerbDetailView'
 import { SkillDomainDetailView } from './views/SkillDomainDetailView'
+import { SpielweltView } from './views/SpielweltView'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/tile/skills/domains/:index" element={<SkillDomainDetailView />} />
           <Route path="/tile/skills/:index" element={<SkillVerbDetailView />} />
           <Route path="/character-editor" element={<CharacterEditorView />} />
+          <Route path="/create-world" element={<SpielweltView />} />
           <Route path="/tile/:id" element={<DetailView />} />
         </Routes>
         <StatusBar />

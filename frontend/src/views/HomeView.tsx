@@ -105,21 +105,21 @@ export function HomeView() {
       <div className="tile-grid">
         <Tile
           id="new-ruleset"
-          name="Neues Regelwerk"
-          description="Ein neues Regelwerk erstellen und speichern"
+          name="Neue Referenzregeln"
+          description="Neue Referenzregeln erstellen"
           onClick={handleNew}
         />
         <Tile
           id="load-ruleset"
-          name="Regelwerk laden"
-          description="XML-Datei öffnen und bearbeiten"
+          name="Referenzregeln laden"
+          description="Referenzregeln laden"
           onClick={handleLoad}
         />
         {currentRuleset && (
           <Tile
             id="edit-ruleset"
-            name={`Regelwerk ${currentRuleset} bearbeiten`}
-            description="Das Regelwerk bearbeiten."
+            name={`Referenzregeln ${currentRuleset} bearbeiten`}
+            description="Die Referenzregeln bearbeiten."
             onClick={() => navigate('/edit-ruleset')}
           />
         )}
@@ -131,6 +131,12 @@ export function HomeView() {
             onClick={() => navigate('/character-editor')}
           />
         )}
+        <Tile
+          id="create-world"
+          name="Spielwelt anlegen"
+          description="Eine neue Spielwelt anlegen."
+          onClick={() => navigate('/create-world')}
+        />
       </div>
     </div>
   )

@@ -6,7 +6,7 @@ Die Kachel „Regelwerk laden" öffnet einen Dateidialog (browsernativ oder Fall
 
 ## Anforderungen
 
-- Klick auf „Regelwerk laden" öffnet einen Dateiauswahl-Dialog, gefiltert auf `.xml`
+- Klick auf „Referenzregeln laden" öffnet einen Dateiauswahl-Dialog, gefiltert auf `.xml`
 - Der XML-Inhalt wird per `POST /api/rulesets/import` ans Backend gesendet; das Backend gibt strukturierte Daten zurück
 - Das geladene Regelwerk wird in `RulesetContext` gesetzt; Navigation zu `/edit-ruleset`
 - Unterstützte Browser: alle (Chromium-Pfad und Fallback)
@@ -38,7 +38,7 @@ Im Fallback-Pfad wird `fileHandle` im Context auf `null` gesetzt; Speichern via 
 ## Rekonstruktion
 
 ```
-HomeView: Klick auf "Regelwerk laden" → handleLoad()
+HomeView: Klick auf "Referenzregeln laden" → handleLoad()
   Wenn window.showOpenFilePicker verfügbar:
     showOpenFilePicker → handle → file.text() → importRuleset(xml)
     → setFileHandle(handle), setCurrentRuleset(handle.name), setRulesetData(data)
