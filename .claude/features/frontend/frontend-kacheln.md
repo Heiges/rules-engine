@@ -39,7 +39,7 @@ Primäres Navigationsmuster der Anwendung. Die Startseite zeigt eine Kachel-Übe
 | `load-ruleset` | Referenzregeln laden | Referenzregeln laden | immer |
 | `edit-ruleset` | Referenzregeln {name} bearbeiten | Die Referenzregeln bearbeiten | nur wenn Regelwerk geladen |
 | `character-editor` | Charactereditor | Erstellt einen Character | nur wenn Regelwerk geladen |
-| `create-world` | Spielwelt anlegen | Eine neue Spielwelt anlegen | immer |
+| `create-world` | Spielwelt anlegen | Eine neue Spielwelt auf Basis der Referenzregeln {name} erstellen | nur wenn Regelwerk geladen |
 
 ## Rekonstruktion
 

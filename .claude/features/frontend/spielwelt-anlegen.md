@@ -12,13 +12,13 @@ Einstiegspunkt für das Anlegen einer neuen Spielwelt. Die Kachel ist auf der St
 
 ## Anforderungen
 
-- Kachel „Spielwelt anlegen" in der HomeView, immer sichtbar (keine Abhängigkeit von geladenem Regelwerk)
+- Kachel „Spielwelt anlegen" in der HomeView, nur sichtbar wenn ein Regelwerk geladen ist
 - Navigation zu `/create-world`
 - Placeholder-View mit Zurück-Button
 
 ## Entscheidungen
 
-- **Immer sichtbar**: Eine Spielwelt ist kein Derivat von Referenzregeln — der Einstieg soll unabhängig vom geladenen Regelwerk möglich sein.
+- **Nur mit geladenem Regelwerk sichtbar**: Die Spielwelt wird auf Basis von Referenzregeln erstellt; ohne geladenes Regelwerk macht die Kachel keinen Sinn.
 - **Placeholder zuerst**: Die View ist intentional leer; das Feature wird in einem separaten Schritt weiter ausgebaut.
 - **Kein eigenes CSS**: nutzt `.detail-view` und `.back-button` aus `DetailView.css`.
 
