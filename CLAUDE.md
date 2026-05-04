@@ -21,6 +21,6 @@ Entwicklung einer Applikation um Rollenspiel-Regeln generisch zu entwicklen. Auf
 
 Details zu Architektur, Design und Toolstack:
 
-@.claude/architecture.md
+@.claude/blueprints/architecture.md
 @.claude/design.md
 @.claude/toolstack.md
