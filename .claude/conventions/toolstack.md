@@ -2,11 +2,8 @@
 
 ## Sprache & Runtime
 
-Für die Entwicklung wird Java genutzt mit der Version 17.
-
-## Build-Tool
-
-Für den Build wird Maven genutzt.
+- Java 21
+- Maven als Build-Tool
 
 ## Frontend
 
@@ -16,16 +13,9 @@ Für den Build wird Maven genutzt.
 
 ## Frameworks & Bibliotheken
 
+- **Spring Boot 3.2.x** — REST-API (`api`-Modul)
 - **Jakarta XML Bind (JAXB) 4.0.x** — XML-Serialisierung im `persistence`-Modul
 - **JUnit Jupiter 5.10.x** — Tests in allen Java-Modulen
-
-## Entwicklungsumgebung
-
-<!-- IDE, lokale Setup-Schritte, benötigte Tools -->
-
-## CI/CD
-
-<!-- Pipeline, wo sie liegt, wie sie getriggert wird -->
 
 ## Wichtige Build-Befehle
 
@@ -50,4 +40,7 @@ cd coreElements && mvn install
 
 # persistence bauen & testen
 cd persistence && mvn test
+
+# API starten
+cd api && mvn spring-boot:run
 ```
