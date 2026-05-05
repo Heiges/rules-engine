@@ -2,6 +2,8 @@ import { createContext, useContext, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { RulesetData } from '../api'
 
+type Role = 'spielleiter' | 'spieler'
+
 interface RulesetContextType {
   currentRuleset: string | null
   setCurrentRuleset: (name: string | null) => void
@@ -9,6 +11,8 @@ interface RulesetContextType {
   setRulesetData: (data: RulesetData | null) => void
   fileHandle: FileSystemFileHandle | null
   setFileHandle: (handle: FileSystemFileHandle | null) => void
+  role: Role | null
+  setRole: (role: Role | null) => void
 }
 
 const RulesetContext = createContext<RulesetContextType | null>(null)
@@ -17,9 +21,10 @@ export function RulesetProvider({ children }: { children: ReactNode }) {
   const [currentRuleset, setCurrentRuleset] = useState<string | null>(null)
   const [rulesetData, setRulesetData] = useState<RulesetData | null>(null)
   const [fileHandle, setFileHandle] = useState<FileSystemFileHandle | null>(null)
+  const [role, setRole] = useState<Role | null>(null)
 
   return (
-    <RulesetContext.Provider value={{ currentRuleset, setCurrentRuleset, rulesetData, setRulesetData, fileHandle, setFileHandle }}>
+    <RulesetContext.Provider value={{ currentRuleset, setCurrentRuleset, rulesetData, setRulesetData, fileHandle, setFileHandle, role, setRole }}>
       {children}
     </RulesetContext.Provider>
   )

@@ -1,7 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { RulesetProvider } from './context/RulesetContext'
 import { StatusBar } from './components/StatusBar'
+import { RequireRole } from './components/RequireRole'
+import { RoleSelectionView } from './views/RoleSelectionView'
 import { HomeView } from './views/HomeView'
+import { PlayerView } from './views/PlayerView'
 import { DetailView } from './views/DetailView'
 import { EditRulesetView } from './views/EditRulesetView'
 import { AttributeView } from './views/AttributeView'
@@ -20,20 +23,22 @@ function App() {
     <RulesetProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomeView />} />
-          <Route path="/edit-ruleset" element={<EditRulesetView />} />
-          <Route path="/tile/werte" element={<WerteView />} />
-          <Route path="/tile/attributes" element={<AttributeView allowGrouping={false} backPath="/edit-ruleset" detailBasePath="/tile/attributes" />} />
-          <Route path="/tile/attributes/:index" element={<AttributeDetailView listPath="/tile/attributes" />} />
-          <Route path="/world/attributes" element={<AttributeView allowGrouping={true} backPath="/create-world" detailBasePath="/world/attributes" />} />
-          <Route path="/world/attributes/:index" element={<AttributeDetailView listPath="/world/attributes" />} />
-          <Route path="/tile/skills" element={<SkillVerbView />} />
-          <Route path="/tile/skills/domains/:index" element={<SkillDomainDetailView />} />
-          <Route path="/tile/skills/:index" element={<SkillVerbDetailView />} />
-          <Route path="/tile/cheats" element={<CheatView />} />
-          <Route path="/tile/cheats/:index" element={<CheatDetailView />} />
+          <Route path="/" element={<RoleSelectionView />} />
+          <Route path="/home" element={<RequireRole role="spielleiter"><HomeView /></RequireRole>} />
+          <Route path="/player" element={<RequireRole role="spieler"><PlayerView /></RequireRole>} />
+          <Route path="/edit-ruleset" element={<RequireRole role="spielleiter"><EditRulesetView /></RequireRole>} />
+          <Route path="/tile/werte" element={<RequireRole role="spielleiter"><WerteView /></RequireRole>} />
+          <Route path="/tile/attributes" element={<RequireRole role="spielleiter"><AttributeView allowGrouping={false} backPath="/edit-ruleset" detailBasePath="/tile/attributes" /></RequireRole>} />
+          <Route path="/tile/attributes/:index" element={<RequireRole role="spielleiter"><AttributeDetailView listPath="/tile/attributes" /></RequireRole>} />
+          <Route path="/world/attributes" element={<RequireRole role="spielleiter"><AttributeView allowGrouping={true} backPath="/create-world" detailBasePath="/world/attributes" /></RequireRole>} />
+          <Route path="/world/attributes/:index" element={<RequireRole role="spielleiter"><AttributeDetailView listPath="/world/attributes" /></RequireRole>} />
+          <Route path="/tile/skills" element={<RequireRole role="spielleiter"><SkillVerbView /></RequireRole>} />
+          <Route path="/tile/skills/domains/:index" element={<RequireRole role="spielleiter"><SkillDomainDetailView /></RequireRole>} />
+          <Route path="/tile/skills/:index" element={<RequireRole role="spielleiter"><SkillVerbDetailView /></RequireRole>} />
+          <Route path="/tile/cheats" element={<RequireRole role="spielleiter"><CheatView /></RequireRole>} />
+          <Route path="/tile/cheats/:index" element={<RequireRole role="spielleiter"><CheatDetailView /></RequireRole>} />
+          <Route path="/create-world" element={<RequireRole role="spielleiter"><SpielweltView /></RequireRole>} />
           <Route path="/character-editor" element={<CharacterEditorView />} />
-          <Route path="/create-world" element={<SpielweltView />} />
           <Route path="/tile/:id" element={<DetailView />} />
         </Routes>
         <StatusBar />

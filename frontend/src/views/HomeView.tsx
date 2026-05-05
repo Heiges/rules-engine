@@ -18,7 +18,7 @@ const XML_SAVE_OPTS: SaveFilePickerOptions = {
 
 export function HomeView() {
   const navigate = useNavigate()
-  const { currentRuleset, setCurrentRuleset, setRulesetData, setFileHandle } = useRuleset()
+  const { currentRuleset, setCurrentRuleset, setRulesetData, setFileHandle, role } = useRuleset()
   const [error, setError] = useState<string | null>(null)
 
   async function handleLoad() {
@@ -105,19 +105,23 @@ export function HomeView() {
       <h1>Rules Engine</h1>
       {error && <p className="home-error">{error}</p>}
       <div className="tile-grid">
-        <Tile
-          id="new-ruleset"
-          name="Neue Referenzregeln"
-          description="Neue Referenzregeln erstellen"
-          onClick={handleNew}
-        />
-        <Tile
-          id="load-ruleset"
-          name="Referenzregeln laden"
-          description="Referenzregeln laden"
-          onClick={handleLoad}
-        />
-        {currentRuleset && (
+        {role === 'spielleiter' && (
+          <Tile
+            id="new-ruleset"
+            name="Neue Referenzregeln"
+            description="Neue Referenzregeln erstellen"
+            onClick={handleNew}
+          />
+        )}
+        {role === 'spielleiter' && (
+          <Tile
+            id="load-ruleset"
+            name="Referenzregeln laden"
+            description="Referenzregeln laden"
+            onClick={handleLoad}
+          />
+        )}
+        {role === 'spielleiter' && currentRuleset && (
           <Tile
             id="edit-ruleset"
             name={`Referenzregeln ${currentRuleset} bearbeiten`}
@@ -133,7 +137,6 @@ export function HomeView() {
             onClick={() => navigate('/create-world')}
           />
         )}
-
       </div>
     </div>
   )
