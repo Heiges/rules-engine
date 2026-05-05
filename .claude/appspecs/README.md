@@ -25,6 +25,14 @@ Nicht jede Domäne braucht alle Schichten — nur was tatsächlich existiert wir
 |--------|---------|-------|
 | Navigation | Frontend | [navigation/tile-navigation.md](navigation/tile-navigation.md) |
 | Navigation | Frontend | [navigation/breadcrumb.md](navigation/breadcrumb.md) |
+| Werte | Domain | [werte/domain.md](werte/domain.md) |
+| Werte | Frontend | [werte/view.md](werte/view.md) |
+| Attribute | Domain | [attribute/domain.md](attribute/domain.md) |
+| Attribute | Frontend | [attribute/view.md](attribute/view.md) |
+| Skills | Domain | [skill/domain.md](skill/domain.md) |
+| Skills | Frontend | [skill/view.md](skill/view.md) |
+| Cheats | Domain | [cheat/domain.md](cheat/domain.md) |
+| Cheats | Frontend | [cheat/view.md](cheat/view.md) |
 
 ## Referenzen
 
