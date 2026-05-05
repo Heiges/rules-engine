@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useRuleset } from '../context/RulesetContext'
 import { exportRuleset, saveRuleset } from '../api'
 import type { ValueRange } from '../api'
@@ -7,7 +6,6 @@ import './DetailView.css'
 import './WerteView.css'
 
 export function WerteView() {
-  const navigate = useNavigate()
   const { rulesetData, setRulesetData, currentRuleset, fileHandle } = useRuleset()
   const [werte, setWerte] = useState<ValueRange>(() => rulesetData?.valueRange ?? { min: -10, average: 0, max: 10 })
 
@@ -43,7 +41,6 @@ export function WerteView() {
 
   return (
     <div className="detail-view">
-      <button className="back-button" onClick={() => navigate('/edit-ruleset')}>← Zurück</button>
       <h1>Wertebereich</h1>
 
       <div className="werte-form">

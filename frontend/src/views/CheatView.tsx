@@ -71,7 +71,6 @@ export function CheatView() {
 
   return (
     <div className="detail-view">
-      <button className="back-button" onClick={() => navigate('/edit-ruleset')}>← Zurück</button>
       <div className="attr-header">
         <h1>Cheats</h1>
         <div className="attr-header-actions">

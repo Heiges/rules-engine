@@ -62,7 +62,6 @@ export function SkillDomainDetailView() {
 
   return (
     <div className="detail-view">
-      <button className="back-button" onClick={() => navigate('/tile/skills')}>← Zurück</button>
       <h1>{isNew ? 'Neue Domäne' : 'Domäne bearbeiten'}</h1>
 
       <div className="attr-form">

@@ -37,4 +37,5 @@ Eine Komponenten-Spec ist so vollständig, dass die Komponente ohne Blick in den
 |-------|------------|
 | `tile.md` | `Tile` — Navigationskachel |
 | `navigation.md` | Navigationssystem — Kachel-Baum, Routen, Sichtbarkeitslogik |
+| `breadcrumb.md` | `Breadcrumb` — Pfadanzeige, ersetzt Zurück-Button |
 

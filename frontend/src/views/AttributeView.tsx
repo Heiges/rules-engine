@@ -8,11 +8,10 @@ import './AttributeView.css'
 
 interface Props {
   allowGrouping: boolean
-  backPath: string
   detailBasePath: string
 }
 
-export function AttributeView({ allowGrouping, backPath, detailBasePath }: Props) {
+export function AttributeView({ allowGrouping, detailBasePath }: Props) {
   const navigate = useNavigate()
   const { rulesetData, setRulesetData, currentRuleset, fileHandle } = useRuleset()
   const [attrs, setAttrs] = useState<Attribute[]>(() => rulesetData?.attributes ?? [])
@@ -107,7 +106,6 @@ export function AttributeView({ allowGrouping, backPath, detailBasePath }: Props
 
   return (
     <div className="detail-view">
-      <button className="back-button" onClick={() => navigate(backPath)}>← Zurück</button>
       <div className="attr-header">
         <h1>Attribute</h1>
         <div className="attr-header-actions">

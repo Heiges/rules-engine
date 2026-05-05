@@ -136,7 +136,6 @@ export function SkillVerbView() {
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="detail-view">
-      <button className="back-button" onClick={() => navigate('/edit-ruleset')}>← Zurück</button>
       <h1>Skills</h1>
       {saveError && <p className="attr-error">{saveError}</p>}
 

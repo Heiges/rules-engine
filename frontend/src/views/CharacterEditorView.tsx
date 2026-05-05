@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useRuleset } from '../context/RulesetContext'
 import { rollDice } from '../api'
 import type { Attribute, RollResult } from '../api'
@@ -29,7 +28,6 @@ function buildEffectiveAttrs(attributes: Attribute[]): EffectiveAttr[] {
 }
 
 export function CharacterEditorView() {
-  const navigate = useNavigate()
   const { rulesetData, currentRuleset } = useRuleset()
   const { valueRange, attributes, skills } = rulesetData ?? {
     valueRange: { min: 0, average: 0, max: 0 },
@@ -64,7 +62,6 @@ export function CharacterEditorView() {
 
   return (
     <div className="detail-view">
-      <button className="back-button" onClick={() => navigate('/')}>← Zurück</button>
       <h1>Charactereditor</h1>
       {currentRuleset && <p className="char-ruleset-label">Regelwerk: {currentRuleset}</p>}
 

@@ -24,6 +24,7 @@ Nicht jede Domäne braucht alle Schichten — nur was tatsächlich existiert wir
 | Domäne | Schicht | Datei |
 |--------|---------|-------|
 | Navigation | Frontend | [navigation/tile-navigation.md](navigation/tile-navigation.md) |
+| Navigation | Frontend | [navigation/breadcrumb.md](navigation/breadcrumb.md) |
 
 ## Referenzen
 

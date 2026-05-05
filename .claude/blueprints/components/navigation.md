@@ -100,6 +100,8 @@ Jede View unterhalb der HomeView hat einen Zurück-Button:
 
 Der Zielpfad des Zurück-Buttons entspricht immer der übergeordneten Ebene im Navigationsbaum.
 
+> **Geplante Ablösung:** Der Zurück-Button soll durch eine `Breadcrumb`-Komponente ersetzt werden, die den vollständigen Navigationspfad anzeigt. Siehe [breadcrumb.md](breadcrumb.md).
+
 ## Dateien
 
 | Artefakt | Pfad |

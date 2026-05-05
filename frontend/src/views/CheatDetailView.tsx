@@ -62,7 +62,6 @@ export function CheatDetailView() {
 
   return (
     <div className="detail-view">
-      <button className="back-button" onClick={() => navigate('/tile/cheats')}>← Zurück</button>
       <h1>{isNew ? 'Neuer Cheat' : 'Cheat bearbeiten'}</h1>
 
       <div className="attr-form">

@@ -67,7 +67,6 @@ export function AttributeDetailView({ listPath }: Props) {
 
   return (
     <div className="detail-view">
-      <button className="back-button" onClick={() => navigate(listPath)}>← Zurück</button>
       <h1>{isNew ? 'Neues Attribut' : 'Attribut bearbeiten'}</h1>
 
       <div className="attr-form">

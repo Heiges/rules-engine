@@ -8,7 +8,6 @@ export function SpielweltView() {
 
   return (
     <div className="detail-view">
-      <button className="back-button" onClick={() => navigate('/')}>← Zurück</button>
       <h1>Spielwelt anlegen</h1>
       <p>Hier wird das Anlegen einer neuen Spielwelt implementiert.</p>
       <div className="tile-grid">

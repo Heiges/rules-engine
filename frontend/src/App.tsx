@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { RulesetProvider } from './context/RulesetContext'
 import { StatusBar } from './components/StatusBar'
 import { RequireRole } from './components/RequireRole'
+import { AppBreadcrumb } from './components/AppBreadcrumb'
 import { RoleSelectionView } from './views/RoleSelectionView'
 import { HomeView } from './views/HomeView'
 import { PlayerView } from './views/PlayerView'
@@ -22,15 +23,16 @@ function App() {
   return (
     <RulesetProvider>
       <BrowserRouter>
+        <AppBreadcrumb />
         <Routes>
           <Route path="/" element={<RoleSelectionView />} />
           <Route path="/home" element={<RequireRole role="spielleiter"><HomeView /></RequireRole>} />
           <Route path="/player" element={<RequireRole role="spieler"><PlayerView /></RequireRole>} />
           <Route path="/edit-ruleset" element={<RequireRole role="spielleiter"><EditRulesetView /></RequireRole>} />
           <Route path="/tile/werte" element={<RequireRole role="spielleiter"><WerteView /></RequireRole>} />
-          <Route path="/tile/attributes" element={<RequireRole role="spielleiter"><AttributeView allowGrouping={false} backPath="/edit-ruleset" detailBasePath="/tile/attributes" /></RequireRole>} />
+          <Route path="/tile/attributes" element={<RequireRole role="spielleiter"><AttributeView allowGrouping={false} detailBasePath="/tile/attributes" /></RequireRole>} />
           <Route path="/tile/attributes/:index" element={<RequireRole role="spielleiter"><AttributeDetailView listPath="/tile/attributes" /></RequireRole>} />
-          <Route path="/world/attributes" element={<RequireRole role="spielleiter"><AttributeView allowGrouping={true} backPath="/create-world" detailBasePath="/world/attributes" /></RequireRole>} />
+          <Route path="/world/attributes" element={<RequireRole role="spielleiter"><AttributeView allowGrouping={true} detailBasePath="/world/attributes" /></RequireRole>} />
           <Route path="/world/attributes/:index" element={<RequireRole role="spielleiter"><AttributeDetailView listPath="/world/attributes" /></RequireRole>} />
           <Route path="/tile/skills" element={<RequireRole role="spielleiter"><SkillVerbView /></RequireRole>} />
           <Route path="/tile/skills/domains/:index" element={<RequireRole role="spielleiter"><SkillDomainDetailView /></RequireRole>} />

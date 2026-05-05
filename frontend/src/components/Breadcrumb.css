@@ -1,0 +1,38 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 12px 32px;
+  font-size: 13px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+
+  @media (max-width: 1024px) {
+    padding: 10px 20px;
+  }
+}
+
+.breadcrumb-separator {
+  color: var(--border);
+  user-select: none;
+}
+
+.breadcrumb-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--sans);
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.breadcrumb-current {
+  color: var(--text-h);
+  font-weight: 500;
+}
