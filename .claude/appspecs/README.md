@@ -33,6 +33,8 @@ Nicht jede Domäne braucht alle Schichten — nur was tatsächlich existiert wir
 | Skills | Frontend | [skill/view.md](skill/view.md) |
 | Cheats | Domain | [cheat/domain.md](cheat/domain.md) |
 | Cheats | Frontend | [cheat/view.md](cheat/view.md) |
+| Persistenz | Persistence | [persistence/domain.md](persistence/domain.md) |
+| REST-API | API | [api/domain.md](api/domain.md) |
 
 ## Referenzen
 
