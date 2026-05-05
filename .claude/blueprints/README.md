@@ -25,7 +25,7 @@ Eine Layer-Spec enthält Klassenkategorien, Pflichtmuster, Verbote und Ablageort
 | Datei | Schicht |
 |-------|---------|
 | `domain.md` | Domänenmodell (`coreElements`) |
-| `persistence.md` | XML-Persistenz (`persistence`) |
+| `persistence-local-xml.md` | Lokale XML-Persistenz (`persistence`) |
 | `views.md` | Frontend-Views (`frontend/src/views/`) |
 
 ### `components/`

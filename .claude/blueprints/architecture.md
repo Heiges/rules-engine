@@ -47,7 +47,7 @@ Abhängigkeiten nur nach unten. Das Domänenmodell kennt keine andere Schicht.
 | Blaupause | Rolle | Wann lesen |
 |-----------|-------|------------|
 | [domain.md](layers/domain.md) | Domain | Neue Domänenklasse anlegen |
-| [persistence.md](layers/persistence.md) | Persistence | Domänenobjekt persistieren |
+| [persistence-local-xml.md](layers/persistence-local-xml.md) | Persistence | Domänenobjekt persistieren |
 | [views.md](layers/views.md) | Frontend | Neue View anlegen |
 
 ### Komponenten-Blaupausen (`blueprints/components/`)
