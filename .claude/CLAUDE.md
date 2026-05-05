@@ -18,11 +18,4 @@ Beim Löschen von Dateien oder Verzeichnissen immer eine Bestätigung einholen!
 
 ## Feature-Dokumentation
 
-Nach jeder Feature-Implementierung (neu oder geändert) eine Feature-Spec anlegen oder aktualisieren:
-
-- Datei: `.claude/features/domain/`, `.claude/features/persistence/` oder `.claude/features/frontend/` — je nach Modul
-- Pflichtabschnitte: **Ziel**, **Anforderungen**, **Entscheidungen**, **Implementierung** (Tabelle mit Artefakt-Pfaden), **Rekonstruktion** (Prompt + Kontext)
-- Außerdem: `_projekt-struktur.md` im Abschnitt `## Bestehende Features` aktualisieren
-
-Das gilt für alle Implementierungs-Tasks — nicht nur für `/new-core-element` oder `/new-rule`.
-Vorlage und Prozess: `/document-feature <name>`
+Nach jeder Feature-Implementierung (neu oder geändert) die passende Spec in `.claude/appspecs/` anlegen oder aktualisieren — je nach Schicht `domain.md` oder `view.md` im zugehörigen Domänenordner.
