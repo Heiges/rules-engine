@@ -19,6 +19,12 @@ Jede Domäne bekommt einen eigenen Unterordner. Innerhalb des Ordners gibt es je
 
 Nicht jede Domäne braucht alle Schichten — nur was tatsächlich existiert wird beschrieben.
 
+## Bestehende Specs
+
+| Domäne | Schicht | Datei |
+|--------|---------|-------|
+| Navigation | Frontend | [navigation/view.md](navigation/view.md) |
+
 ## Referenzen
 
 - [blueprints/](../blueprints/README.md) — Blaupausen für Muster und Bauregeln
